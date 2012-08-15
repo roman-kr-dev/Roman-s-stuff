@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<!-- <link rel="stylesheet" href="http://cadoogi.com/pinkfacebook/css/reset.css" />
+		<link rel="stylesheet" href="http://cadoogi.com/pinkfacebook/css/styles.css?ver=2" /> -->
+		
+
+		<!-- <script type="text/javascript" src="http://cadoogi.com/pinkfacebook/javascript/jquery-1.7.min.js"></script> -->
+		<script type="text/javascript">
+		var	originRegExp = /^chrome\-extension\:\/\//,
+			messageRegExp = /^MegaPlayListXXX\.(.*)/;
+		
+		window.addEventListener('message', function(e){
+			if (originRegExp.test(e.origin) && messageRegExp.test(e.data.action)) {
+				if (RegExp.$1 === 'stop') document.getElementById('ytplayer').innerHTML = '';
+			}
+		}, false);
+
+		function postMessage(message) {
+			window.parent.postMessage({action:message}, '*');
+		}
+
+		postMessage('MegaPlayListXXX.player.init');
+		</script>
+	</head>
+
+	<body>	
+		<div id="ytplayer">
+			<iframe type="text/html" width="640" height="360" src="http://www.youtube.com/embed/0Sy3J7O5bxM?autoplay=1" frameborder="0" allowfullscreen></iframe>
+		</div>
+	</body>
+</html>

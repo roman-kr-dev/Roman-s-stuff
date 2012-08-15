@@ -1,0 +1,549 @@
+div.groovelift-player-audio {
+	font-size:1em;
+	font-family:Verdana, Arial, sans-serif;
+	line-height:1.6;
+	color: #666;
+	position:relative;
+	width:710px;
+	height:155px;
+	background:url(images/big_bg_player.png);
+}
+
+div.groovelift-player-interface {
+	position: relative;
+	width:100%;
+}
+
+div.groovelift-player-audio div.groovelift-player-type-single div.groovelift-player-interface {
+	height:120px;
+}
+div.groovelift-player-audio div.groovelift-player-type-playlist div.groovelift-player-interface {
+	height:120px;
+}
+
+/* @group CONTROLS */
+div.groovelift-player-interface ul.groovelift-player-controls {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	overflow:hidden;
+
+}
+
+
+
+div.groovelift-player-audio ul.groovelift-player-controls {
+	
+	width:80px;
+}
+
+div.groovelift-player-interface ul.groovelift-player-controls a {
+	display:block;
+	overflow:hidden;
+	text-indent:-9999px;
+}
+
+a.groovelift-player-play,
+a.groovelift-player-pause {
+	width:62px;
+	height:62px;
+	margin-left:13px;
+	margin-top:45px;
+}
+
+a.groovelift-player-play {
+	background:url(images/big_play_btn.png) no-repeat;
+}
+a.groovelift-player-play:hover {
+	background:url(images/big_play_btn.png) no-repeat;
+}
+a.groovelift-player-pause {
+	background:url(images/big_play_btn_active.png) no-repeat;
+	display: none;
+}
+a.groovelift-player-pause:hover {
+	background:url(images/big_play_btn_active.png) no-repeat;
+}
+
+a.groovelift-player-stop, a.groovelift-player-previous, a.groovelift-player-next {
+	width:28px;
+	height:28px;
+	margin-top:6px;
+}
+
+a.groovelift-player-stop {
+	background: url("jplayer.blue.monday.jpg") 0 -83px no-repeat;
+	margin-left:10px;
+}
+
+a.groovelift-player-stop:hover {
+	background: url("jplayer.blue.monday.jpg") -29px -83px no-repeat;
+}
+
+a.groovelift-player-previous {
+	background: url("jplayer.blue.monday.jpg") 0 -112px no-repeat;
+}
+a.groovelift-player-previous:hover {
+	background: url("jplayer.blue.monday.jpg") -29px -112px no-repeat;
+}
+
+a.groovelift-player-next {
+	background: url("jplayer.blue.monday.jpg") 0 -141px no-repeat;
+}
+a.groovelift-player-next:hover {
+	background: url("jplayer.blue.monday.jpg") -29px -141px no-repeat;
+}
+
+/* @end */
+
+/* @group progress bar */
+
+div.groovelift-player-audio div.groovelift-player-progress {
+	position: absolute;
+	left:80px;
+	top:37px;
+	width:629px;
+	height:82px;
+	background:url(images/big_play_bg.png) repeat-x;
+}
+
+div.groovelift-player-audio div.groovelift-player-progress-left {
+	position: absolute;
+	z-index:500;
+	left:0px;
+	top:0px;
+	width:18px;
+	height:82px;
+	background:url(images/big_bg_player_left.png) no-repeat;
+}
+
+div.groovelift-player-seek-bar {
+	background:url(images/big_play_loading_bg.png) repeat-x;
+	width:0px;
+	height:100%;
+	cursor: pointer;
+}
+
+div.groovelift-player-play-bar {
+	background:url(images/big_play_playing_bg.png) repeat-x;
+	width:0px;
+	height:100%;
+}
+
+/* The seeking class is added/removed inside jPlayer */
+div.groovelift-player-seeking-bg {
+	background: url("images/ajax-loader.gif") center center no-repeat;
+}
+
+/* @end */
+
+/* @group volume controls */
+
+
+a.groovelift-player-mute,
+a.groovelift-player-unmute,
+a.groovelift-player-volume-max {
+	width:9px;
+	height:10px;
+	margin-top:-3px;
+	margin-left: 66px;
+}
+
+a.groovelift-player-mute {
+	background: url("images/big_play_sound_mute.png") no-repeat;
+}
+a.groovelift-player-mute:hover {
+	background: url("images/big_play_sound_mute.png") no-repeat;
+}
+a.groovelift-player-unmute {
+	background: url("images/big_play_sound_unmute.png") no-repeat;
+	display: none;
+}
+a.groovelift-player-unmute:hover {
+	background: url("images/big_play_sound_unmute.png") no-repeat;
+}
+
+
+a.groovelift-player-volume-max {
+	background: url("jplayer.blue.monday.jpg") 0 -186px no-repeat;
+}
+a.groovelift-player-volume-max:hover {
+	background: url("jplayer.blue.monday.jpg") -19px -186px no-repeat;
+}
+
+div.groovelift-player-volume-bar {
+	position: absolute;
+	overflow:hidden;
+	background: url("jplayer.blue.monday.jpg") 0 -250px repeat-x;
+	width:46px;
+	height:5px;
+	cursor: pointer;
+	display:none !important;
+}
+div.groovelift-player-audio div.groovelift-player-volume-bar {
+	top:37px;
+	left:330px;
+}
+div.groovelift-player-video div.groovelift-player-volume-bar {
+	top:17px;
+	left:72px;
+}
+div.groovelift-player-volume-bar-value {
+	background: url("jplayer.blue.monday.jpg") 0 -256px repeat-x;
+	width:0px;
+	height:5px;
+}
+
+/* @end */
+
+/* @group current time and duration */
+
+div.groovelift-player-audio div.groovelift-player-time-holder {
+	position:absolute;
+	top:130px;
+	left:6px;
+	font-size:.64em;
+	font-style:oblique;
+}
+
+div.groovelift-player-audio div.groovelift-player-time-holder div {
+	float:left;
+}
+
+/* @end */
+
+div.groovelift-player-video-play {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	cursor:pointer;
+	background-color:rgba(0,0,0,0); /* Makes IE9 work with the active area over the whole video area. IE6/7/8 only have the button as active area. */
+}
+div.groovelift-player-video-270p div.groovelift-player-video-play {
+	height:270px;
+}
+div.groovelift-player-video-360p div.groovelift-player-video-play {
+	height:360px;
+}
+div.groovelift-player-video-full div.groovelift-player-video-play {
+	height:100%;
+	z-index:1000;
+}
+a.groovelift-player-video-play-icon {
+	position:relative;
+	display:block;
+	width: 112px;
+	height: 100px;
+
+	margin-left:-56px;
+	margin-top:-50px;
+	left:50%;
+	top:50%;
+
+	background: url("jplayer.blue.monday.video.play.png") 0 0 no-repeat;
+	text-indent:-9999px;
+}
+div.groovelift-player-video-play:hover a.groovelift-player-video-play-icon {
+	background: url("jplayer.blue.monday.video.play.png") 0 -100px no-repeat;
+}
+
+div.groovelift-player-jplayer audio,
+div.groovelift-player-jplayer {
+	width:0px;
+	height:0px;
+}
+
+div.groovelift-player-jplayer {
+	background-color: #000000;
+}
+
+/* @group NO SOLUTION error feedback */
+
+.groovelift-player-no-solution {
+	position:absolute;
+	width:390px;
+	margin-left:-202px;
+	left:50%;
+	top: 10px;
+
+	padding:5px;
+	font-size:.8em;
+	background-color:#eee;
+	border:2px solid #009be3;
+	color:#000;
+	display:none;
+}
+
+.groovelift-player-no-solution a {
+	color:#000;
+}
+
+.groovelift-player-no-solution span {
+	font-size:1em;
+	display:block;
+	text-align:center;
+	font-weight:bold;
+}
+
+/* @end */
+
+
+/* top bar */
+div.groovelift-player-top {
+	top:0px;
+	left:0px;
+	position:absolute;
+	width:710px;
+	height:36px;
+	z-index:100;
+}
+
+	div.groovelift-player-info {
+		float:left;
+		width:400px;
+	}
+
+		div.groovelift-player-info div.groovelift-player-info-image {
+			float:left;
+			width:32px;
+			height:32px;
+		}
+
+			div.groovelift-player-info div.groovelift-player-info-image img {
+				width:32px;
+				height:32px;
+			}
+
+		div.groovelift-player-info div.groovelift-player-info-details {
+			float:left;
+			margin-left:8px;
+		}
+
+			div.groovelift-player-info div.groovelift-player-info-user-name {
+				width:100%;
+				font-size:12px;
+				color:#575757;
+				line-height:12px;
+			}
+
+			div.groovelift-player-info div.groovelift-player-info-song-name-date {
+				font-size:11px;
+				color:#575757;
+			}
+
+				div.groovelift-player-info div.groovelift-player-info-song-name-date strong {
+					font-weight:bold;
+					font-size:14px;
+					color:#29aae2;
+				}
+
+				div.groovelift-player-info div.groovelift-player-info-song-name-date span {
+					position:relative;
+					top:-2px;
+				}
+
+	div.groovelift-player-buttons {
+		float:right;
+		height:36px;
+	}
+
+	div.groovelift-player-buttons div {
+		float:right;
+	}
+
+		div.groovelift-player-buttons-seperator {
+			width:2px;
+			height:36px;
+			background:url(images/big_btn_sep.png) no-repeat;
+		}
+
+		div.groovelift-player-buttons-share {
+			width:28px;
+			height:36px;
+			background:url(images/big_btn_share.png) no-repeat;
+			cursor:pointer;
+		}
+
+		div.groovelift-player-buttons-favorite {
+			width:34px;
+			height:36px;
+			background:url(images/big_btn_fav.png) no-repeat;
+			cursor:pointer;
+		}
+
+		div.groovelift-player-buttons-download {
+			width:33px;
+			height:36px;
+			background:url(images/big_btn_download.png) no-repeat;
+			cursor:pointer;
+		}
+
+		div.groovelift-player-buttons-comment {
+			width:30px;
+			height:36px;
+			background:url(images/big_btn_comment.png) no-repeat;
+			cursor:pointer;
+		}
+
+/* comments */
+div.groovelift-player-comments-bar {
+	position:absolute;
+	z-index:200;
+	left:80px;
+	height:25px;
+	background:#06C;
+	width:629px;
+	bottom:5px;
+	cursor:pointer;
+}
+
+	div.groovelift-player-comments-bar img {
+		position:absolute;
+		width:25px;
+		height:25px;
+		top:0px;
+		left:0px;
+		cursor:pointer;
+	}
+
+/* tooltip */
+div.groovelift-player-tooltip {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	z-index:200;
+	width:209px;
+	height:122px;
+	background:url(images/black_arrow.png) no-repeat;
+	display:none;
+}
+
+	div.groovelift-player-tooltip div {
+		text-align:center;
+		color:#fff;
+		margin:30px;
+	}
+
+/* add comment popup */
+div.groovelift-player-add-comment {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	z-index:200;
+	width:360px;
+	height:122px;
+	background:url(images/add_comment.png) no-repeat;
+	display:none;
+}
+
+	div.groovelift-player-add-comment-content {
+		margin-top:20px;
+		margin-left:6px;
+		margin-right:11px;
+	}
+
+		div.groovelift-player-add-comment-header {
+			height:20px;
+		}
+
+			div.groovelift-player-add-comment-title {
+				float:left;
+				color: #29AAE2;
+				font-size: 14px;
+				line-height:14px;
+				margin-left:8px;
+				margin-top:3px;
+				font-weight:bold;
+			}
+
+			div.groovelift-player-add-comment-close {
+				float:right;
+				color:#fff;
+				font-size:14px;
+				font-weight:bold;
+				margin-right:5px;
+				cursor:pointer;
+			}
+
+		div.groovelift-player-add-comment-form {
+			margin-left:8px;
+			width:331px;
+			height:47px;
+		}
+
+			div.groovelift-player-add-comment-form textarea {
+				width:100%;
+				height:100%;
+				background:transparent;
+				border:none;
+				color:#fff;
+				resize:none;
+			}
+
+		div.groovelift-player-add-comment-footer {
+			height:20px;
+		}
+
+			div.groovelift-player-add-comment-footer button {
+				float:right;
+				height:18px;
+				margin-top:1px;
+				font-size:11px;
+				line-height:11px;
+				margin-left:10px;
+			}
+
+/* show comment popup */
+div.groovelift-player-show-comment {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	z-index:200;
+	width:360px;
+	height:122px;
+	background:url(images/add_comment.png) no-repeat;
+	display:none;
+}
+
+	div.groovelift-player-show-comment-content {
+		margin-top:20px;
+		margin-left:6px;
+		margin-right:11px;
+	}
+
+		div.groovelift-player-show-comment-header {
+			height:20px;
+		}
+
+			div.groovelift-player-show-comment-title {
+				float:left;
+				color: #29AAE2;
+				font-size: 14px;
+				line-height:14px;
+				margin-left:8px;
+				margin-top:3px;
+				font-weight:bold;
+			}
+
+				div.groovelift-player-show-comment-title img {
+					float:left;
+					width:25px;
+					height:25px;
+					margin-right:10px;
+				}
+
+			div.groovelift-player-show-comment-close {
+				float:right;
+				color:#fff;
+				font-size:14px;
+				font-weight:bold;
+				margin-right:5px;
+				cursor:pointer;
+			}
+
+		div.groovelift-player-show-comment-post {
+			clear:both;
+			margin-left:8px;
+			color:#fff;
+		}

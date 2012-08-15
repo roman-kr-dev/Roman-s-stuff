@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+ <head>
+<title> New Document </title>
+
+<script style="text/javascript" src="javascript/groovelift.player.min.js"></script>
+<script style="text/javascript">
+var player = new grooveLiftPlayer({	
+	user_id:'jhklh',
+	user_name:'Avi Cohen',
+	user_image:'http://userserve-ak.last.fm/serve/_/36237217/Justin+Biber+JUSTINBIEBER.jpg',
+	track_id:'123',
+	track_name:'a cool track',
+	track_uploaded:'may 2011',
+	track_duration:267.81895691609975,
+	track_url:{
+		m4a:"../sound/1.m4a",
+		mp3:"../sound/1.mp3"
+	},
+	track_comments:[
+		{
+			user_id:1,
+			user_name:'Moshe Cohen',
+			user_image:'http://images.indyposted.com/wp-content/uploads/2010/12/ChuckNorris-e1268280158767.jpg',
+			comment_id:'123',
+			comment_time:'1:34',
+			comment:'Hi my name is moshe..'
+		},
+
+		{
+			user_id:1,
+			user_name:'Moshe Cohen',
+			user_image:'http://images.indyposted.com/wp-content/uploads/2010/12/ChuckNorris-e1268280158767.jpg',
+			comment_id:'456',
+			comment_time:'2:34',
+			comment:'Hi again'
+		}
+	],
+
+	container:'#player',
+
+	events:{
+		onShare:function (track_id) {
+			alert('share: ' + track_id);
+		},
+
+		onFavorite:function (track_id) {
+			alert('favorite: ' + track_id);
+		},
+
+		onDownload:function (track_id) {
+			alert('download: ' + track_id);
+		}
+	}
+});
+</script>
+
+ </head>
+
+ <body>
+
+	<div id="player"></div>
+  
+ </body>
+</html>

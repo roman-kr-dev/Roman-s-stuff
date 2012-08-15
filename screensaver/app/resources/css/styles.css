@@ -1,0 +1,39 @@
+/* 13461 */
+
+.screen-saver-{{app-id}}-screen-overlay {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:#000;
+	opacity:0.8;
+	z-index:{{overlay-zindex}};
+}
+
+.screen-saver-{{app-id}}-screen-images {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:{{overlay-zindex-images}};
+}
+
+	.screen-saver-{{app-id}}-screen-images img {
+		position:absolute;
+		display:none;
+
+		-webkit-box-shadow: 2px 2px 2px 5px rgba(0, 0, 0, 0.6);
+		box-shadow: 2px 2px 2px 5px rgba(0, 0, 0, 0.6);
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+	}
+
+	.screen-saver-{{app-id}}-screen-picture-1 {
+		max-width:700px;
+	}
+
+	.screen-saver-{{app-id}}-screen-picture-2 {
+		max-width:500px;
+	}

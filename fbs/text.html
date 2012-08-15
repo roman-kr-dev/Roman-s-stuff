@@ -1,0 +1,469 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <script src="jquery.js"></script>
+  <script src="jquery.autogrow-textarea.js"></script>
+  <script src="jquery.caret.min.js"></script>
+  <script src="jquery.mzText.js"></script>
+  
+  <style type="text/css">
+
+	.textarea-container {
+		margin:50px;
+		margin-bottom:3px;
+		width:500px;
+		position:relative;
+		background:lightyellow;
+		direction:ltr;
+		text-align:left;
+		line-height: 1;
+	}
+
+	.textarea-container textarea {
+		width:500px;
+		height:150px;
+		background:transparent;
+		position:relative;
+		
+		font-family:"lucida grande",tahoma,verdana,arial,sans-serif !important;
+		font-size:13px;
+		line-height: 1;
+		margin:0px;
+		padding:0px;
+		overflow:hidden !important;
+		border-width:0;
+		border:none;
+		outline:none;
+		resize:none;
+		white-space:pre-wrap;
+		word-wrap:break-word;
+		-webkit-appearance: none;
+		-webkit-border-radius: 0;
+		zoom:1;
+		-webkit-box-sizing: border-box;
+	}
+
+	.textarea-container .textarea-reflected {
+		width:100%;
+		height:100%;
+		position:absolute;
+		top:0px;
+		left:0px;
+		direction:ltr;
+		text-align:left;
+		font-family:"lucida grande",tahoma,verdana,arial,sans-serif !important;
+		font-size:13px;
+		line-height: 1;
+		
+
+
+		
+
+
+	}
+
+	.textarea-container .textarea-reflected span {
+		display:inline-block;
+		width:500px;
+		background:lightyellow;
+		height:100%;
+		direction:ltr;
+		text-align:left;
+		font-family:"lucida grande",tahoma,verdana,arial,sans-serif !important;
+		font-size:13px;
+		line-height: 1;	
+		color:transparent;
+		white-space:pre-wrap;
+		word-wrap:break-word;
+	}
+
+	.textarea-container .textarea-reflected span b {
+		background:#e9e9e9;
+		font-weight:normal;
+	}
+
+  </style>
+ </head>
+
+ <body>
+  
+		<div class="textarea-container">
+			<div class="textarea-reflected">
+				<span id="txtAreaReflected"></span>
+			</div>
+			<textarea id="txtArea" name="" cols="" rows="" class="focusedInput"></textarea>
+		</div>
+		<script type="text/javascript">
+
+		   
+
+			var aWords = [];
+			var DEBUG = false;
+
+			function doGetCaretPosition(ctrl) {
+			    var CaretPos = 0; // IE Support
+			    if (document.selection) {
+			        ctrl.focus();
+			        var Sel = document.selection.createRange();
+			        Sel.moveStart('character', -ctrl.value.length);
+			        CaretPos = Sel.text.length;
+			    }
+			    // Firefox support
+			    else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+			        CaretPos = ctrl.selectionStart;
+			    return (CaretPos);
+			}
+
+			function setCaretPosition(ctrl, pos) {
+			    if (ctrl.setSelectionRange) {
+			        ctrl.focus();
+			        ctrl.setSelectionRange(pos, pos);
+			    }
+			    else if (ctrl.createTextRange) {
+			        var range = ctrl.createTextRange();
+			        range.collapse(true);
+			        range.moveEnd('character', pos);
+			        range.moveStart('character', pos);
+			        range.select();
+			    }
+			}
+
+			function getCloserLastPosition(sText, sSearchText, iPosition) {
+			    if (iPosition > sText.length)
+			        return -1;
+			    return sText.substring(0, iPosition).lastIndexOf(sSearchText);
+			}
+
+			function log(s) {
+			    console.log(s);
+            }
+
+			function aler(s) {
+			    alert(JSON.stringify(s));
+			}
+
+			function dochange(oEl) {
+
+			    var oTextArea = oEl;
+
+			    var sVal = oTextArea.val();
+			    var iCaretPosition = oEl.caret().start; // doGetCaretPosition(this);
+
+			    var iLastAtChar = getCloserLastPosition(sVal, "@", iCaretPosition);
+			    var iCharsToCheck = 25;
+
+			    var sOldVal = oTextArea.attr("oldVal") || "";
+			    if (sOldVal.length != sVal.length) {
+			        for (var i = 0; i < aWords.length; i++) {
+			            if (aWords[i].Position > (iCaretPosition - (sVal.length - sOldVal.length) - 1)) {
+			                aWords[i].Position += sVal.length - sOldVal.length;
+			            }
+			        }
+			    }
+
+			    // בודקים פערים
+
+			    if ($.trim(sVal) == "")
+			        aWords = [];
+
+			    for (var i = 0; i < aWords.length; i++) {
+			        
+			        var oTerm = aWords[i];
+
+			        /*if (oTerm.Position > sVal.length) {
+			            
+			            aWords.splice(i--, 1);
+			            continue;
+			        }*/
+
+			        var sTerm = sVal.length ? sVal.substring(Math.min(oTerm.Position, sVal.length), Math.min(oTerm.Position + oTerm.Length, sVal.length)) : "";
+
+			        ; (function () {
+
+			            if (sTerm == oTerm.Text)
+			                return;
+
+			            // Search for right in caret position in reverse
+			            /*
+			            if (iCaretPosition > oTerm.Position + oTerm.Length)
+			            {
+			            alert("here");
+			            aWords.splice(i--,1);
+			            return;
+			            }
+			            */
+
+			            var sWordToCaret = sVal.substring(iCaretPosition, oTerm.Position + oTerm.Length - (oTextArea.attr("oldVal").length - sVal.length));
+			            var sTrimWordToCaret = sWordToCaret; // .replace(/(\s+)$/gi,"");
+
+			            var aTextWords = oTerm.Text.split(" ");
+
+
+			            var aTermWords = sTrimWordToCaret.split(" ");
+
+			            var a = aTextWords.length - 1;
+			            var b = aTermWords.length - 1;
+
+
+
+			            var aAcceptables = [];
+			            while (a >= 0) {
+			                if (aTextWords[a] == aTermWords[b]) {
+			                    aAcceptables.push(aTextWords[a]);
+			                    b--;
+			                }
+			                a--;
+			            }
+
+			            var sCaretToWord = sVal.substring(oTerm.Position, iCaretPosition);
+			            var aCaretToWord = sCaretToWord != "" ? sCaretToWord.split(" ") : [];
+
+			            aCaretToWord.reverse();
+			            aAcceptables.reverse();
+
+			            var iSpaces = 0;
+			            $.each(aCaretToWord, function () {
+			                if (this == "") iSpaces++;
+			            });
+
+			            var sWordToFix;
+			            var iAddToPosition = 0;
+
+			            if (iSpaces > 1 || !iSpaces) {
+
+			                var bAcceptables = aAcceptables.length ? true : false;
+			                if (!aAcceptables.length) {
+
+			                    a = aTextWords.length - 1;
+			                    b = aCaretToWord.length - 1;
+
+			                    aTextWords.reverse();
+
+			                    while (a >= 0) {
+			                        if (aTextWords[a] == aCaretToWord[b]) {
+			                            aAcceptables.push(aTextWords[a]);
+			                            b--;
+			                        }
+			                        a--;
+			                    }
+
+			                }
+
+			                sWordToFix = aAcceptables.join(" ");
+
+			                if (bAcceptables) {
+			                    iAddToPosition = aWords[i].Text.length - sWordToFix.length - (oTextArea.attr("oldVal").length - sVal.length);
+			                }
+
+
+
+			            } else if (iSpaces == 1) {
+
+
+
+			                aCaretToWord.shift();
+			                aCaretToWord.reverse();
+
+			                if (!aAcceptables.length) {
+			                    a = aTextWords.length - 1;
+
+			                    while (a >= 0) {
+			                        if (aCaretToWord.length > a && aTextWords[a] != aCaretToWord[a]) {
+			                            aCaretToWord.splice(a, 1);
+			                        }
+			                        a--;
+			                    }
+			                }
+
+			                var sFirstBeforeCaret = (aCaretToWord.length ? (aCaretToWord.join(" ")) + " " : "");
+
+			                sWordToFix = sFirstBeforeCaret + aAcceptables.join(" ");
+			                sWordToFix = $.trim(sWordToFix);
+
+			                if (aAcceptables.length) {
+			                    if (sTerm.split(" ").length != sWordToFix.split(" ").length) {
+			                        sWordToFix = $.trim(sWordToFix.substring(sFirstBeforeCaret.length, sWordToFix.length));
+			                    }
+			                    iAddToPosition += aWords[i].Text.length - sWordToFix.length - (oTextArea.attr("oldVal").length - sVal.length);
+			                }
+
+			            }
+
+			            if (sWordToFix) {
+			                aWords[i].Position = aWords[i].Position + iAddToPosition;
+			                aWords[i].Text = sWordToFix;
+			                aWords[i].Length = sWordToFix.length;
+			            } else {
+			                aWords.splice(i--, 1);
+			            }
+
+			        })();
+
+			    }
+
+
+
+
+			    // בודקים האם יש צורך להשלים
+
+			    var bTermNotFound = true;
+
+			    if (iLastAtChar > -1) {
+
+			        var iTermFrom = iLastAtChar;
+			        var iTermTo = Math.min(iLastAtChar + iCharsToCheck + 1, sVal.length);
+
+			        var bFoundGraterWord = false;
+
+			        for (var i = 0; i < aWords.length; i++) {
+			            if (aWords[i].Position > iTermFrom) {
+			                bFoundGraterWord = true;
+			                iTermTo = Math.min(iTermTo, aWords[i].Position);
+			            }
+			        }
+
+
+			        if (iCaretPosition >= iLastAtChar) {
+			            iTermTo = Math.min(iTermTo, iCaretPosition);
+			        }
+
+			        if (bFoundGraterWord) {
+			            while (sVal.charAt(iTermTo - 1) == " ") {
+			                iTermTo--;
+			            }
+			        }
+
+			        if (iTermTo > iTermFrom + 1) {
+			            var sTerm = sVal.substring(iTermFrom + 1, iTermTo);
+
+			            // ajax
+			            // var aDataBase = "moti shay zharfati,maor ben-ami,ad alkobi,a b c d,harry potter".split(",");
+
+			            var aDataBase = "akanksha kurena puveja,roi sorezki,moti zharfati,ad alkobi".split(",");
+			            var aFound = [];
+
+			            if (sTerm) {
+			                for (var i = 0; i < aDataBase.length; i++) {
+			                    if (aDataBase[i].toLowerCase().indexOf(sTerm) > -1) {
+			                        aFound.push(aDataBase[i]);
+			                    }
+			                }
+			            }
+
+			            if (aFound.length) {
+			                $("#inteli_popup").css({
+			                    top: oTextArea.offset().top + oTextArea.height(),
+			                    left: oTextArea.offset().left
+			                }).fadeIn(300).find("UL").html("<li>" + aFound.join("</li><li>") + "</li>").find("LI").bind("mousedown", function () {
+
+			                    var sTermToInsert = $(this).html();
+
+			                    sVal = sVal.substring(0, iTermFrom) + sTermToInsert + sVal.substring(iTermTo, sVal.length);
+			                    oTextArea.val(sVal);
+			                    oTextArea.attr("oldVal", oTextArea.val());
+
+			                    aWords.push({
+			                        Position: iLastAtChar,
+			                        Length: sTermToInsert.length,
+			                        Text: sTermToInsert
+			                    });
+
+			                    for (var i = 0; i < aWords.length; i++) {
+			                        if (aWords[i].Position > iLastAtChar) {
+			                            aWords[i].Position += sTermToInsert.length - sTerm.length - 1;
+			                        }
+			                    }
+
+			                    aWords.sort(function (a, b) {
+			                        if (a.Position > b.Position)
+			                            return 1;
+			                        return -1;
+			                    });
+
+			                    setTimeout(function () {
+			                        setCaretPosition(oTextArea.get(0), iLastAtChar + sTermToInsert.length);
+			                        oTextArea.trigger("keyup");
+			                    }, 20);
+
+			                });
+			                bTermNotFound = false;
+			            }
+			        }
+			    }
+
+			    if (bTermNotFound) {
+			        $("#inteli_popup").css("display", "none");
+			    }
+
+			    // עוטפים את הטקסט
+
+			    var sFormattedVal = sVal;
+			    var aVals = [];
+
+			    for (var i = 0; i < aWords.length; i++) {
+			        if (i == 0) aVals.push(sFormattedVal.substring(0, aWords[i].Position));
+			        aVals.push([]);
+			        aVals.push(sFormattedVal.substring(aWords[i].Position, aWords[i].Position + aWords[i].Length));
+			        aVals.push([]);
+			        aVals.push(sFormattedVal.substring(aWords[i].Position + aWords[i].Length, i + 1 == aWords.length ? sFormattedVal.length : aWords[i + 1].Position));
+			    }
+
+			    sFormattedVal = "";
+			    var bOpenMode = true;
+
+			    for (var i = 0; i < aVals.length; i++) {
+			        if ($.type(aVals[i]) == "array") {
+			            sFormattedVal += bOpenMode ? "<b>" : "</b>";
+			            bOpenMode = !bOpenMode;
+			        } else {
+			            sFormattedVal += aVals[i].replace(/&/gi, "&amp;").replace(/</gi, "&gt;").replace(/>/gi, "&lt;").replace(/\r\n/gi, '<br/>').replace(/\n/gi, '<br/>').replace(/\s/gi, " ");
+			        }
+			    }
+
+			    // מכניסים
+
+			    $("#txtAreaReflected").html(sFormattedVal);
+			    oTextArea.attr("oldVal", oTextArea.val());
+			}
+
+			var oInterval = null;
+			var bInDown = false;
+
+			$("#txtArea").autogrow().bind("dragstart", function () {
+			    return false;
+			}).bind("blur", function () {
+			    $("#inteli_popup").css("display", "none");
+			}).bind("mouseup", function () {
+			    dochange($(this));
+			}).bind("keydown", function () {
+			    if (bInDown) return;
+			    bInDown = true;
+			    try { clearInterval(oInterval); }
+			    catch (e) { }
+			    var oEl = $(this);
+			    oInterval = setInterval(function () {
+			        dochange(oEl);
+			    }, 10);
+			}).bind("keyup", function () {
+			    bInDown = false;
+			    try { clearInterval(oInterval); }
+			    catch (e) { }
+			    dochange($(this));
+			});
+		</script>
+
+		<div id="inteli_popup" style="display:none;position:absolute;background:green;width:500px;">
+			<ul></ul>
+		</div>
+		
+		
+		<input type="button" onclick="alert($('#txtArea').val() + '\n\n' + JSON.stringify(aWords) + '\n\n' + $('#txtAreaReflected').html())" value="Alert" />
+
+
+ </body>
+</html>
