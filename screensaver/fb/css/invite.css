@@ -45,8 +45,6 @@ div.fb_dialog label {
 
 .fb_dialog_popup {
 	overflow:visible;
-	width: 468px;
-	top:20px;
 }
 
 /* dialog content general css */
@@ -237,7 +235,7 @@ ul.friends_tabs li.friends_tab.friends_tab_selected .bl {
 div.friends_selector ul.friends {
 	z-index:1;
 	padding:0 0 0 3px;
-	height:210px;
+	height:140px;
 	overflow:auto;
 	*overflow-y:scroll;
 	border:1px solid #e7ebf5;

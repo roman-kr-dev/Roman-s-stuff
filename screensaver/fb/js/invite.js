@@ -1,6 +1,6 @@
 var FriendsDialog = (function () {
 	var config = {
-		max_selected:30,
+		max_selected:3,
 		second_action_text:'',
 		personal_message:'',
 		friends_list:[],
@@ -38,7 +38,7 @@ var FriendsDialog = (function () {
 			if (this.allTab == all) return;
 			
 			maxSelected.css('display', 'none');
-			//$clear(this.fade_delay);
+			clearInterval(this.fade_delay);
 			
 			tabAll[all ? 'addClass' : 'removeClass']('friends_tab_selected');
 			tabSelected[!all ? 'addClass' : 'removeClass']('friends_tab_selected');
@@ -49,11 +49,11 @@ var FriendsDialog = (function () {
 					'opacity':1
 				});
 
-				//this.fade_delay = function () { new Fx.Tween(noFriends).start('opacity', 0).chain(function () { noFriends.setStyle('display', 'none'); }); }.delay(2000);
+				this.fade_delay = function () { new Fx.Tween(noFriends).start('opacity', 0).chain(function () { noFriends.setStyle('display', 'none'); }); }.delay(2000);
 			}
 			else {
-				noFriends.setStyle('display', 'none');
-				$clear(this.fade_delay);
+				noFriends.css('display', 'none');
+				clearInterval(this.fade_delay);
 			}
 			
 			this.allTab = all;
@@ -72,11 +72,13 @@ var FriendsDialog = (function () {
 				this.selected.push(id);
 				this.events.fire('friendSelect', id);
 			}
-			else {
+			else if (this.selected.indexOf(id) > -1) {
 				li.removeClass('selected');
-				this.selected.erase(id);
+				this.selected.splice( $.inArray(id, this.selected), 1 );
 				this.events.fire('friendUnSelect', id);
 			}
+
+			console.log(id, this.selected)
 
 			selecedCount.html(this.selected.length);
 			
@@ -84,9 +86,9 @@ var FriendsDialog = (function () {
 		},
 		
 		showFriends:function (all) {
-			$$('ul#fbinvite_friends li').each(function (li) {
-				$(li).setStyle('display', all ? 'block' : this.selected.indexOf($(li).get('friend') * 1) == -1 ? 'none' : 'block');
-			}.bind(this));
+			$('ul#fbinvite_friends li').each($.proxy(function (i, li) {
+				$(li).css('display', all ? 'block' : this.selected.indexOf($(li).attr('friend') * 1) == -1 ? 'none' : 'block');
+			}, this));
 		},
 		
 		friendsSeach:function (term) {
@@ -107,8 +109,12 @@ var FriendsDialog = (function () {
 			var maxSelected = $('fbinvite_max_selected');
 			
 			if (!li.is('.selected') && this.selected.length == config.max_selected) {
-				maxSelected.setStyle('display', 'block').setStyle('opacity', 1);
-				$clear(this.fade_delay);
+				maxSelected.css({
+					'display':'block',
+					'opacity':1
+				});
+
+				maxSelected.stop();
 				this.fade_delay = function () { new Fx.Tween(maxSelected).start('opacity', 0).chain(function () { maxSelected.setStyle('display', 'none'); }); }.delay(2000);
 			}
 		},
