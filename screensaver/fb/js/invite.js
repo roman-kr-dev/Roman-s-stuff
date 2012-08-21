@@ -4,12 +4,12 @@ var FriendsDialog = (function () {
 		second_action_text:'',
 		personal_message:'',
 		friends_list:[],
-		action_botton_text:'Send Invitations',
-		cancel_botton_text:'Cancel',
-		action_botton_function:'send_invites',
-		cancel_botton_function:'selector_cancel',
+		action_botton_text:'Continue',
+		cancel_botton_text:'Skip',
+		action_botton_function:'friendsScreenSaver.invite',
+		cancel_botton_function:'friendsScreenSaver.skip',
 		search_default:'Start Typing a Name',
-		title_text:'Invite Friends',
+		title_text:'Choose Friends',
 		no_selected_friends:'You have no selected friends.',
 		too_many_friends:'Too many friends selected.',
 		tab_all:'All',
@@ -44,16 +44,17 @@ var FriendsDialog = (function () {
 			tabSelected[!all ? 'addClass' : 'removeClass']('friends_tab_selected');
 			
 			if (!all && !this.selected.length) {		
-				noFriends.css({
-					'display':'block',
-					'opacity':1
+				if (this.fade_delay) clearTimeout(this.fade_delay);
+				
+				noFriends.stop().fadeIn('slow', function () {
+					this.fade_delay = setTimeout(function () {
+						noFriends.fadeOut('slow');
+					}, 2000);
 				});
-
-				this.fade_delay = function () { new Fx.Tween(noFriends).start('opacity', 0).chain(function () { noFriends.setStyle('display', 'none'); }); }.delay(2000);
 			}
 			else {
 				noFriends.css('display', 'none');
-				clearInterval(this.fade_delay);
+				clearTimeout(this.fade_delay);
 			}
 			
 			this.allTab = all;
@@ -106,16 +107,16 @@ var FriendsDialog = (function () {
 		},
 		
 		maxSelected:function (li) {
-			var maxSelected = $('fbinvite_max_selected');
+			var maxSelected = $('#fbinvite_max_selected');
 			
 			if (!li.is('.selected') && this.selected.length == config.max_selected) {
-				maxSelected.css({
-					'display':'block',
-					'opacity':1
+				if (this.fade_delay) clearTimeout(this.fade_delay);
+				
+				maxSelected.stop().fadeIn('slow', function () {
+					this.fade_delay = setTimeout(function () {
+						maxSelected.fadeOut('slow');
+					}, 2000);
 				});
-
-				maxSelected.stop();
-				this.fade_delay = function () { new Fx.Tween(maxSelected).start('opacity', 0).chain(function () { maxSelected.setStyle('display', 'none'); }); }.delay(2000);
 			}
 		},
 		
@@ -140,15 +141,21 @@ var FriendsDialog = (function () {
 		},
 		
 		sendInvites:function () {
-			var message = $('fbinvite_message');
-			
-			if (window[config.action_botton_function]) window[config.action_botton_function](this.selected, message.value == message.title ? '' : message.value);
+			try {
+				eval(config.action_botton_function + '(this.selected)');
+			}
+			catch (e) {
+			}
 		},
 		
 		cancelInvites:function () {
-			this.close();
-			
-			if (window[config.cancel_botton_function]) window[config.cancel_botton_function]();
+			console.log('fdddf')
+			try {
+				eval(config.cancel_botton_function + '()');
+			}
+			catch (e) {
+				console.log('fff', e.message);
+			}
 		}
 	});
 })();

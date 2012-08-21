@@ -204,6 +204,10 @@ ul.friends_tabs li.friends_tab .bl {
 	padding:1px 6px 2px;
 }
 
+ul.friends_tabs li.friends_tab a {
+	color:#6D84B4;
+}
+
 ul.friends_tabs li.friends_tab.friends_tab_selected a {
 	color:#fff;
 	cursor:default;
