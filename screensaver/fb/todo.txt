@@ -1,0 +1,7 @@
+Friend name
+suffle
+conputer background
+current z index
+when selecting friend - load from chache if allready selected before
+fix max selected
+fix selected tab

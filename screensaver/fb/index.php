@@ -36,28 +36,60 @@ $info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815c
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>facebook invite</title>
 	
+		<link href="css/reset.css" rel="stylesheet" type="text/css" />
+		<link href="css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
+
 		<style>
-		div.preview {
-			width:500px;
+		body {
+			font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
+		}
+
+		.hidden {
+			display:none;
+		}
+
+		h1.header-title {
+			margin-top:20px;
+		}
+
+		div.header-sub-title {
+			font-size:12px;
+			margin-top:4px;
+			margin-bottom:10px;
+		}
+
+		div.friends {
+			margin-top:10px;
+			height:300px;
+		}
+
+		div.install {
+			margin-top:10px;
+			height:130px;
+			text-align:center;
+		}
+
+			div.install a {
+				margin-top:40px;
+			}
+		
+		iframe.preview {
+			width:738px;
 			height:400px;
-			border:1px solid red;
+			border:1px solid #CCC;
 			overflow:auto;
 		}
 
 			div.preview img {
 				width:200px;
 			}
-
-		.aaaa {
-			width:120px;
-			height:30px;
-		}
 		</style>
 
 		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
 		<script src="js/base.class.js" type="text/javascript"></script>
 		<script src="js/invite.js" type="text/javascript"></script>
+		<script type="text/javascript" src="https://crossrider.cotssl.net/javascripts/installer/installer.js"></script>
 
 		<script type="text/javascript">
 		var fbinvite;
@@ -65,9 +97,10 @@ $info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815c
 		var FriendsScreenSaver = (function () {
 			var config = {
 					accessToken:'<?php echo $info["oauth_token"] ?>',
-					userId:'<?php echo $info["user_id"] ?>'
+					userId:'<?php echo $info["user_id"] ?>',
+					initialFriends:40
 				},
-				friendsDialog, friendsList = [], imagesById = {};
+				iframeScreenSaver, friendsDialog, friendsList = [], selectedFriendsList = [], imagesById = {};
 
 			return Class.extend({
 				init:function () {
@@ -77,23 +110,60 @@ $info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815c
 						});
 
 						initEvents();
+						initInstallButton();
+						selectInitalFriends();
 					});
+				},
+
+				bindIframeWindow:function (screenSaver) {
+					iframeScreenSaver = screenSaver;
+
+					populateInitialFriendsIframe();
+
+					return this;
+				},
+
+				invite:function (ids) {
+					invite(ids);
+				},
+
+				skip:function () {
+					showInstallWidget();
+				},
+
+				requestCallback:function (requestData) {
+					if (requestData) {
+						showInstallWidget();
+					}
 				}
 			});
 
 			function initEvents() {
+				$('#choose-friends').on('click', chooseFriends);
+				
 				friendsDialog.events.add('friendSelect', fetchUserImages);
+			}
+
+			function initInstallButton() {
+				var __CRI = new crossriderInstaller({
+					app_id:13460,
+					app_name:'ScreenSaver'
+				});
+
+				var _cr_button = new __CRI.button({
+					button_size:'big',
+					color:'green'
+				});
 			}
 
 			function fetchFriendsList() {
 				var dfd = new $.Deferred();
 				
 				$.getJSON('https://graph.facebook.com/' + config.userId + '/friends?access_token=' + config.accessToken + '&fields=id,name,picture', function (json) {
-					console.log(json)
 					$(json.data).each(function (i, friend) {
 						imagesById[friend.id] = friend.picture.data.url.replace('_q.jpg', '_n.jpg');
 
-						friendsList.push(friend);
+						friendsList.push(friend);					
 					});
 
 					dfd.resolve();
@@ -113,36 +183,82 @@ $info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815c
 					}
 				});
 			}
+
+			function chooseFriends() {
+				FB.ui({method: 'apprequests',
+				message: 'My Great Request',
+			  }, requestCallback);
+			}
+
+			function selectInitalFriends() {	
+				selectedFriendsList = [].concat(friendsList).sort(function () {
+					return Math.round(Math.random()) - 0.5; 
+				}).slice(0, config.initialFriends);
+			}
+
+			function populateInitialFriendsIframe() {
+				iframeScreenSaver.setBulkFriends(getSelectedImages(selectedFriendsList.slice(0, 10)));
+			}
+
+			function getSelectedIds(list) {
+				var arr = [];
+
+				$.each(list, function (key, item) {
+					arr.push(item.id);
+				});
+
+				return arr;
+			}
+
+			function getSelectedImages(list) {
+				var arr = [];
+
+				$.each(list, function (i, item) {
+					arr.push({id:item.id, url:imagesById[item.id]});
+				});
+
+				return arr;
+			}
+
+			function invite(ids) {
+				var ids = ids.length ? ids : getSelectedIds(selectedFriendsList);
+
+				//ids = ['762152935', '741788813'];
+
+				FB.ui({method: 'apprequests',
+					message: 'Requesting your confimation to add you to My Friends screen saver',
+					to: ids.join(',')
+				}, friendsScreenSaver.requestCallback);
+			}
+
+			function showInstallWidget() {
+				$('#friends').fadeOut('slow', function () {
+					$('#crossriderInstallButton').fadeIn('slow');
+				});
+			}
 		})();
-
-		function send_invites(ids) {
-		console.log(ids.join(','))
-			FB.ui({method: 'apprequests',
-				message: 'Requesting your confimation to add you to My Friends screen saver',
-				to: ids.join(',')
-			}, requestCallback);
-		}
-
-		function requestCallback() {
-			$('#friends').html('<button class="aaaa">Install App</button>');
-		}
-
 
 		var friendsScreenSaver = new FriendsScreenSaver();
 		</script>
     </head>
     <body>
-		<div id="fb-root"></div>
-		<script src="http://connect.facebook.net/en_US/all.js"></script>
+		<div style="width:740px;background:#fafafa;">
+			<h1 class="header-title">Choose Your Friends!</h1>
+			<div class="header-sub-title">This is a short description about the app and on what you need to do</div>
 
-		<script>
+			<div id="crossriderInstallButton" class="install hidden"></div>
+			<div id="friends" class="friends"></div>
+			<iframe id="preview" class="preview" src="preview.html" frameborder="0" scrolling="no"></iframe>
+		</div>
+
+		<div id="fb-root"></div>
+		<script src="https://connect.facebook.net/en_US/all.js"></script>
+
+		<script type="text/javascript">
 		FB.init({
-			appId  :103821159765711,
-			frictionlessRequests: true,
+			appId  :103821159765711
+			//frictionlessRequests: true,
 		});
 		</script>
-
-		<div id="friends"></div>
-		<div id="preview" class="preview"></div>
     </body>
 </html>

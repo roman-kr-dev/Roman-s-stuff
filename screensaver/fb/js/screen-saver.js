@@ -7,316 +7,125 @@ var ScreenSaver = (function ($) {
 			cssPrefix:'screen-saver-',
 			baseZindex:2147483000,
 			speedFor100PX:2500,
-			speedJumpPercent:30,
-			maxImageWidth:[240, 200]
+			imageDisplayTimeout:1000,
+			speedJumpPercent:[25, 35],
+			screenRatio:'35%',
+			animationTopOffset:20,
+			animationBottomOffset:[20, 120],
+			maxImageWidth:[700, 500, 300],
+			screenPositions:[
+				{
+					x:'25%',
+					xOffset:25,
+					y:'50%',
+					yOffset:50,
+					maxWidthBinding:0,
+					speedRatio:1
+				}, {
+					x:'75%',
+					xOffset:25,
+					y:'50%',
+					yOffset:50,
+					maxWidthBinding:0,
+					speedRatio:1
+				}, {
+					x:'25%',
+					xOffset:20,
+					y:'25%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'75%',
+					xOffset:20,
+					y:'75%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'50%',
+					xOffset:20,
+					y:'50%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'50%',
+					xOffset:20,
+					y:'100%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'15%',
+					xOffset:20,
+					y:'50%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}, {
+					x:'55%',
+					xOffset:20,
+					y:'55%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}, {
+					x:'22%',
+					xOffset:20,
+					y:'150%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}, {
+					x:'88%',
+					xOffset:20,
+					y:'150%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}
+			]
 		},
 		win = $(window), mainApp, thi$, 
 		viewportWidth = win.width(),
 		viewportHeight = win.height(),
-		picturesData = [], screenUnits = [], displayUnits = {},
-		overlayLayer, imagesLayer, zIndex = 100;
+		imagesData = {}, maxImageWidth = [], animationQueue = [],
+		animationQueueTimeout, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {			
 			thi$ = this;
 			
-			overlayScreen();
-			setTimeout(function () {
-				bindMainWindow();
-			}, 300);
-			
-			/*$.when(getPicturesData()).then(function () {
-				overlayScreen();
-				initScreenUnits();
-				setTimeout(function () {
-					initFadeInEffect();
-				}, 2000);
-				//initAnimation();
-			});*/
+			initMaxImageWidth();
+			initMainWindow();
+			initMarkup();
 		},
 
-		setBulkFriends:function (data) {
-			setBulkFriends(data);
+		bindMainApp:function (app) {
+			mainApp = app;
+		},
+
+		addImage:function (image) {
+			addImage(image);
+		},
+
+		clearAllImages:function () {
+			clearAllImages();
 		}
 	});
 
-	function bindMainWindow() {
-		mainApp = parent.friendsScreenSaver.bindIframeWindow(thi$);
-	}
-
-	function initPictureAnimation(index) {
-		var data, pos, ratio;
-
-		imagesLayer.removeClass('loader');
-		
-		//left big unit
-		if (!displayUnits[0]) {
-			data = picturesData[index];
-			console.log('aaaaa', data);
-			ratio = data.width > config.maxImageWidth[0] ? data.width / config.maxImageWidth[0] : 1;
-			pos = {
-				x:(viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-				y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-			};
-
-			createImage(index, pos, data, ratio, 1, 1);
-			initAnimation(index);
-
-			displayUnits[0] = true;
-
-			console.log('yanik', index);
-
-			return;
-		}
-
-		//left big unit
-		if (!displayUnits[1]) {
-			data = picturesData[index];
-
-			ratio = data.width > config.maxImageWidth[0] ? data.width / config.maxImageWidth[0] : 1;
-			pos = {
-				x:(viewportWidth / 2) + (viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-				y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-			};
-
-			createImage(index, pos, data, ratio, 1, 2);
-			initAnimation(index);
-
-			displayUnits[1] = true;
-
-			console.log('zigger', index);
-
-			return;
-		}
-
-		//4 small units center screen 1
-		if (!displayUnits[2]) {
-			data = picturesData[index];
-			ratio = data.width > config.maxImageWidth[1] ? data.width / config.maxImageWidth[1] : 1;
-			pos = {
-				x:(viewportWidth / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.width / ratio) / 2),
-				y:(viewportHeight / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.height / ratio) / 2)
-			};
-
-			createImage(index, pos, data, ratio, 2, 3);
-			initAnimation(index);
-
-			console.log('bah', index);
-
-			displayUnits[2] = true;
-
-			return;
-		}
-
-		//4 small units center screen 2
-		if (!displayUnits[3]) {
-			data = picturesData[index];
-			ratio = data.width > config.maxImageWidth[1] ? data.width / config.maxImageWidth[1] : 1;
-			pos = {
-				x:(viewportWidth / 2) + (viewportWidth / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.width / ratio) / 2),
-				y:(viewportHeight / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.height / ratio) / 2)
-			};
-
-			createImage(index, pos, data, ratio, 2, 4);
-			initAnimation(index);
-
-			console.log('zorg', index);
-
-			displayUnits[3] = true;
-
-			return;
-		}
-	}
-
-	function initScreenUnits() {
-		var data, pos, ratio;
-
-		//left big unit
-		data = picturesData[0];
-		ratio = data.width > config.maxImageWidth[0] ? data.width / config.maxImageWidth[0] : 1;
-		pos = {
-			x:(viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 1, 1);
-
-		//right big unit
-		data = picturesData[1];
-		ratio = data.width > config.maxImageWidth[0] ? data.width / config.maxImageWidth[0] : 1;
-		pos = {
-			x:(viewportWidth / 2) + (viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 1, 2);
-
-		//4 small units center screen
-		data = picturesData[2];
-		ratio = data.width > config.maxImageWidth[1] ? data.width / config.maxImageWidth[1] : 1;
-		pos = {
-			x:(viewportWidth / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 2, 3);
-
-		data = picturesData[3];
-		ratio = data.width > config.maxImageWidth[1] ? data.width / config.maxImageWidth[1] : 1;
-		pos = {
-			x:(viewportWidth / 2) + (viewportWidth / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2 / 2) + (-50 + Math.floor(Math.random() * 100)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 2, 4);
-
-		/*data = picturesData[1];
-		ratio = data.width > config.maxImageWidth ? data.width / config.maxImageWidth : 1;
-		pos = {
-			x:(viewportWidth / 2) + (viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 1);
-
-		data = picturesData[0];
-		ratio = data.width > config.maxImageWidth ? data.width / config.maxImageWidth : 1;
-		pos = {
-			x:(viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 1);
-
-		data = picturesData[1];
-		ratio = data.width > config.maxImageWidth ? data.width / config.maxImageWidth : 1;
-		pos = {
-			x:(viewportWidth / 2) + (viewportWidth / 2 / 2) + (-75 + Math.floor(Math.random() * 150)) - ((data.width / ratio) / 2),
-			y:(viewportHeight / 2) + (-200 + Math.floor(Math.random() * 400)) - ((data.height / ratio) / 2)
-		};
-
-		createImage(pos, data, ratio, 1);*/
-	}
-
-	function createImage(index, pos, data, ratio, level, speedFactor) {
-		var img = picturesData[index].img;
-
-		img.attr('class', config.cssPrefix + 'picture-'+ level)
-		img.css({
-			'top':pos.y,
-			'left':pos.x,
-			'z-index':config.baseZindex + (zIndex --)
+	function initMaxImageWidth() {
+		$.each(config.maxImageWidth, function (i, imageWidth) {
+			maxImageWidth.push(imageWidth * parseInt(config.screenRatio, 10) / 100);
 		});
-		img.data('data', {
-			x:pos.x,
-			y:pos.y,
-			w:data.width / ratio,
-			h:data.height / ratio,
-			speedFactor:speedFactor
-		});
-		img.fadeIn(1200);
-
-		/*console.log({
-			x:pos.x,
-			y:pos.y,
-			w:data.width / ratio,
-			h:data.height / ratio,
-			level:level
-		});*/
-
-		screenUnits.push(img);
 	}
 
-	/*function getPicture() {
-		var img, ratio, unit;
-		
-		$.each(picturesData, function (i, data) {
-			unit = screenUnits['1-' + i];
-			ratio = data.width > config.maxImageWidth ? data.width / config.maxImageWidth : 1;
-			
-			img = $('<img class="' + config.cssPrefix + 'screen-picture" />');
-			img.attr('src', data.url)
-			img.css({
-				'top': - ((data.height / ratio) / 2),
-				'left': - ((data.width / ratio) / 2)
-			});
-
-			unit.x = unit.x - ((data.width / ratio) / 2);
-			unit.y = unit.y - ((data.height / ratio) / 2);
-			
-			if (i <= 1) {
-				img.appendTo(unit.el);
-			}
-		});
-	}*/
-
-	function getPicturesData() {
-		/*picturesData = [
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-snc6/208969_10150948846765139_2137780753_o.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/475277_389088041129065_548300253_o.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/2608_64830262259_2238363_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash3/577922_10150891711022269_693742183_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-snc6/6291_100671013280327_6298611_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-prn1/38525_422461037459_3427540_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/487155_10151085778051294_627539601_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-snc7/425061_10151053430206692_861376128_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash3/575270_10150950457235139_1975904854_n.jpg'},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash3/547929_414756971893840_1959452198_n.jpg'}
-		].sort(function() {return 0.5 - Math.random();});*/
-		
-		/*picturesData = [
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-snc6/208969_10150948846765139_2137780753_o.jpg', width:545, height:674},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/475277_389088041129065_548300253_o.jpg', width:2048, height:1365},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/2608_64830262259_2238363_n.jpg', width:500, height:375},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash3/577922_10150891711022269_693742183_n.jpg', width:540, height:689},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-snc6/6291_100671013280327_6298611_n.jpg', width:400, height:264},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-prn1/38525_422461037459_3427540_n.jpg', width:720, height:540},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/487155_10151085778051294_627539601_n.jpg', width:200, height:200},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-snc7/425061_10151053430206692_861376128_n.jpg', width:403, height:403},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash3/575270_10150950457235139_1975904854_n.jpg', width:960, height:717},
-			{url:'https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash3/547929_414756971893840_1959452198_n.jpg', width:700, height:427}
-		].sort(function(a, b) {
-			return b.width * b.height - a.width * a.height;
-		});*/
-		
-		/*for (var i=0;i<picturesData.length;i++ ) {
-			$('<img />')
-			.attr('index', i)
-			.on('load', function () { console.log(this.getAttribute('index'), '{url:' + (picturesData[this.getAttribute('index') * 1].url) + ', width:' + this.width + ', height:' + this.height + '},'); })
-			.attr('src', picturesData[i].url)
-			.appendTo('body');
-		}
-
-		return true;*/
+	function initMainWindow() {
+		parent.friendsScreenSaver.bindIframeWindow(thi$);
 	}
 
-	function setBulkFriends(data) {
-		picturesData = data;
-console.log(imagesLayer)
-		for (var i=0;i<picturesData.length;i++ ) {
-			$('<img />')
-			.attr('index', i)
-			.on('load', function () { 
-				var index = $(this).attr('index') * 1;
-
-				picturesData[index].width = this.width;
-				picturesData[index].height = this.height;
-				picturesData[index].img = $(this);
-
-				initPictureAnimation(index);
-			})
-			.attr('src', picturesData[i].url)
-			.appendTo(imagesLayer);
-		}
-
-		/*overlayScreen();
-		initScreenUnits();
-		setTimeout(function () {
-			initFadeInEffect();
-		}, 500);*/
-	}
-	
-	function overlayScreen() {
+	function initMarkup() {
 		overlayLayer = $('<div />')
 			.addClass(config.cssPrefix + 'overlay')
 			.appendTo('body');
@@ -326,94 +135,103 @@ console.log(imagesLayer)
 			.appendTo('body');
 	}
 
-	function calcSpeed(distance, speedFactor) {
-		var speed = distance / 100 * config.speedFor100PX,
-			adjustSpeed = speed * (100 - config.speedJumpPercent * (speedFactor - 1)) / 100;
+	function initPictureDefaultPosition(data) {
+		var currentPosition, ratio, pos;
+		
+		$.each(config.screenPositions, function (i, position) {
+			if (!currentPosition && !position.active) {
+				currentPosition = position;
+				position.active = true;
+			}
+		});
+
+		if (currentPosition) {
+			ratio = data.width > maxImageWidth[currentPosition.maxWidthBinding] ? data.width / maxImageWidth[currentPosition.maxWidthBinding] : 1;
+			pos = {
+				width:Math.round(data.width / ratio),
+				height:Math.round(data.height / ratio),
+				left:Math.max(0, (viewportWidth * parseInt(currentPosition.x, 10) / 100) + (Math.floor(Math.random() * currentPosition.xOffset * 2) - currentPosition.xOffset) - ((data.width / ratio) / 2)),
+				top:(viewportHeight * parseInt(currentPosition.y, 10) / 100) + (Math.floor(Math.random() * currentPosition.yOffset * 2) - currentPosition.yOffset) - ((data.height / ratio) / 2)
+			};
+	
+			data.speedRatio = currentPosition.speedRatio;
+			data.ratio = ratio;
+			data.pos = pos;
+			data.image.css(pos);
+			
+			insertAnimationQueue(data);
+		}
+	}
+
+	function insertAnimationQueue(data) {
+		animationQueue.push(data);
+
+		if (!animationQueueTimeout) {
+			initAnimationQueue();
+		}
+	}
+
+	function initAnimationQueue() {
+		var data;
+		
+		if (animationQueue.length) {
+			data = animationQueue.shift();
+
+			data.image.fadeIn(function () {
+				initPictureAnimation(data);
+			});
+
+			animationQueueTimeout = setTimeout(initAnimationQueue, config.imageDisplayTimeout);
+		}
+		else {
+			animationQueueTimeout = null;
+		}
+	}
+
+	function initPictureAnimation(data, topOffset) {
+		var image = data.image,
+			top = data.pos.height + config.animationTopOffset,
+			distance = (topOffset ? topOffset : data.pos.top) + top,
+			speed = calculateAnimationSpeed(distance, data.speedRatio);
+	
+			image.animate({
+				top:'-' + top,
+			}, speed, 'linear', $.proxy(function() {
+				var bottomOffset = Math.floor(Math.random() * (config.animationBottomOffset[1] - config.animationBottomOffset[0])) + config.animationBottomOffset[0],
+					topOffset = viewportHeight + bottomOffset,
+					data = this;
+
+				data.image.css('top', topOffset);
+				
+				initPictureAnimation(data, topOffset);
+			}, data));
+	}
+
+	function calculateAnimationSpeed(distance, speedRatio) {
+		var jumpPercent = Math.floor(Math.random() * (config.speedJumpPercent[1] - config.speedJumpPercent[0])) + config.speedJumpPercent[0],
+			speed = distance / 100 * config.speedFor100PX,
+			adjustSpeed = speed * (100 - jumpPercent * (speedRatio - 1)) / 100;
 
 		return speed = speed + (speed - adjustSpeed);
 	}
+	
+	function addImage(imageData) {
+		$('<img />')
+		.data('image-id', imageData.id)
+		.on('load', function () { 
+			var image = $(this);
+			
+			imageData.width = this.width;
+			imageData.height = this.height;
+			imageData.image = image;
 
-	function initFadeInEffect() {
-		var i = screenUnits.length - 1,
-			fadeIn = function () {
-				screenUnits[i].fadeIn(1200, function () {
-					i--;
-
-					if (i >= 0) {
-						setTimeout(function () {
-							fadeIn();
-						}, 500);
-					}
-					else {
-						setTimeout(function () {
-							initAnimation();
-						}, 500);
-					}
-				});
-			}
-
-		fadeIn();
-
-		
-		/*$.each(screenUnits, function (i, unit) {
-			unit.animate({
-				'opacity':1,
-			}, 2000, 'linear', $.proxy(function() {
-			}, unit));
-			unit.fadeIn();
-		});*/
+			initPictureDefaultPosition(imageData);
+		})
+		.attr('src', imageData.url)
+		.appendTo(imagesLayer);
 	}
 
-	/*function initAnimation() {
-		var data, speed, adjustSpeed;
-		
-		$.each(screenUnits, function (i, unit) {
-			var data = unit.data('data'),
-				targetTop = data.h + 20,
-				distance = data.y + targetTop,
-				speed = calcSpeed(distance, data.speedFactor);
-
-			console.log(data.speedFactor + ' * ' + speed);
-			//data = unit.data('data')
-			//speed = (data.y + data.h) / 100 * config.speedFor100PX;
-			//adjustSpeed = speed * (100 - config.speedJumpPercent * (data.level - 1)) / 100;
-			//speed = speed + (speed - adjustSpeed);
-			//console.log('b', unit, speed);
-		
-
-			runAnimation(unit, targetTop, speed);
-		});
-	}*/
-
-	function initAnimation(index) {
-		var unit = picturesData[index].img,
-			data, speed, adjustSpeed;
-		
-		var data = unit.data('data'),
-			targetTop = data.h + 20,
-			distance = data.y + targetTop,
-			speed = calcSpeed(distance, data.speedFactor);
-	console.log('data', data);
-		runAnimation(unit, targetTop, speed);
-	}
-
-
-
-	function runAnimation(unit, top, speed) {
-		//console.log('animation ', top, speed, unit);
-
-		unit.animate({
-			top:'-' + top,
-		}, speed, 'linear', $.proxy(function() {
-			var unit = this,
-				data = unit.data('data'),
-				targetTop = data.h + 20,
-				newTop = viewportHeight + 10,
-				distance = newTop + targetTop,
-				speed = calcSpeed(distance, data.speedFactor);
-//console.log('done', speed);
-			unit.css('top', newTop);
-			runAnimation(unit, targetTop, speed);
-		}, unit));
+	function clearAllImages() {
+		console.log('Cleart25/08/2012');
 	}
 })(jQuery);
