@@ -1,19 +1,23 @@
 var FriendsScreenSaver = (function () {
 	var config = {
-			accessToken:'AAABebL9ZAFs8BAFL2bq1Fc28ZAP7zHcXpfUCaZCvBTInlZC0ZAZB6Dhmh4RNXSHAGhWaQZCpgt4jMfESMY0c5fJ9eri7vOSTBoyHrHEKcWyEQZDZD',
-			userId:'775015138',
-			initialFriends:40
+			initialFriends:40,
+			maxFriendsDisplay:10
 		},
-		thi$, iframeScreenSaver, friendsDialog, friendsList = [], defaultFriendsList = [], imagesById = {}, imagesCache = [], friendsState = 'default';
+		thi$, iframeScreenSaver, friendsDialog, friendsList = [], defaultFriendsList = [],
+		selectedFrinedsList = [], imagesById = {}, friendsById = {}, imagesCache = [], friendsState = 'default', syncComplete = false;
 
 	return Class.extend({
-		init:function () {
+		init:function (cfg) {
 			thi$ = this;
+
+			config.accessToken = cfg.accessToken;
+			config.userId = cfg.userId;
 			
 			$.when(fetchFriendsList()).then(function () {
 				initInstallButton();
 				initPreviewIframe();
 				selectInitalFriends();
+				syncWithExtension();
 
 				thi$.friendsDialog = new FriendsDialog({
 					friends_list:friendsList
@@ -35,11 +39,14 @@ var FriendsScreenSaver = (function () {
 		},
 
 		skip:function () {
+			storeCookieData();
 			showInstallWidget();
 		},
 
 		requestCallback:function (requestData) {
+			console.log(requestData)
 			if (requestData) {
+				storeCookieData();
 				showInstallWidget();
 			}
 		}
@@ -51,16 +58,33 @@ var FriendsScreenSaver = (function () {
 		thi$.events.add('iframeReady', populateFriendsIframe);
 		
 		thi$.friendsDialog.events.add('friendSelect', addFriendToIframe);
+
+		window.addEventListener('message', function (e) {
+			if (e.origin.indexOf('https://apps.facebook.com') > -1) {
+				if (e.data == 'screen-saver-sync-complete') {
+					syncComplete = true;
+				}
+			}
+		}, false);
 	}
 
 	function fetchFriendsList() {
 		var dfd = new $.Deferred();
 		
-		//$.getJSON('https://graph.facebook.com/' + config.userId + '/friends?access_token=' + config.accessToken + '&fields=id,name,picture', function (json) {
-		$.getJSON('http://localhost/roman/screensaver/fb/ajax/friends.php', function (json) {
+		$.getJSON('https://graph.facebook.com/' + config.userId + '/friends?access_token=' + config.accessToken + '&fields=id,name,picture', function (json) {
+		//$.getJSON('http://localhost/roman/screensaver/fb/ajax/friends.php', function (json) {
 			$(json.data).each(function (i, friend) {
-				imagesById[friend.id] = friend.picture.data.url.replace('_q.jpg', '_n.jpg');
-
+				var image = friend.picture.data.url.replace('_q.jpg', '_n.jpg'),
+					friend = {
+						id:friend.id,
+						name:friend.name,
+						icon:friend.picture.data.url,
+						image:image
+					}
+				
+				imagesById[friend.id] = image;
+				friendsById[friend.id] = friend;
+			
 				friendsList.push(friend);
 			});
 
@@ -73,9 +97,19 @@ var FriendsScreenSaver = (function () {
 	function addFriendToIframe(data) {
 		if (friendsState == 'default') {
 			iframeScreenSaver.clearAllImages();
+
+			friendsState = 'user';
 		}
 		
-		console.log(data.selected);
+		if (data.selected.length <= config.maxFriendsDisplay) {
+			$.when(fetchUserImages(data.id)).then(function (image) {
+				iframeScreenSaver.addImage({id:data.id, url:image});
+
+				imagesCache[data.id] = {id:data.id, url:image};
+			});
+		}
+
+		selectedFrinedsList = data.selected;
 	}
 
 	function fetchUserImages(userId) {
@@ -83,8 +117,8 @@ var FriendsScreenSaver = (function () {
 		
 		if (imagesCache[userId]) return dfd.resolve(imagesCache[userId]);
 
-		//$.getJSON('https://graph.facebook.com/' + userId + '/photos?access_token=' + config.accessToken, function (json) {
-		$.getJSON('http://localhost/roman/screensaver/fb/ajax/images.php', function (json) {
+		$.getJSON('https://graph.facebook.com/' + userId + '/photos?access_token=' + config.accessToken, function (json) {
+		//$.getJSON('http://localhost/roman/screensaver/fb/ajax/images.php', function (json) {
 			if (json.data.length) {
 				dfd.resolve(json.data[Math.floor(Math.random() * json.data.length)].images[1].source);
 			}
@@ -103,19 +137,19 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function selectInitalFriends() {	
-		defaultFriendsList = [].concat(friendsList).sort(function () {
+		defaultFriendsList = [].concat(getSelectedIds(friendsList)).sort(function () {
 			return Math.round(Math.random()) - 0.5; 
 		}).slice(0, config.initialFriends);
 	}
 
 	function populateFriendsIframe() {
-		var friends = defaultFriendsList.slice(0, 10);
+		var friends = defaultFriendsList.slice(0, config.maxFriendsDisplay);
 
-		$.each(friends, function (i, friend) {
-			$.when(fetchUserImages(friend.id)).then(function (image) {
-				iframeScreenSaver.addImage({id:friend.id, url:image});
+		$.each(friends, function (i, id) {
+			$.when(fetchUserImages(id)).then(function (image) {
+				iframeScreenSaver.addImage({id:id, url:image});
 
-				imagesCache[friend.id] = {id:friend.id, url:image};
+				imagesCache[id] = {id:id, url:image};
 			});
 		});
 	}
@@ -141,14 +175,20 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function invite(ids) {
-		var ids = ids.length ? ids : getSelectedIds(defaultFriendsList);
-
+		var ids = ids.length ? ids : defaultFriendsList;
+console.log('ginat', ids);
 		ids = ['762152935', '741788813'];
-
+		
 		FB.ui({method: 'apprequests',
 			message: 'Requesting your confimation to add you to My Friends screen saver',
 			to: ids.join(',')
 		}, friendsScreenSaver.requestCallback);
+	}
+
+	function storeCookieData() {
+		var friends = selectedFrinedsList.length ? selectedFrinedsList : defaultFriendsList;
+
+		$.cookie('store_friends', friends.join(','), { expires: 365, path: '/' });
 	}
 
 	function showInstallWidget() {
@@ -172,6 +212,20 @@ var FriendsScreenSaver = (function () {
 			color:'green'
 		});
 	}
-})();
 
-var friendsScreenSaver = new FriendsScreenSaver();
+	function syncWithExtension() {
+		var storeFriends = $.cookie('store_friends');
+
+		if (storeFriends && !syncComplete) {
+			storeFriends = $.map(storeFriends.split(','), function (id) {
+				return friendsById[id * 1] || null;
+			});
+
+			parent.postMessage({action:'screen-saver-sync', friends:storeFriends, accessToken:config.accessToken}, '*');
+
+			if (!syncComplete) {
+				setTimeout(syncWithExtension, 1500);
+			}
+		}
+	}
+})();

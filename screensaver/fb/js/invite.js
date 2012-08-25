@@ -1,6 +1,6 @@
 var FriendsDialog = (function () {
 	var config = {
-		max_selected:3,
+		max_selected:40,
 		second_action_text:'',
 		personal_message:'',
 		friends_list:[],
@@ -275,7 +275,7 @@ var FriendsDialogHTML = (function () {
 					html.push('<ul id="friendsScreenSaver.friendsDialog_friends" class="friends">');
 						$(config.friends_list).each(function (i, friend) {
 							html.push('<li friend="'+friend.id+'" name="'+friend.name+'">');
-								html.push('<a onclick="friendsScreenSaver.friendsDialog.selectFriend($(this.parentNode)); return false;" title="'+friend.name+'" href="#"><span style="background-image: url('+friend.picture.data.url+');" class="square"><span></span></span><strong>'+friend.name+'</strong></a>');
+								html.push('<a onclick="friendsScreenSaver.friendsDialog.selectFriend($(this.parentNode)); return false;" title="'+friend.name+'" href="#"><span style="background-image: url('+friend.icon+');" class="square"><span></span></span><strong>'+friend.name+'</strong></a>');
 							html.push('</li>');
 						});
 					html.push('</ul>');

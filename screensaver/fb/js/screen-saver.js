@@ -140,7 +140,7 @@ var ScreenSaver = (function ($) {
 		
 		$.each(config.screenPositions, function (i, position) {
 			if (!currentPosition && !position.active) {
-				currentPosition = position;
+				currentPosition = data.position = position;
 				position.active = true;
 			}
 		});
@@ -215,23 +215,30 @@ var ScreenSaver = (function ($) {
 		return speed = speed + (speed - adjustSpeed);
 	}
 	
-	function addImage(imageData) {
+	function addImage(data) {
 		$('<img />')
-		.data('image-id', imageData.id)
+		.data('image-id', data.id)
 		.on('load', function () { 
 			var image = $(this);
 			
-			imageData.width = this.width;
-			imageData.height = this.height;
-			imageData.image = image;
+			data.width = this.width;
+			data.height = this.height;
+			data.image = image;
 
-			initPictureDefaultPosition(imageData);
+			initPictureDefaultPosition(data);
 		})
-		.attr('src', imageData.url)
+		.attr('src', data.url)
 		.appendTo(imagesLayer);
+
+		imagesData[data.id] = data;
 	}
 
 	function clearAllImages() {
-		console.log('Cleart25/08/2012');
+		$.each(imagesData, function (i, data) {
+			data.image.stop().remove();
+			data.position.active = false;
+
+			delete imagesData[i];
+		});
 	}
 })(jQuery);

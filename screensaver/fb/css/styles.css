@@ -1,3 +1,47 @@
+body {
+	font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
+}
+
+.hidden {
+	display:none;
+}
+
+h1.header-title {
+	
+}
+
+div.header-sub-title {
+	font-size:12px;
+	margin-top:4px;
+	margin-bottom:10px;
+}
+
+div.friends {
+	margin-top:10px;
+	height:300px;
+}
+
+div.install {
+	margin-top:10px;
+	height:130px;
+	text-align:center;
+}
+
+	div.install a {
+		margin-top:40px;
+	}
+
+div.preview {
+	width:758px;
+	height:400px;
+	border:1px solid #CCC;
+}
+
+	div.preview iframe {
+		width:758px;
+		height:400px;
+	}
+
 a.choose-friends {
 	color:white;
 	display:inline-block;
