@@ -29,120 +29,46 @@ function base64_url_decode($input) {
 
 $info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815cd7de6e94');
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>facebook invite</title>
 	
+		<link href="css/reset.css" rel="stylesheet" type="text/css" />
+		<link href="css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
-		<style>
-		div.preview {
-			width:500px;
-			height:400px;
-			border:1px solid red;
-			overflow:auto;
-		}
 
-			div.preview img {
-				width:200px;
-			}
-
-		.aaaa {
-			width:120px;
-			height:30px;
-		}
-		</style>
-
+		<script type="text/javascript" src="https://crossrider.cotssl.net/javascripts/installer/installer.js"></script>
 		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<script src="js/jquery.cookie.js" type="text/javascript"></script>
 		<script src="js/base.class.js" type="text/javascript"></script>
 		<script src="js/invite.js" type="text/javascript"></script>
-
-		<script type="text/javascript">
-		var fbinvite;
-		
-		var FriendsScreenSaver = (function () {
-			var config = {
-					accessToken:'<?php echo $info["oauth_token"] ?>',
-					userId:'<?php echo $info["user_id"] ?>'
-				},
-				friendsDialog, friendsList = [], imagesById = {};
-
-			return Class.extend({
-				init:function () {
-					$.when(fetchFriendsList()).then(function () {
-						friendsDialog = fbinvite = new FriendsDialog({
-							friends_list:friendsList
-						});
-
-						initEvents();
-					});
-				}
-			});
-
-			function initEvents() {
-				friendsDialog.events.add('friendSelect', fetchUserImages);
-			}
-
-			function fetchFriendsList() {
-				var dfd = new $.Deferred();
-				
-				$.getJSON('https://graph.facebook.com/' + config.userId + '/friends?access_token=' + config.accessToken + '&fields=id,name,picture', function (json) {
-					console.log(json)
-					$(json.data).each(function (i, friend) {
-						imagesById[friend.id] = friend.picture.data.url.replace('_q.jpg', '_n.jpg');
-
-						friendsList.push(friend);
-					});
-
-					dfd.resolve();
-				});
-
-				return dfd;
-			}
-
-			//add cache
-			function fetchUserImages(userId) {
-				$.getJSON('https://graph.facebook.com/' + userId + '/photos?access_token=' + config.accessToken, function (json) {
-					if (json.data.length) {
-						$('<img src="' + json.data[Math.floor(Math.random() * json.data.length)].images[1].source + '" />').appendTo('#preview');
-					}
-					else {
-						$('<img src="' + imagesById[userId] + '" />').appendTo('#preview');
-					}
-				});
-			}
-		})();
-
-		function send_invites(ids) {
-		console.log(ids.join(','))
-			FB.ui({method: 'apprequests',
-				message: 'Requesting your confimation to add you to My Friends screen saver',
-				to: ids.join(',')
-			}, requestCallback);
-		}
-
-		function requestCallback() {
-			$('#friends').html('<button class="aaaa">Install App</button>');
-		}
-
-
-		var friendsScreenSaver = new FriendsScreenSaver();
-		</script>
+		<script src="js/canvas.js" type="text/javascript"></script>
     </head>
     <body>
-		<div id="fb-root"></div>
-		<script src="http://connect.facebook.net/en_US/all.js"></script>
+		<div style="width:760px;background:#fafafa;">
+			<h1 class="header-title">Choose Your Friends!</h1>
+			<div class="header-sub-title">This is a short description about the app and on what you need to do</div>
 
-		<script>
+			<div id="crossriderInstallButton" class="install hidden"></div>
+			<div id="friends" class="friends"></div>
+			<div id="preview" class="preview"></div>
+		</div>
+
+		<div id="fb-root"></div>
+		<script src="https://connect.facebook.net/en_US/all.js"></script>
+
+		<script type="text/javascript">
 		FB.init({
 			appId  :103821159765711,
-			frictionlessRequests: true,
+			frictionlessRequests:false //true
+		});
+
+		var friendsScreenSaver = new FriendsScreenSaver({
+			accessToken:'<?php echo $info["oauth_token"] ?>',
+			userId:'<?php echo $info["user_id"] ?>'
 		});
 		</script>
-
-		<div id="friends"></div>
-		<div id="preview" class="preview"></div>
     </body>
 </html>

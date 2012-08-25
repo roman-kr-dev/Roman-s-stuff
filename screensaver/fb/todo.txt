@@ -1,0 +1,13 @@
+Friend name
+suffle
+conputer background
+current z index
+when selecting friend - load from chache if allready selected before
+fix max selected
+fix selected tab
+fix quick select error
+user must be logged in to facebook ?
+remove ajax spinner
+support IE / FF
+if user has closed browser and access token is expired - open a hidden iframe with the screen saver app to get new access token
+de select friend
