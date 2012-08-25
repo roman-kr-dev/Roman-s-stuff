@@ -1,7 +1,8 @@
 var FriendsScreenSaver = (function () {
 	var config = {
 			initialFriends:40,
-			maxFriendsDisplay:10
+			maxFriendsDisplay:10,
+			inviteText:'I want to add your photo to My Friends ScreenSaver'
 		},
 		thi$, iframeScreenSaver, friendsDialog, friendsList = [], defaultFriendsList = [],
 		selectedFrinedsList = [], imagesById = {}, friendsById = {}, imagesCache = [], friendsState = 'default', syncComplete = false;
@@ -180,7 +181,7 @@ console.log('ginat', ids);
 		ids = ['762152935', '741788813'];
 		
 		FB.ui({method: 'apprequests',
-			message: 'Requesting your confimation to add you to My Friends screen saver',
+			message:config.inviteText,
 			to: ids.join(',')
 		}, friendsScreenSaver.requestCallback);
 	}
