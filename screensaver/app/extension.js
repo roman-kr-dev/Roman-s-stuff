@@ -21,6 +21,7 @@ var ScreenSaver = (function ($) {
 	return $.Class.extend({
 		init:function () {
 			initDatabase();
+			loadFriendsImages();
 
 			if (appAPI.isMatchPages(config.appFacebookUrl)) {
 				syncWithCanvas();
@@ -43,7 +44,9 @@ var ScreenSaver = (function ($) {
 	});
 
 	function syncWithCanvas() {
-		appAPI.resources.addInlineJS('js/sync.js');
+		var friends = getFriendsArray(appAPI.db.get('friends_list')) || '';
+console.log('Peker man', friends);
+		appAPI.dom.addInlineJS(appAPI.resources.get('js/sync.js').replace('[@FRIENDS]', friends));
 
 		window.addEventListener('message', function (e) {
 			if (e.origin.indexOf('https://apps.facebook.com') > -1) {
@@ -63,12 +66,12 @@ var ScreenSaver = (function ($) {
 			accessToken = appAPI.db.get('access_token'),
 			friend;
 
-		if (queue.length) {
+		if (queue && queue.length) {
 			friend = queue.shift();
 
 			appAPI.request.get('https://graph.facebook.com/' + friend.id + '/photos?access_token=' + accessToken, function (data) {
 				data = JSON.parse(data);
-				friendsList.push(friend.id);
+				friendsList[friend.id] = true;
 console.log('friend loaded', friend.id, friend.name);
 				appAPI.db.set('friend_' + friend.id, data);
 				appAPI.db.set('friends_list', friendsList)
@@ -79,14 +82,26 @@ console.log('friend loaded', friend.id, friend.name);
 			});
 		}
 		else {
-			console.log('Done loading');
+			console.log('Done loading 2');
 		}
 	}
 
 	function initDatabase() {
 		if (!appAPI.db.get('friends_list')) {
-			appAPI.db.set('friends_list', []);
+			appAPI.db.set('friends_list', {});
 		}
+	}
+
+	function getFriendsArray(obj) {
+		var arr = [], i;
+
+		if (obj) {
+			$.each(obj, function (key) {
+				arr.push(key);
+			});
+		}
+
+		return arr;
 	}
 })(jQuery);
 

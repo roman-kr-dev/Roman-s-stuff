@@ -61,8 +61,14 @@ var FriendsScreenSaver = (function () {
 
 		window.addEventListener('message', function (e) {
 			if (e.origin.indexOf('https://apps.facebook.com') > -1) {
-				if (e.data == 'screen-saver-sync-complete') {
+				if (e.data.action == 'screen-saver-sync-complete') {
+					$.cookie('store_friends', null, { path: '/' });
+
 					syncComplete = true;
+				}
+console.log('le action', e.data.action);
+				if (e.data.action == 'screen-saver-installed') {
+					console.log('big banana', e.data.friends);
 				}
 			}
 		}, false);
@@ -216,7 +222,7 @@ console.log('ginat', ids);
 	function syncWithExtension() {
 		var storeFriends = $.cookie('store_friends');
 
-		if (storeFriends && !syncComplete) {
+		if (storeFriends && !syncComplete) {console.log('Start Synking');
 			storeFriends = $.map(storeFriends.split(','), function (id) {
 				return friendsById[id * 1] || null;
 			});
