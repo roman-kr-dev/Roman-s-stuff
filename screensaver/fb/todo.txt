@@ -11,3 +11,9 @@ remove ajax spinner
 support IE / FF
 if user has closed browser and access token is expired - open a hidden iframe with the screen saver app to get new access token
 de select friend
+select random 40 tab
+settings icon - close on click
+if user in not loggen in to facebook after installer
+selected = my friends
+download CRX BOX
+publish action permission
