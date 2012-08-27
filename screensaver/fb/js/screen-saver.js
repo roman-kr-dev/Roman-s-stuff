@@ -216,6 +216,10 @@ var ScreenSaver = (function ($) {
 	}
 	
 	function addImage(data) {
+		/* SHIT CODE */
+		imagesLayer.removeClass('loader');
+		/* SHIT CODE */
+		
 		$('<img />')
 		.data('image-id', data.id)
 		.on('load', function () { 

@@ -1,13 +1,10 @@
 (function (friends) {
-	var iframeWin = document.getElementById('iframe_canvas').contentWindow;
+	var iframeWin, screenSaverReady = false;
 
-	iframeWin.postMessage({action:'screen-saver-installed', friends:friends ? friends.split(',') : ''}, '*');
-
-	/*window.addEventListener('message', function (e) {
+	window.addEventListener('message', function (e) {
 		if (e.origin == 'http://localhost') {
-			if (e.data.action == 'screen-saver-init') {
+			if (e.data.action == 'screen-saver-ready') {
 				iframeWin = e.source;
-				
 				iframeWin.postMessage({action:'screen-saver-installed', friends:friends ? friends.split(',') : ''}, '*');
 			}
 
@@ -17,6 +14,6 @@
 				window.postMessage(e.data, '*');
 			}
 		}
-	}, false);*/
+	}, false);
 
 })('[@FRIENDS]');

@@ -1,4 +1,7 @@
 /* 13461 */
+.hidden {
+	display:none;
+}
 
 .screen-saver-{{app-id}}-screen-overlay {
 	position:fixed;

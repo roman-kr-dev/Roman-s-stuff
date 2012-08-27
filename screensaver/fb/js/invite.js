@@ -17,11 +17,12 @@ var FriendsDialog = (function () {
 		find_friends_label:'Find Friends:',
 		personal_message_label:'Add a personal message:',
 		action_text:''
-	};
+	}, thi$;
 	
 	return Class.extend({
 		init: function(cfg){
 			$.extend(true, config, cfg);
+			thi$ = this;
 
 			this.selected = [];
 			this.allTab = true;
@@ -66,7 +67,7 @@ var FriendsDialog = (function () {
 		
 		selectFriend:function (li) {
 			var id = li.attr('friend') * 1,
-				selecedCount = $('#friendsScreenSaver.friendsDialog_selected_count');
+				selecedCount = $('#selected_count');
 			
 			if (this.selected.indexOf(id) == -1 && this.selected.length < config.max_selected) {
 				li.addClass('selected');
@@ -84,9 +85,23 @@ var FriendsDialog = (function () {
 			
 			this.maxSelected(li);
 		},
+
+		selectFriends:function (friends) {
+			var ul = $('#friendsScreenSaver'),
+				selecedCount = $('#selected_count');
+
+			$.each(friends, function (i, id) {
+				var li = ul.find('li[friend="' + id + '"]');
+				
+				li.addClass('selected');
+				thi$.selected.push(id);
+			});
+
+			selecedCount.html(thi$.selected.length);
+		},
 		
 		showFriends:function (all) {
-			$('ul#friendsScreenSaver.friendsDialog_friends li').each($.proxy(function (i, li) {
+			$('ul#friendsScreenSaver li').each($.proxy(function (i, li) {
 				$(li).css('display', all ? 'block' : this.selected.indexOf($(li).attr('friend') * 1) == -1 ? 'none' : 'block');
 			}, this));
 		},
@@ -94,7 +109,7 @@ var FriendsDialog = (function () {
 		friendsSeach:function (term) {
 			if (!this.allTab) this.selectTab(true, true);
 			
-			$('ul#friendsScreenSaver.friendsDialog_friends li').each(function (i, li) {
+			$('ul#friendsScreenSaver li').each(function (i, li) {
 				var rx = new RegExp('('+term+')', "i"),
 					name = $(li).attr('name');
 						
@@ -136,7 +151,7 @@ var FriendsDialog = (function () {
 			input.set('value', input.title).addClass('input_placeholder');
 			clear.setStyle('display', 'none');
 			
-			$$('ul#friendsScreenSaver.friendsDialog_friends li').each(function (li) { $(li).setStyle('display', 'block').getElement('strong').set('html', $(li).get('name')); });
+			$$('ul#friendsScreenSaver li').each(function (li) { $(li).setStyle('display', 'block').getElement('strong').set('html', $(li).get('name')); });
 		},
 		
 		sendInvites:function () {
@@ -251,7 +266,7 @@ var FriendsDialogHTML = (function () {
 											html.push('<div class="tl">');
 												html.push('<div class="tr">');
 													html.push('<div class="br">');
-														html.push('<div class="bl">'+config.tab_selected+' (<strong id="friendsScreenSaver.friendsDialog_selected_count">0</strong>)</div>');
+														html.push('<div class="bl">'+config.tab_selected+' (<strong id="selected_count">0</strong>)</div>');
 													html.push('</div>');
 												html.push('</div>');
 											html.push('</div>');
@@ -272,7 +287,7 @@ var FriendsDialogHTML = (function () {
 					break;
 
 				case 'friends':
-					html.push('<ul id="friendsScreenSaver.friendsDialog_friends" class="friends">');
+					html.push('<ul id="friendsScreenSaver" class="friends">');
 						$(config.friends_list).each(function (i, friend) {
 							html.push('<li friend="'+friend.id+'" name="'+friend.name+'">');
 								html.push('<a onclick="friendsScreenSaver.friendsDialog.selectFriend($(this.parentNode)); return false;" title="'+friend.name+'" href="#"><span style="background-image: url('+friend.icon+');" class="square"><span></span></span><strong>'+friend.name+'</strong></a>');

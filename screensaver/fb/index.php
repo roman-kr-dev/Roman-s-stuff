@@ -27,7 +27,7 @@ function base64_url_decode($input) {
 
 
 
-$info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815cd7de6e94');
+$info = parse_signed_request($_POST['signed_request'], 'e4531c9277859d46b03cccd93ebba160');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -39,7 +39,7 @@ $info = parse_signed_request($_POST['signed_request'], '08a3511adc38b815682f815c
 		<link href="css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
 
-		<script type="text/javascript" src="https://crossrider.cotssl.net/javascripts/installer/installer.js"></script>
+		<script src="js/installer.js" type="text/javascript"></script>
 		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
 		<script src="js/jquery.cookie.js" type="text/javascript"></script>
 		<script src="js/base.class.js" type="text/javascript"></script>

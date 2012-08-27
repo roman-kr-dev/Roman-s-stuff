@@ -2,10 +2,13 @@ var FriendsScreenSaver = (function () {
 	var config = {
 			initialFriends:40,
 			maxFriendsDisplay:10,
+			checkInstallTimeout:3000,
+			checkInstallTimeoutDelay:20000,
 			inviteText:'I want to add your photo to My Friends ScreenSaver'
 		},
-		thi$, iframeScreenSaver, friendsDialog, friendsList = [], defaultFriendsList = [],
-		selectedFrinedsList = [], imagesById = {}, friendsById = {}, imagesCache = [], friendsState = 'default', syncComplete = false;
+		thi$, iframeScreenSaver, friendsDialog, friendsList = [], defaultFriendsList,
+		selectedFrinedsList = [], imagesById = {}, friendsById = {}, imagesCache = [], friendsState = 'default',
+		syncComplete = false, isInstalled = false, dfdInstalled, dfdIframeReady, checkInstallTime;
 
 	return Class.extend({
 		init:function (cfg) {
@@ -17,14 +20,22 @@ var FriendsScreenSaver = (function () {
 			$.when(fetchFriendsList()).then(function () {
 				initInstallButton();
 				initPreviewIframe();
-				selectInitalFriends();
-				syncWithExtension();
 
 				thi$.friendsDialog = new FriendsDialog({
 					friends_list:friendsList
 				});
 
 				initEvents();
+
+				$.when(checkIsExtensionInstalled()).then(function () {
+					console.log('app installed done checking', isInstalled);
+					$.when(checkIfPreviewReady()).then(function () {
+						console.log('iframe ready');
+						selectInitalFriends();
+						populateFriendsIframe();
+						syncWithExtension();
+					});
+				});
 			});
 		},
 
@@ -32,7 +43,9 @@ var FriendsScreenSaver = (function () {
 			iframeScreenSaver = iframe;
 			iframeScreenSaver.bindMainApp(this);
 
-			thi$.events.fire('iframeReady');
+			if (dfdIframeReady) {
+				dfdIframeReady.resolve();
+			}
 		},
 
 		invite:function (ids) {
@@ -55,20 +68,24 @@ var FriendsScreenSaver = (function () {
 
 	function initEvents() {
 		$('#choose-friends').on('click', chooseFriends);
-
-		thi$.events.add('iframeReady', populateFriendsIframe);
 		
 		thi$.friendsDialog.events.add('friendSelect', addFriendToIframe);
 
 		window.addEventListener('message', function (e) {
 			if (e.origin.indexOf('https://apps.facebook.com') > -1) {
-				if (e.data.action == 'screen-saver-sync-complete') {
+				if (e.data.action == 'screen-saver-sync-complete' && !syncComplete) {
 					$.cookie('store_friends', null, { path: '/' });
 
 					syncComplete = true;
 				}
-console.log('le action', e.data.action);
-				if (e.data.action == 'screen-saver-installed') {
+
+				if (e.data.action == 'screen-saver-installed' && !isInstalled) {
+					isInstalled = true;
+
+					defaultFriendsList = e.data.friends;
+					thi$.friendsDialog.selectFriends(defaultFriendsList);
+
+					dfdInstalled.resolve(true);
 					console.log('big banana', e.data.friends);
 				}
 			}
@@ -81,11 +98,12 @@ console.log('le action', e.data.action);
 		$.getJSON('https://graph.facebook.com/' + config.userId + '/friends?access_token=' + config.accessToken + '&fields=id,name,picture', function (json) {
 		//$.getJSON('http://localhost/roman/screensaver/fb/ajax/friends.php', function (json) {
 			$(json.data).each(function (i, friend) {
-				var image = friend.picture.data.url.replace('_q.jpg', '_n.jpg'),
+				//var image = friend.picture.data.url.replace('_q.jpg', '_n.jpg'),
+				var image = friend.picture.replace('_q.jpg', '_n.jpg'),
 					friend = {
 						id:friend.id,
 						name:friend.name,
-						icon:friend.picture.data.url,
+						icon:friend.picture,
 						image:image
 					}
 				
@@ -144,7 +162,7 @@ console.log('le action', e.data.action);
 	}
 
 	function selectInitalFriends() {	
-		defaultFriendsList = [].concat(getSelectedIds(friendsList)).sort(function () {
+		defaultFriendsList = (defaultFriendsList || [].concat(getSelectedIds(friendsList))).sort(function () {
 			return Math.round(Math.random()) - 0.5; 
 		}).slice(0, config.initialFriends);
 	}
@@ -220,6 +238,44 @@ console.log('ginat', ids);
 		});
 	}
 
+	function checkIsExtensionInstalled() {
+		var fCheck = function () {
+			if (!isInstalled) {
+				if (new Date().getTime() - checkInstallTime <= config.checkInstallTimeout) {
+					parent.postMessage({action:'screen-saver-ready'}, '*');
+console.log('check is install');
+					setTimeout(fCheck, 200);
+				}
+				else {
+console.log('not installed');
+					dfdInstalled.resolve(false);
+
+					checkIsExtensionInstalledWithDelay();
+				}
+			}
+		}
+
+		dfdInstalled = new $.Deferred();
+		checkInstallTime = new Date().getTime();
+
+		fCheck();
+
+		return dfdInstalled.promise();
+	}
+
+	function checkIsExtensionInstalledWithDelay() {
+		if (!isInstalled) {
+			if (new Date().getTime() - checkInstallTime <= config.checkInstallTimeoutDelay) {
+				parent.postMessage({action:'screen-saver-ready'}, '*');
+console.log('check is install after delay');
+				setTimeout(checkIsExtensionInstalledWithDelay, 1000);
+			}
+			else {
+console.log('not installed even after delay');
+			}
+		}
+	}
+
 	function syncWithExtension() {
 		var storeFriends = $.cookie('store_friends');
 
@@ -229,10 +285,16 @@ console.log('ginat', ids);
 			});
 
 			parent.postMessage({action:'screen-saver-sync', friends:storeFriends, accessToken:config.accessToken}, '*');
-
-			if (!syncComplete) {
-				setTimeout(syncWithExtension, 1500);
-			}
 		}
+	}
+
+	function checkIfPreviewReady() {
+		if (iframeScreenSaver) {
+			return true;
+		}
+
+		dfdIframeReady = new $.Deferred();
+
+		return dfdIframeReady.promise();
 	}
 })();
