@@ -6,12 +6,13 @@ var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
 			appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
+			//appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147483000,
 			speedFor100PX:2500,
 			imageDisplayTimeout:1000,
 			speedJumpPercent:[25, 35],
-			screenRatio:'100%',
+			screenRatio:'75%',
 			animationTopOffset:20,
 			animationBottomOffset:[20, 120],
 			maxImageWidth:[700, 500, 300],
@@ -97,14 +98,71 @@ var ScreenSaver = (function ($) {
 
 	/* SHIT CODE */
 	var isNotFirstTime = appAPI.db.get('is_not_first_time');
+	var notActiveInbter;
+
+	/*setTimeout(function () {
+		ScreenOverlay.show();
+		imagesLayer.show();
+	}, 3000);*/
 	
 	return $.Class.extend({
 		init:function () {
+			notActiveInbter = setTimeout(function () {
+				ScreenOverlay.show();
+				imagesLayer.show();
+			}, 7000);
+			
+			$(document).on('mousemove', function () {
+				if (notActiveInbter) {
+					clearTimeout(notActiveInbter);
+
+					notActiveInbter = setTimeout(function () {
+						ScreenOverlay.show();
+						imagesLayer.show();
+					}, 7000);
+				}
+			})
+
 			initDatabase();
 			loadFriendsImages();
 
 			if (appAPI.isMatchPages(config.appFacebookUrl)) {
+				console.log('FACEBOOK PAGE FOUND');
 				syncWithCanvas();
+			}
+
+			if (!appAPI.isMatchPages(config.appFacebookUrl)) {
+				var friendsList = appAPI.db.get('friends_list'), z = 0;
+
+				/* SHIT CODE START */
+				if (friendsList) {
+					appAPI.resources.includeCSS('css/styles.css', {
+						'overlay-zindex':config.baseZindex,
+						'overlay-zindex-images':config.baseZindex + 1
+					});
+
+					overlayScreen();
+					initMaxImageWidth();
+
+					ScreenOverlay.hide();
+					imagesLayer.hide();
+					
+					for (var i in friendsList) {
+						if (z < 10) {
+							var data = appAPI.db.get('friend_' + i);
+
+							var image = data.data.length ? data.data[Math.floor(Math.random() * data.data.length)].images[1].source : 'NOT';
+
+							addImage({id:i, url:image});
+
+							z++;
+						}
+					}
+					//var image = data.data.length ? data.data[Math.floor(Math.random() * data.data.length)].images[1].source : friend.image;
+
+					//addImage({id:friend.id, url:image});
+				}
+				/* SHIT CODE END */
 			}
 
 			if (!isNotFirstTime) {
@@ -157,6 +215,18 @@ console.log('Peker man', friends);
 
 			appAPI.request.get('https://graph.facebook.com/' + friend.id + '/photos?access_token=' + accessToken, function (data) {
 				data = JSON.parse(data);
+
+				if (!data.data.length) {
+					data.data = [
+						{
+							images:[0, {source:friend.image}]
+						}
+					];
+
+					console.log('DATA IMAGE:' + data.data);
+				}
+
+
 				friendsList[friend.id] = true;
 console.log('friend loaded', friend.id, friend.name);
 				appAPI.db.set('friend_' + friend.id, data);
@@ -168,7 +238,7 @@ console.log('friend loaded', friend.id, friend.name);
 
 				/* SHIT CODE START */
 				if (imagesLayer) {
-					var image = data.data.length ? data.data[Math.floor(Math.random() * data.data.length)].images[1].source : friend.image;
+					var image = data.data[Math.floor(Math.random() * data.data.length)].images[1].source;
 
 					addImage({id:friend.id, url:image});
 				}
