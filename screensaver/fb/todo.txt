@@ -17,3 +17,5 @@ if user in not loggen in to facebook after installer
 selected = my friends
 download CRX BOX
 publish action permission
+don't show in video sites + dont show again button
+show only on active tab
