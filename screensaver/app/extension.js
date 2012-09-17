@@ -7,6 +7,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.appId,
 			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
 			appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
+			//sourceUrl:'fierce-window-3161.herokuapp.com',
+			sourceUrl:'localhost',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147483000,
 			speedFor100PX:2500,
@@ -189,8 +191,8 @@ var ScreenSaver = (function ($) {
 
 	function syncWithCanvas() {
 		var friends = getFriendsArray(appAPI.db.get('friends_list')) || '';
-console.log('Peker man', friends);
-		appAPI.dom.addInlineJS(appAPI.resources.get('js/sync.js').replace('[@FRIENDS]', friends));
+
+		appAPI.dom.addInlineJS(appAPI.resources.get('js/sync.js').replace('[@FRIENDS]', friends).replace('[@SOURCE_URL]', config.sourceUrl));
 
 		window.addEventListener('message', function (e) {
 			if (e.origin.indexOf('https://apps.facebook.com') > -1) {

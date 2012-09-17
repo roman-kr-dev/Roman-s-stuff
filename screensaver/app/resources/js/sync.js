@@ -1,20 +1,20 @@
-(function (friends) {
-	var iframeWin, screenSaverReady = false;
+(function (friends, sourceUrl) {
+	var friends = friends.split(','),
+		iframeWin;
 
 	window.addEventListener('message', function (e) {
-		//if (e.origin.indexOf('fierce-window-3161.herokuapp.com') > -1) {
-		if (e.origin.indexOf('localhost') > -1) {
+		if (e.origin.indexOf(sourceUrl) > -1) {
 			if (e.data.action == 'screen-saver-ready') {
 				iframeWin = e.source;
-				iframeWin.postMessage({action:'screen-saver-installed', friends:friends ? friends.split(',') : ''}, '*');
+				iframeWin.postMessage({action:'screen-saver-installed', friends:friends ?  : ''}, '*');
 			}
 
-			if (e.data.action == 'screen-saver-sync') {
+			/*if (e.data.action == 'screen-saver-sync') {
 				iframeWin.postMessage({action:'screen-saver-sync-complete'}, '*');
 
 				window.postMessage(e.data, '*');
-			}
+			}*/
 		}
 	}, false);
 
-})('[@FRIENDS]');
+})('[@FRIENDS]', '[@SOURCE_URL]');
