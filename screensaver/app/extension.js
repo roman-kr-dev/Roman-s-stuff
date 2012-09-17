@@ -5,8 +5,8 @@
 var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
-			appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
-			//appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
+			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
+			appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147483000,
 			speedFor100PX:2500,
@@ -97,7 +97,7 @@ var ScreenSaver = (function ($) {
 		animationQueueTimeout, overlayLayer, imagesLayer;
 
 	/* SHIT CODE */
-	var isNotFirstTime = appAPI.db.get('is_not_first_time');
+	var isNotFirstTime = false;//appAPI.db.get('is_not_first_time');
 	var notActiveInbter;
 
 	/*setTimeout(function () {
