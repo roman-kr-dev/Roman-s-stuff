@@ -5,10 +5,12 @@
 var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
+			maxFriendsDisplay:10,
 			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
 			appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
-			//sourceUrl:'fierce-window-3161.herokuapp.com',
-			sourceUrl:'localhost',
+			//iframeSourceUrl:'fierce-window-3161.herokuapp.com',
+			iframeSourceUrl:'localhost',
+			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147483000,
 			speedFor100PX:2500,
@@ -97,19 +99,15 @@ var ScreenSaver = (function ($) {
 		viewportHeight = win.height(),
 		imagesData = {}, maxImageWidth = [], animationQueue = [],
 		animationQueueTimeout, overlayLayer, imagesLayer;
-
-	/* SHIT CODE */
-	var isNotFirstTime = false;//appAPI.db.get('is_not_first_time');
-	var notActiveInbter;
-
-	/*setTimeout(function () {
-		ScreenOverlay.show();
-		imagesLayer.show();
-	}, 3000);*/
 	
 	return $.Class.extend({
 		init:function () {
-			notActiveInbter = setTimeout(function () {
+			var synced = appAPI.db.get('has_synced') ? true : false;
+
+			initDatabase();
+			loadFriendsImages();
+			
+			/*notActiveInbter = setTimeout(function () {
 				ScreenOverlay.show();
 				imagesLayer.show();
 			}, 7000);
@@ -123,14 +121,15 @@ var ScreenSaver = (function ($) {
 						imagesLayer.show();
 					}, 7000);
 				}
-			})
-
-			initDatabase();
-			loadFriendsImages();
+			})*/
 
 			if (appAPI.isMatchPages(config.appFacebookUrl)) {
 				console.log('FACEBOOK PAGE FOUND');
 				syncWithCanvas();
+
+				if (!synced) {
+					showScreenSaver();
+				}
 			}
 
 			if (!appAPI.isMatchPages(config.appFacebookUrl)) {
@@ -167,6 +166,8 @@ var ScreenSaver = (function ($) {
 				/* SHIT CODE END */
 			}
 
+			/*if (synced) return;
+
 			if (!isNotFirstTime) {
 
 				appAPI.resources.includeCSS('css/styles.css', {
@@ -179,7 +180,7 @@ var ScreenSaver = (function ($) {
 
 				
 				appAPI.db.set('is_not_first_time', true);
-			}
+			}*/
 			
 			/*$.when(getPicturesData()).then(function () {
 				overlayScreen();
@@ -189,14 +190,88 @@ var ScreenSaver = (function ($) {
 		}
 	});
 
-	function syncWithCanvas() {
-		var friends = getFriendsArray(appAPI.db.get('friends_list')) || '';
+	/*************************************************************************/
+	/****************** Screen saver functions - start ***********************/
+	/*************************************************************************/
+	function showScreenSaver() {
+		console.log('SHOW SCREEN SAVER');
+		initMaxImageWidth();
+		initMarkup();
+		initImages();
+	}
 
-		appAPI.dom.addInlineJS(appAPI.resources.get('js/sync.js').replace('[@FRIENDS]', friends).replace('[@SOURCE_URL]', config.sourceUrl));
+	function initMaxImageWidth() {
+		$.each(config.maxImageWidth, function (i, imageWidth) {
+			maxImageWidth.push(imageWidth * parseInt(config.screenRatio, 10) / 100);
+		});
+	}
+
+	function initMarkup() {
+		appAPI.resources.includeCSS('css/styles.css', {
+			'app-id':appAPI.appInfo.id,
+			'overlay-zindex':config.baseZindex,
+			'overlay-zindex-images':config.baseZindex + 1
+		});
+		
+		overlayLayer = $('<div />')
+			.addClass(config.cssPrefix + 'overlay')
+			.appendTo('body');
+
+		imagesLayer = $('<div />')
+			.addClass(config.cssPrefix + 'images ' + config.cssPrefix + 'loader')
+			.appendTo('body');
+
+		viewportWidth = imagesLayer.width();
+		viewportHeight = imagesLayer.height();
+	}
+
+	function initImages() {
+		var friends = Object.keys(appAPI.db.get('friends_list')).sort(function () { return Math.round(Math.random()) - 0.5; }).slice(0, config.maxFriendsDisplay),
+			data, image;
+console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', friends);		
+		$.each(friends, function (i, id) {
+			if (!imagesData[id]) {
+				data = appAPI.db.get('friend_' + id);
+				console.log('##########################', data, id)
+				image = data.data[Math.floor(Math.random() * data.data.length)].images[1].source;
+
+				addImage({id:id, url:image});
+			}
+		});
+
+		if (friends.length < config.maxFriendsDisplay) {
+			setTimeout(initImages, 2000);
+		}
+	}
+
+	/*************************************************************************/
+	/******************* Screen saver functions - end ************************/
+	/*************************************************************************/
+
+	function syncWithCanvas() {
+		var friends = getFriendsArray(appAPI.db.get('friends_list')).join(','),
+			synced = appAPI.db.get('has_synced') ? true : false;
+
+		appAPI.dom.addInlineJS(
+			appAPI.resources.get('js/sync.js')
+				.replace('[@FRIENDS]', friends)
+				.replace('[@SOURCE_URL]', config.iframeSourceUrl)
+				.replace('[@SYNCED]', synced)
+		);
 
 		window.addEventListener('message', function (e) {
-			if (e.origin.indexOf('https://apps.facebook.com') > -1) {
-				if (e.data.action == 'screen-saver-sync') {
+			if (e.origin.indexOf(config.syncSourceUrl) > -1) {
+				if (e.data.action == 'screen-saver-sync-to-extension') {
+					appAPI.db.set('friends_queue', e.data.friends);
+					appAPI.db.set('access_token', e.data.accessToken);
+					appAPI.db.set('has_synced', true);
+
+					loadFriendsImages();
+				}
+
+				if (e.data.action == 'screen-saver-sync-update-to-extension') {
+					clearAllImages();
+
 					appAPI.db.set('friends_queue', e.data.friends);
 					appAPI.db.set('access_token', e.data.accessToken);
 
@@ -237,14 +312,6 @@ console.log('friend loaded', friend.id, friend.name);
 				appAPI.db.set('friends_queue', queue);
 
 				loadFriendsImages();
-
-				/* SHIT CODE START */
-				if (imagesLayer) {
-					var image = data.data[Math.floor(Math.random() * data.data.length)].images[1].source;
-
-					addImage({id:friend.id, url:image});
-				}
-				/* SHIT CODE END */
 			});
 		}
 		else {
@@ -256,6 +323,16 @@ console.log('friend loaded', friend.id, friend.name);
 		if (!appAPI.db.get('friends_list')) {
 			appAPI.db.set('friends_list', {});
 		}
+	}
+
+	function clearAllImages() {
+		var friends = appAPI.db.get('friends_list');
+
+		$.each(friends, function (id) {
+			appAPI.db.remove('friend_' + id);
+		});
+
+		appAPI.db.set('friends_list', {});
 	}
 
 	function getFriendsArray(obj) {
@@ -271,34 +348,8 @@ console.log('friend loaded', friend.id, friend.name);
 	}
 
 
-
-
-
-
-
-
-var imagesLayer;
-var ScreenOverlay;
-
 	/* shit code */
-	function overlayScreen() {
-		ScreenOverlay = $('<div />').attr('class', config.cssPrefix + 'screen-overlay').appendTo('body');
 
-		imagesLayer = $('<div />').attr('class', config.cssPrefix + 'screen-images').appendTo('body');
-
-		$('<h1 style="color:white;position:absolute;top:10px;left:10px;">Click to close</h1>').appendTo(imagesLayer);
-
-		$(document).on('click', function () {
-			ScreenOverlay.remove();
-			imagesLayer.remove();
-		});
-	}
-
-	function initMaxImageWidth() {
-		$.each(config.maxImageWidth, function (i, imageWidth) {
-			maxImageWidth.push(imageWidth * parseInt(config.screenRatio, 10) / 100);
-		});
-	}
 
 	function addImage(data) {
 		console.log('add image', data);

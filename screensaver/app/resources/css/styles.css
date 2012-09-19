@@ -3,7 +3,11 @@
 	display:none;
 }
 
-.screen-saver-{{app-id}}-screen-overlay {
+.screen-saver-{{app-id}}-loader {
+	background:url(resource-image://images/ajax-loader.gif) no-repeat center center;
+}
+
+.screen-saver-{{app-id}}-overlay {
 	position:fixed;
 	top:0;
 	left:0;
@@ -14,7 +18,7 @@
 	z-index:{{overlay-zindex}};
 }
 
-.screen-saver-{{app-id}}-screen-images {
+.screen-saver-{{app-id}}-images {
 	position:fixed;
 	top:0;
 	left:0;
@@ -23,7 +27,7 @@
 	z-index:{{overlay-zindex-images}};
 }
 
-	.screen-saver-{{app-id}}-screen-images img {
+	.screen-saver-{{app-id}}-images img {
 		position:absolute;
 		display:none;
 
@@ -33,10 +37,10 @@
 		border-radius: 5px;
 	}
 
-	.screen-saver-{{app-id}}-screen-picture-1 {
+	.screen-saver-{{app-id}}-picture-1 {
 		max-width:700px;
 	}
 
-	.screen-saver-{{app-id}}-screen-picture-2 {
+	.screen-saver-{{app-id}}-picture-2 {
 		max-width:500px;
 	}
