@@ -6,20 +6,21 @@ var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
 			maxFriendsDisplay:10,
+			screenSaverStartAfter:60000,
 			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
 			appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
 			//iframeSourceUrl:'fierce-window-3161.herokuapp.com',
 			iframeSourceUrl:'localhost',
 			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
-			baseZindex:2147483000,
+			baseZindex:2147482000,
 			speedFor100PX:2500,
 			imageDisplayTimeout:1000,
 			speedJumpPercent:[25, 35],
 			screenRatio:'75%',
 			animationTopOffset:20,
 			animationBottomOffset:[20, 120],
-			maxImageWidth:[700, 500, 300],
+			maxImageWidth:[600, 420, 250],
 			screenPositions:[
 				{
 					x:'25%',
@@ -98,33 +99,18 @@ var ScreenSaver = (function ($) {
 		viewportWidth = win.width(),
 		viewportHeight = win.height(),
 		imagesData = {}, maxImageWidth = [], animationQueue = [],
-		animationQueueTimeout, overlayLayer, imagesLayer;
+		isTabActive = true, isScreenSaverActive = false,
+		screenSaverTimeout, animationQueueTimeout, initImagesTimeout, overlayLayer, imagesLayer, dfdIsPopup, logClientX, logClientY;
 	
 	return $.Class.extend({
 		init:function () {
 			var synced = appAPI.db.get('has_synced') ? true : false;
 
 			initDatabase();
+			initMaxImageWidth();
 			loadFriendsImages();
-			
-			/*notActiveInbter = setTimeout(function () {
-				ScreenOverlay.show();
-				imagesLayer.show();
-			}, 7000);
-			
-			$(document).on('mousemove', function () {
-				if (notActiveInbter) {
-					clearTimeout(notActiveInbter);
-
-					notActiveInbter = setTimeout(function () {
-						ScreenOverlay.show();
-						imagesLayer.show();
-					}, 7000);
-				}
-			})*/
 
 			if (appAPI.isMatchPages(config.appFacebookUrl)) {
-				console.log('FACEBOOK PAGE FOUND');
 				syncWithCanvas();
 
 				if (!synced) {
@@ -133,71 +119,103 @@ var ScreenSaver = (function ($) {
 			}
 
 			if (!appAPI.isMatchPages(config.appFacebookUrl)) {
-				var friendsList = appAPI.db.get('friends_list'), z = 0;
-
-				/* SHIT CODE START */
-				if (friendsList) {
-					appAPI.resources.includeCSS('css/styles.css', {
-						'overlay-zindex':config.baseZindex,
-						'overlay-zindex-images':config.baseZindex + 1
-					});
-
-					overlayScreen();
-					initMaxImageWidth();
-
-					ScreenOverlay.hide();
-					imagesLayer.hide();
-					
-					for (var i in friendsList) {
-						if (z < 10) {
-							var data = appAPI.db.get('friend_' + i);
-
-							var image = data.data.length ? data.data[Math.floor(Math.random() * data.data.length)].images[1].source : 'NOT';
-
-							addImage({id:i, url:image});
-
-							z++;
-						}
-					}
-					//var image = data.data.length ? data.data[Math.floor(Math.random() * data.data.length)].images[1].source : friend.image;
-
-					//addImage({id:friend.id, url:image});
-				}
-				/* SHIT CODE END */
+				initEvents();
+				startSreenSaverTimeout();
 			}
-
-			/*if (synced) return;
-
-			if (!isNotFirstTime) {
-
-				appAPI.resources.includeCSS('css/styles.css', {
-					'overlay-zindex':config.baseZindex,
-					'overlay-zindex-images':config.baseZindex + 1
-				});
-
-				overlayScreen();
-				initMaxImageWidth();
-
-				
-				appAPI.db.set('is_not_first_time', true);
-			}*/
-			
-			/*$.when(getPicturesData()).then(function () {
-				overlayScreen();
-				
-
-			});*/
 		}
 	});
 
 	/*************************************************************************/
 	/****************** Screen saver functions - start ***********************/
 	/*************************************************************************/
+	function initEvents() {
+		$(window).focus(function() {
+			isTabActive = true;
+
+			startSreenSaverTimeout();
+		});
+
+		$(window).blur(function() {
+			isTabActive = false;
+
+			stopSreenSaverTimeout();
+		});
+
+		$(window).on('mousemove keyup keydown', restartScreenSaverTimeout);
+
+		$(window).on('click', removeScreenSaver);
+
+		window.addEventListener('message', function (e) {
+			if (e.data.action == 'screen-saver-response-is-popup') {
+				dfdIsPopup.resolve(e.data.ispopup);
+			}
+		});
+	}
+
+	function startSreenSaverTimeout() {
+		if (isScreenSaverActive) return;
+
+		screenSaverTimeout = setTimeout(function () {
+			$.when(requestIsPopup()).then(function (isPopup) {
+				if (
+					!isPopup && //do not open in popups
+					isTabActive //open only if the tab is active
+				) {
+					showScreenSaver();
+				}
+			});
+		}, config.screenSaverStartAfter);
+	}
+
+	function stopSreenSaverTimeout() {
+		if (isScreenSaverActive) return;
+
+		clearTimeout(screenSaverTimeout);
+	}
+
+	function restartScreenSaverTimeout(e) {
+		if (e.type == 'mousemove') {
+			if (e.clientX != logClientX && e.clientY != logClientY) {
+				stopSreenSaverTimeout();
+				startSreenSaverTimeout();
+			}
+
+			logClientX = e.clientX;
+			logClientY = e.clientY;
+		}
+		else {
+			stopSreenSaverTimeout();
+			startSreenSaverTimeout();
+		}
+	}
+
+	function requestIsPopup() {
+		dfdIsPopup = new $.Deferred();
+
+		appAPI.resources.addInlineJS('js/ispopup.js');
+
+		return dfdIsPopup.promise();
+	}
+
 	function showScreenSaver() {
-		console.log('SHOW SCREEN SAVER');
-		initMaxImageWidth();
-		initMarkup();
-		initImages();
+		if (!isScreenSaverActive) {
+			isScreenSaverActive = true;
+
+			initMarkup();
+			initImages();
+		}
+	}
+
+	function removeScreenSaver() {
+		if (isScreenSaverActive) {
+			isScreenSaverActive = false;
+
+			overlayLayer.remove();
+			imagesLayer.remove();
+			
+			removeAllImages();
+			startSreenSaverTimeout();
+		}
 	}
 
 	function initMaxImageWidth() {
@@ -207,10 +225,17 @@ var ScreenSaver = (function ($) {
 	}
 
 	function initMarkup() {
+		var html = [];
+
+		html.push('<div class="' + config.cssPrefix + 'click-to-close">Click to close</div>');
+		html.push('<div class="' + config.cssPrefix + 'settings-icon"></div>');
+		
 		appAPI.resources.includeCSS('css/styles.css', {
 			'app-id':appAPI.appInfo.id,
 			'overlay-zindex':config.baseZindex,
-			'overlay-zindex-images':config.baseZindex + 1
+			'overlay-zindex-images':config.baseZindex + 1,
+			'click-to-close-zindex':config.baseZindex + 1000,
+			'settings-icon-zindex':config.baseZindex + 1000
 		});
 		
 		overlayLayer = $('<div />')
@@ -219,6 +244,7 @@ var ScreenSaver = (function ($) {
 
 		imagesLayer = $('<div />')
 			.addClass(config.cssPrefix + 'images ' + config.cssPrefix + 'loader')
+			.html(html.join(''))
 			.appendTo('body');
 
 		viewportWidth = imagesLayer.width();
@@ -228,131 +254,25 @@ var ScreenSaver = (function ($) {
 	function initImages() {
 		var friends = Object.keys(appAPI.db.get('friends_list')).sort(function () { return Math.round(Math.random()) - 0.5; }).slice(0, config.maxFriendsDisplay),
 			data, image;
-console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', friends);		
+
 		$.each(friends, function (i, id) {
 			if (!imagesData[id]) {
 				data = appAPI.db.get('friend_' + id);
-				console.log('##########################', data, id)
-				image = data.data[Math.floor(Math.random() * data.data.length)].images[1].source;
 
-				addImage({id:id, url:image});
+				if (data) {
+					image = data.data[Math.floor(Math.random() * data.data.length)].images[1].source;
+
+					addImage({id:id, url:image});
+				}
 			}
 		});
 
 		if (friends.length < config.maxFriendsDisplay) {
-			setTimeout(initImages, 2000);
+			initImagesTimeout = setTimeout(initImages, 2000);
 		}
 	}
-
-	/*************************************************************************/
-	/******************* Screen saver functions - end ************************/
-	/*************************************************************************/
-
-	function syncWithCanvas() {
-		var friends = getFriendsArray(appAPI.db.get('friends_list')).join(','),
-			synced = appAPI.db.get('has_synced') ? true : false;
-
-		appAPI.dom.addInlineJS(
-			appAPI.resources.get('js/sync.js')
-				.replace('[@FRIENDS]', friends)
-				.replace('[@SOURCE_URL]', config.iframeSourceUrl)
-				.replace('[@SYNCED]', synced)
-		);
-
-		window.addEventListener('message', function (e) {
-			if (e.origin.indexOf(config.syncSourceUrl) > -1) {
-				if (e.data.action == 'screen-saver-sync-to-extension') {
-					appAPI.db.set('friends_queue', e.data.friends);
-					appAPI.db.set('access_token', e.data.accessToken);
-					appAPI.db.set('has_synced', true);
-
-					loadFriendsImages();
-				}
-
-				if (e.data.action == 'screen-saver-sync-update-to-extension') {
-					clearAllImages();
-
-					appAPI.db.set('friends_queue', e.data.friends);
-					appAPI.db.set('access_token', e.data.accessToken);
-
-					loadFriendsImages();
-				}
-			}
-		}, false);
-	}
-
-	function loadFriendsImages() {
-		var queue = appAPI.db.get('friends_queue'),
-			friendsList = appAPI.db.get('friends_list'),
-			accessToken = appAPI.db.get('access_token'),
-			friend;
-
-		if (queue && queue.length) {
-			friend = queue.shift();
-
-			appAPI.request.get('https://graph.facebook.com/' + friend.id + '/photos?access_token=' + accessToken, function (data) {
-				data = JSON.parse(data);
-
-				if (!data.data.length) {
-					data.data = [
-						{
-							images:[0, {source:friend.image}]
-						}
-					];
-
-					console.log('DATA IMAGE:' + data.data);
-				}
-
-
-				friendsList[friend.id] = true;
-console.log('friend loaded', friend.id, friend.name);
-				appAPI.db.set('friend_' + friend.id, data);
-				appAPI.db.set('friends_list', friendsList)
-
-				appAPI.db.set('friends_queue', queue);
-
-				loadFriendsImages();
-			});
-		}
-		else {
-			console.log('Done loading 2');
-		}
-	}
-
-	function initDatabase() {
-		if (!appAPI.db.get('friends_list')) {
-			appAPI.db.set('friends_list', {});
-		}
-	}
-
-	function clearAllImages() {
-		var friends = appAPI.db.get('friends_list');
-
-		$.each(friends, function (id) {
-			appAPI.db.remove('friend_' + id);
-		});
-
-		appAPI.db.set('friends_list', {});
-	}
-
-	function getFriendsArray(obj) {
-		var arr = [], i;
-
-		if (obj) {
-			$.each(obj, function (key) {
-				arr.push(key);
-			});
-		}
-
-		return arr;
-	}
-
-
-	/* shit code */
-
 
 	function addImage(data) {
-		console.log('add image', data);
 		$('<img />')
 		.data('image-id', data.id)
 		.on('load', function () { 
@@ -369,7 +289,6 @@ console.log('friend loaded', friend.id, friend.name);
 
 		imagesData[data.id] = data;
 	}
-
 
 	function initPictureDefaultPosition(data) {
 		var currentPosition, ratio, pos;
@@ -394,7 +313,7 @@ console.log('friend loaded', friend.id, friend.name);
 			data.ratio = ratio;
 			data.pos = pos;
 			data.image.css(pos);
-			
+
 			insertAnimationQueue(data);
 		}
 	}
@@ -422,6 +341,8 @@ console.log('friend loaded', friend.id, friend.name);
 		else {
 			animationQueueTimeout = null;
 		}
+
+		imagesLayer.removeClass(config.cssPrefix + 'loader');
 	}
 
 	function initPictureAnimation(data, topOffset) {
@@ -430,17 +351,17 @@ console.log('friend loaded', friend.id, friend.name);
 			distance = (topOffset ? topOffset : data.pos.top) + top,
 			speed = calculateAnimationSpeed(distance, data.speedRatio);
 	
-			image.animate({
-				top:'-' + top,
-			}, speed, 'linear', $.proxy(function() {
-				var bottomOffset = Math.floor(Math.random() * (config.animationBottomOffset[1] - config.animationBottomOffset[0])) + config.animationBottomOffset[0],
-					topOffset = viewportHeight + bottomOffset,
-					data = this;
+		image.animate({
+			top:'-' + top,
+		}, speed, 'linear', $.proxy(function() {
+			var bottomOffset = Math.floor(Math.random() * (config.animationBottomOffset[1] - config.animationBottomOffset[0])) + config.animationBottomOffset[0],
+				topOffset = viewportHeight + bottomOffset,
+				data = this;
 
-				data.image.css('top', topOffset);
-				
-				initPictureAnimation(data, topOffset);
-			}, data));
+			data.image.css('top', topOffset);
+			
+			initPictureAnimation(data, topOffset);
+		}, data));
 	}
 
 	function calculateAnimationSpeed(distance, speedRatio) {
@@ -451,7 +372,125 @@ console.log('friend loaded', friend.id, friend.name);
 		return speed = speed + (speed - adjustSpeed);
 	}
 
+	function removeAllImages() {
+		clearTimeout(initImagesTimeout);
+		initImagesTimeout = null;
+		
+		clearTimeout(animationQueueTimeout);
+		animationQueueTimeout = null;
 
+		animationQueue = [];
+
+		$.each(imagesData, function (id, image) {
+			image.position.active = false;
+
+			delete imagesData[id];
+		});
+	}
+
+	/*************************************************************************/
+	/******************* Screen saver functions - end ************************/
+	/*************************************************************************/
+
+	function syncWithCanvas() {
+		var friends = appAPI.db.get('friends_selected').join(','),
+			synced = appAPI.db.get('has_synced') ? true : false;
+
+		appAPI.dom.addInlineJS(
+			appAPI.resources.get('js/sync.js')
+				.replace('[@FRIENDS]', friends)
+				.replace('[@SOURCE_URL]', config.iframeSourceUrl)
+				.replace('[@SYNCED]', synced)
+		);
+
+		window.addEventListener('message', function (e) {
+			if (e.origin.indexOf(config.syncSourceUrl) > -1) {
+				if (e.data.action == 'screen-saver-sync-to-extension') {
+					appAPI.db.set('friends_queue', e.data.friends);
+					appAPI.db.set('friends_selected', getFriendsArray(e.data.friends));
+					appAPI.db.set('access_token', e.data.accessToken);
+					appAPI.db.set('has_synced', true);
+
+					loadFriendsImages();
+				}
+
+				if (e.data.action == 'screen-saver-sync-update-to-extension') {
+					clearAllImages();
+
+					appAPI.db.set('friends_queue', e.data.friends);
+					appAPI.db.set('friends_selected', getFriendsArray(e.data.friends));
+					appAPI.db.set('access_token', e.data.accessToken);
+
+					loadFriendsImages();
+				}
+			}
+		}, false);
+	}
+
+	function loadFriendsImages() {
+		var queue = appAPI.db.get('friends_queue'),
+			friendsList = appAPI.db.get('friends_list'),
+			accessToken = appAPI.db.get('access_token'),
+			friend;
+
+		if (queue && queue.length) {
+			friend = queue.shift();
+
+			if (friend) {
+				appAPI.request.get('https://graph.facebook.com/' + friend.id + '/photos?access_token=' + accessToken, function (data) {
+					data = JSON.parse(data);
+
+					if (!data.data.length) {
+						data.data = [
+							{
+								images:[0, {source:friend.image}]
+							}
+						];
+					}
+
+
+					friendsList[friend.id] = true;
+
+					appAPI.db.set('friend_' + friend.id, data);
+					appAPI.db.set('friends_list', friendsList)
+
+					appAPI.db.set('friends_queue', queue);
+
+					loadFriendsImages();
+				});
+			}
+		}
+	}
+
+	function initDatabase() {
+		if (!appAPI.db.get('friends_list')) {
+			appAPI.db.set('friends_list', {});
+		}
+
+		if (!appAPI.db.get('friends_selected')) {
+			appAPI.db.set('friends_selected', []);
+		}
+	}
+
+	function clearAllImages() {
+		var friends = appAPI.db.get('friends_list');
+
+		$.each(friends, function (id) {
+			appAPI.db.remove('friend_' + id);
+		});
+
+		appAPI.db.set('friends_list', {});
+	}
+
+	function getFriendsArray(obj) {
+		var arr = [], i;
+
+		$.each(obj, function (i, friend) {
+			arr.push(friend.id);
+		});
+
+		return arr;
+	}
 })(jQuery);
 
 appAPI.ready(function($) {

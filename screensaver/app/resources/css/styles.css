@@ -44,3 +44,26 @@
 	.screen-saver-{{app-id}}-picture-2 {
 		max-width:500px;
 	}
+
+
+	/* click to close text */
+	.screen-saver-{{app-id}}-click-to-close {
+		position:absolute;
+		top:10px;
+		left:10px;
+		font-size:22px;
+		color:#fff;
+		z-index:{{click-to-close-zindex}};
+	}
+
+	/* settings icon */
+	.screen-saver-{{app-id}}-settings-icon {
+		position:absolute;
+		bottom:10px;
+		left:10px;
+		width:16px;
+		height:16px;
+		z-index:{{settings-icon-zindex}};
+		background:url(resource-image://images/settings.png) no-repeat center center;
+		cursor:pointer;
+	}
