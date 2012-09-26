@@ -1,16 +1,13 @@
-  /************************************************************************************
-  This is your Page Code. The appAPI.ready() code block will be executed on every page load.
-  For more information please visit our wiki site: http://crossrider.wiki.zoho.com
-*************************************************************************************/
 var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
 			maxFriendsDisplay:10,
-			screenSaverStartAfter:60000,
-			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
-			appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
-			//iframeSourceUrl:'fierce-window-3161.herokuapp.com',
-			iframeSourceUrl:'localhost',
+			screenSaverStartAfter:10,//minutes
+			defaultCloseType:'move',//move or click
+			appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
+			//appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
+			iframeSourceUrl:'fierce-window-3161.herokuapp.com',
+			//iframeSourceUrl:'localhost',
 			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147482000,
@@ -100,25 +97,30 @@ var ScreenSaver = (function ($) {
 		viewportHeight = win.height(),
 		imagesData = {}, maxImageWidth = [], animationQueue = [],
 		isTabActive = true, isScreenSaverActive = false,
-		screenSaverTimeout, animationQueueTimeout, initImagesTimeout, overlayLayer, imagesLayer, dfdIsPopup, logClientX, logClientY;
+		screenSaverTimeout, animationQueueTimeout, initImagesTimeout, screenSaverSettings, overlayLayer, imagesLayer, dfdIsPopup, logClientX, logClientY;
 	
 	return $.Class.extend({
-		init:function () {
+		init:function (data) {
 			var synced = appAPI.db.get('has_synced') ? true : false;
+
+			config.blacklist = data.blacklist;
 
 			initDatabase();
 			initMaxImageWidth();
 			loadFriendsImages();
 
+			screenSaverSettings = appAPI.db.get('settings');
+
 			if (appAPI.isMatchPages(config.appFacebookUrl)) {
 				syncWithCanvas();
 
 				if (!synced) {
-					showScreenSaver();
+					initEventsFacebook();
+					showScreenSaver(true);
 				}
 			}
 
-			if (!appAPI.isMatchPages(config.appFacebookUrl)) {
+			if (!appAPI.isMatchPages(config.appFacebookUrl) && !isBlackList()) {
 				initEvents();
 				startSreenSaverTimeout();
 			}
@@ -129,22 +131,19 @@ var ScreenSaver = (function ($) {
 	/****************** Screen saver functions - start ***********************/
 	/*************************************************************************/
 	function initEvents() {
-		$(window).focus(function() {
-			isTabActive = true;
-
-			startSreenSaverTimeout();
+		$(document).on('mousemove', screenSaverMouseMove);
+		$(document).on('click', screenSaverMouseClick);
+		$(document).on('keydown', screenSaverKeyboardPress);
+		$(document).on('scroll', screenSaverRemoveOrRestart);
+		
+		$(window).on('resize', screenSaverRemoveOrRestart);
+		$(window).on('screenSaverFocusChange', function (e, type) {
+			if (isScreenSaverActive) {
+				removeScreenSaver();
+			}
+			
+			isTabActive = type == 'visible';
 		});
-
-		$(window).blur(function() {
-			isTabActive = false;
-
-			stopSreenSaverTimeout();
-		});
-
-		$(window).on('mousemove keyup keydown', restartScreenSaverTimeout);
-
-		$(window).on('click', removeScreenSaver);
-
 		window.addEventListener('message', function (e) {
 			if (e.data.action == 'screen-saver-response-is-popup') {
 				dfdIsPopup.resolve(e.data.ispopup);
@@ -152,56 +151,75 @@ var ScreenSaver = (function ($) {
 		});
 	}
 
-	function startSreenSaverTimeout() {
-		if (isScreenSaverActive) return;
-
-		screenSaverTimeout = setTimeout(function () {
-			$.when(requestIsPopup()).then(function (isPopup) {
-				if (
-					!isPopup && //do not open in popups
-					isTabActive //open only if the tab is active
-				) {
-					showScreenSaver();
-				}
-			});
-		}, config.screenSaverStartAfter);
+	function initEventsFacebook() {
+		$(document).on('click', removeScreenSaver);
 	}
 
-	function stopSreenSaverTimeout() {
-		if (isScreenSaverActive) return;
-
-		clearTimeout(screenSaverTimeout);
-	}
-
-	function restartScreenSaverTimeout(e) {
+	function screenSaverMouseMove(e) {
+		var isMouseMove = false;
+		
+		//detect mouse move
 		if (e.type == 'mousemove') {
-			if (e.clientX != logClientX && e.clientY != logClientY) {
-				stopSreenSaverTimeout();
-				startSreenSaverTimeout();
+			if (e.clientX != logClientX || e.clientY != logClientY) {
+				isMouseMove = true;
 			}
 
 			logClientX = e.clientX;
 			logClientY = e.clientY;
 		}
-		else {
-			stopSreenSaverTimeout();
+
+		//if mouse move detected
+		if (isMouseMove) {
+			screenSaverRemoveOrRestart();
+		}
+	}
+
+	function screenSaverMouseClick() {
+		if (isScreenSaverActive && screenSaverSettings.close == 'click') {
+			removeScreenSaver();
+		} else {
 			startSreenSaverTimeout();
 		}
 	}
 
-	function requestIsPopup() {
-		dfdIsPopup = new $.Deferred();
-
-		appAPI.resources.addInlineJS('js/ispopup.js');
-
-		return dfdIsPopup.promise();
+	function screenSaverKeyboardPress(e) {
+		if(!isScreenSaverActive && e.altKey && e.which == 83) {
+			showScreenSaver();
+		} else {
+			screenSaverRemoveOrRestart();
+		}
 	}
 
-	function showScreenSaver() {
+	function screenSaverRemoveOrRestart() {
+		if (isScreenSaverActive && screenSaverSettings.close == 'move') {
+			removeScreenSaver();
+		} else {
+			startSreenSaverTimeout();
+		}
+	}
+
+	function startSreenSaverTimeout() {
+		if (!isScreenSaverActive) {
+			clearTimeout(screenSaverTimeout);
+
+			screenSaverTimeout = setTimeout(function () {
+				$.when(requestIsPopup()).then(function (isPopup) {
+					if (
+						!isPopup && //do not open in popups
+						isTabActive //open only if the tab is active
+					) {
+						showScreenSaver();
+					}
+				});
+			}, screenSaverSettings.display * 60 * 1000);
+		}
+	}
+
+	function showScreenSaver(isSync) {
 		if (!isScreenSaverActive) {
 			isScreenSaverActive = true;
 
-			initMarkup();
+			initMarkup(isSync);
 			initImages();
 		}
 	}
@@ -218,24 +236,44 @@ var ScreenSaver = (function ($) {
 		}
 	}
 
+	function requestIsPopup() {
+		dfdIsPopup = new $.Deferred();
+
+		appAPI.resources.addInlineJS('js/ispopup.js');
+
+		return dfdIsPopup.promise();
+	}
+
 	function initMaxImageWidth() {
 		$.each(config.maxImageWidth, function (i, imageWidth) {
 			maxImageWidth.push(imageWidth * parseInt(config.screenRatio, 10) / 100);
 		});
 	}
 
-	function initMarkup() {
-		var html = [];
+	function initMarkup(isSync) {
+		var html = [], thankyou;
 
-		html.push('<div class="' + config.cssPrefix + 'click-to-close">Click to close</div>');
-		html.push('<div class="' + config.cssPrefix + 'settings-icon"></div>');
+		if (isSync) {
+			html.push('<div class="' + config.cssPrefix + 'thank-you-install">');
+				html.push('<h1>Thank you for installing My Friends ScreenSaver</h1>');
+				html.push('<ul>');
+					html.push('<li>This screen server will be shown after 15 minutes of idle time.<br />Press Alt + s to view the Screen Saver immediately</li>');
+					html.push('<li>Change the display settings by clicking the "Settings" button</li>');
+					html.push('<li>To change friends just select a new onces and click Update</li>');
+				html.push('</ul>');
+				html.push('<div class="' + config.cssPrefix + 'click-to-close">Click to close</div>');
+			html.push('</div>');
+		}
+
+		if (screenSaverSettings.close == 'click') {
+			html.push('<div class="' + config.cssPrefix + 'click-to-close-screen">Click to close</div>');
+		}
 		
 		appAPI.resources.includeCSS('css/styles.css', {
 			'app-id':appAPI.appInfo.id,
 			'overlay-zindex':config.baseZindex,
 			'overlay-zindex-images':config.baseZindex + 1,
-			'click-to-close-zindex':config.baseZindex + 1000,
-			'settings-icon-zindex':config.baseZindex + 1000
+			'thank-you-install-zindex':config.baseZindex + 1000
 		});
 		
 		overlayLayer = $('<div />')
@@ -249,6 +287,11 @@ var ScreenSaver = (function ($) {
 
 		viewportWidth = imagesLayer.width();
 		viewportHeight = imagesLayer.height();
+
+		thankyou = imagesLayer.find('.' + config.cssPrefix + 'thank-you-install');
+		thankyou.css({
+			left:viewportWidth / 2 - thankyou.width() / 2
+		});
 	}
 
 	function initImages() {
@@ -277,12 +320,15 @@ var ScreenSaver = (function ($) {
 		.data('image-id', data.id)
 		.on('load', function () { 
 			var image = $(this);
-			
-			data.width = this.width;
-			data.height = this.height;
-			data.image = image;
 
-			initPictureDefaultPosition(data);
+			//it may been removed already
+			if (imagesData[data.id]) {
+				data.width = this.width;
+				data.height = this.height;
+				data.image = image;
+
+				initPictureDefaultPosition(data);
+			}
 		})
 		.attr('src', data.url)
 		.appendTo(imagesLayer);
@@ -382,7 +428,9 @@ var ScreenSaver = (function ($) {
 		animationQueue = [];
 
 		$.each(imagesData, function (id, image) {
-			image.position.active = false;
+			if (image.position) {
+				image.position.active = false;
+			}
 
 			delete imagesData[id];
 		});
@@ -394,6 +442,7 @@ var ScreenSaver = (function ($) {
 
 	function syncWithCanvas() {
 		var friends = appAPI.db.get('friends_selected').join(','),
+			settings = appAPI.JSONParser.stringify(screenSaverSettings),
 			synced = appAPI.db.get('has_synced') ? true : false;
 
 		appAPI.dom.addInlineJS(
@@ -401,6 +450,7 @@ var ScreenSaver = (function ($) {
 				.replace('[@FRIENDS]', friends)
 				.replace('[@SOURCE_URL]', config.iframeSourceUrl)
 				.replace('[@SYNCED]', synced)
+				.replace('[@SETTINGS]', settings)
 		);
 
 		window.addEventListener('message', function (e) {
@@ -422,6 +472,10 @@ var ScreenSaver = (function ($) {
 					appAPI.db.set('access_token', e.data.accessToken);
 
 					loadFriendsImages();
+				}
+
+				if (e.data.action == 'screen-saver-update-settings') {
+					appAPI.db.set('settings', e.data.settings);
 				}
 			}
 		}, false);
@@ -470,6 +524,13 @@ var ScreenSaver = (function ($) {
 		if (!appAPI.db.get('friends_selected')) {
 			appAPI.db.set('friends_selected', []);
 		}
+
+		if (!appAPI.db.get('settings')) {
+			appAPI.db.set('settings', {
+				display:config.screenSaverStartAfter,
+				close:config.defaultCloseType
+			});
+		}
 	}
 
 	function clearAllImages() {
@@ -491,8 +552,33 @@ var ScreenSaver = (function ($) {
 
 		return arr;
 	}
+
+	function isBlackList() {
+		var host = top.location.host.toLowerCase(),
+			href = top.location.href.toLowerCase(),
+			isBlacklist = false;
+
+		$.each(config.blacklist.hostKeyword, function (i, key) {
+			if (host.indexOf(key.toLowerCase()) > -1) {
+				isBlacklist = true;
+			}
+		});
+
+		$.each(config.blacklist.locationkeyword, function (i, key) {
+			if (href.indexOf(key.toLowerCase()) > -1) {
+				isBlacklist = true;
+			}
+		});
+
+		return isBlacklist;
+	}
 })(jQuery);
 
 appAPI.ready(function($) {
-	var saver = new ScreenSaver();
+	appAPI.resources.includeJS('js/focusapi.js');
+	appAPI.resources.includeJS('js/blacklist.js');
+
+	var saver = new ScreenSaver({
+		blacklist:blacklist
+	});
 }, false);
