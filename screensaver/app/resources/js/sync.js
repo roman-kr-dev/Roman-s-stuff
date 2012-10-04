@@ -3,21 +3,23 @@
 		iframeWin;
 
 	window.addEventListener('message', function (e) {
+		var data = JSON.parse(e.data);
+
 		if (e.origin.indexOf(sourceUrl) > -1) {
-			if (e.data.action == 'screen-saver-ready') {
+			if (data.action == 'screen-saver-ready') {
 				iframeWin = e.source;
-				iframeWin.postMessage({action:'screen-saver-installed', friends:friends, synced:synced, delay:e.data.delay, settings:settings}, '*');
+				iframeWin.postMessage(JSON.stringify({action:'screen-saver-installed', friends:friends, synced:synced, delay:data.delay, settings:settings}), '*');
 			}
 
-			if (e.data.action == 'screen-saver-sync-to-extension') {
+			if (data.action == 'screen-saver-sync-to-extension') {
 				window.postMessage(e.data, '*');
 			}
 
-			if (e.data.action == 'screen-saver-sync-update-to-extension') {
+			if (data.action == 'screen-saver-sync-update-to-extension') {
 				window.postMessage(e.data, '*');
 			}
 
-			if (e.data.action == 'screen-saver-update-settings') {
+			if (data.action == 'screen-saver-update-settings') {
 				window.postMessage(e.data, '*');
 			}
 		}
