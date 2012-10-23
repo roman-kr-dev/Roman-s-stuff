@@ -8,21 +8,93 @@ var ScreenSaver = (function ($) {
 			baseZindex:2147483000,
 			speedFor100PX:2500,
 			imageDisplayTimeout:1000,
-			slots:{
-				rows:3,
-				cols:3
-			}
+			speedJumpPercent:[25, 35],
+			screenRatio:'35%',
+			animationTopOffset:20,
+			animationBottomOffset:[20, 120],
+			maxImageWidth:[700, 500, 300],
+			screenPositions:[
+				{
+					x:'25%',
+					xOffset:25,
+					y:'50%',
+					yOffset:50,
+					maxWidthBinding:0,
+					speedRatio:1
+				}, {
+					x:'75%',
+					xOffset:25,
+					y:'50%',
+					yOffset:50,
+					maxWidthBinding:0,
+					speedRatio:1
+				}, {
+					x:'25%',
+					xOffset:20,
+					y:'25%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'75%',
+					xOffset:20,
+					y:'75%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'50%',
+					xOffset:20,
+					y:'50%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'50%',
+					xOffset:20,
+					y:'100%',
+					yOffset:40,
+					maxWidthBinding:1,
+					speedRatio:2
+				}, {
+					x:'15%',
+					xOffset:20,
+					y:'50%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}, {
+					x:'55%',
+					xOffset:20,
+					y:'55%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}, {
+					x:'22%',
+					xOffset:20,
+					y:'150%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}, {
+					x:'88%',
+					xOffset:20,
+					y:'150%',
+					yOffset:40,
+					maxWidthBinding:2,
+					speedRatio:3
+				}
+			]
 		}, mainApp, thi$, viewportWidth, viewportHeight, 
-		imagesData = {}, animationQueue = [], screenSlots = [],
-		screenWidth = $(window).width(), screenHeight = $(window).height(),
+		imagesData = {}, maxImageWidth = [], animationQueue = [],
 		animationQueueTimeout, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {
 			thi$ = this;
 
-			//initMaxImageWidth();
-			initSlots();
+			initMaxImageWidth();
 			initMainWindow();
 		},
 
@@ -35,7 +107,7 @@ var ScreenSaver = (function ($) {
 		},
 
 		addImage:function (data) {
-			//addImage(data);
+			addImage(data);
 		},
 
 		removeImage:function (data) {
@@ -55,15 +127,10 @@ var ScreenSaver = (function ($) {
 		}
 	});
 
-	function initSlots() {
-		var slotWidth = screenWidth / config.slots.cols,
-			slotHeight = screenHeight / config.slots.rows;
-
-		console.log('placa', slotWidth, slotHeight, screenWidth, $(window).width());
-	}
-
 	function initMaxImageWidth() {
-		config.maxImageWidth = (config.maxImageWidth * parseInt(config.screenRatio, 10) / 100);
+		$.each(config.maxImageWidth, function (i, imageWidth) {
+			maxImageWidth.push(imageWidth * parseInt(config.screenRatio, 10) / 100);
+		});
 	}
 
 	function initMainWindow() {
@@ -82,22 +149,35 @@ var ScreenSaver = (function ($) {
 		viewportWidth = imagesLayer.width();
 		viewportHeight = imagesLayer.height();
 	}
+
+	function initPictureDefaultSlot(data) {
+		$.each(config.screenPositions, function (i, position) {
+			if (!data.position && !position.active) {
+				data.position = position;
+				
+				position.active = true;
+			}
+		});
+
+		return data.position;
+	}
 	
 	function initPictureDefaultPosition(data) {
 		var ratio, pos;
-console.log('indf');
-		ratio = data.width > config.maxImageWidth ? data.width / config.maxImageWidth : 1;
+		
+		ratio = data.width > maxImageWidth[data.position.maxWidthBinding] ? data.width / maxImageWidth[data.position.maxWidthBinding] : 1;
 		pos = {
 			width:Math.round(data.width / ratio),
 			height:Math.round(data.height / ratio),
-			left:0,
-			top:0
+			left:Math.max(0, (viewportWidth * parseInt(data.position.x, 10) / 100) + (Math.floor(Math.random() * data.position.xOffset * 2) - data.position.xOffset) - ((data.width / ratio) / 2)),
+			top:(viewportHeight * parseInt(data.position.y, 10) / 100) + (Math.floor(Math.random() * data.position.yOffset * 2) - data.position.yOffset) - ((data.height / ratio) / 2)
 		};
 
+		data.speedRatio = data.position.speedRatio;
 		data.ratio = ratio;
 		data.pos = pos;
 		data.image.css(pos);
-console.log('nigger kushen', data);		
+		
 		insertAnimationQueue(data);
 	}
 
@@ -114,7 +194,7 @@ console.log('nigger kushen', data);
 		
 		if (animationQueue.length) {
 			data = animationQueue.shift();
-console.log('banan', data.image);
+
 			data.image.fadeIn(function () {
 				initPictureAnimation(data);
 			});
@@ -156,25 +236,27 @@ console.log('banan', data.image);
 	function addImage(data) {
 		var image;
 		
-		image = $('<img />');
+		if (initPictureDefaultSlot(data)) {
+			image = $('<img />');
 
-		data.image = image;
-		
-		image.data('image-id', data.id)
-		.on('load', function () { 
-			var image = $(this);
+			data.image = image;
 			
-			data.width = image.width();
-			data.height = image.height();
+			image.data('image-id', data.id)
+			.on('load', function () { 
+				var image = $(this);
+				
+				data.width = image.width();
+				data.height = image.height();
 
-			initPictureDefaultPosition(data);
+				initPictureDefaultPosition(data);
 
-			imagesLayer.removeClass('loader');
-		})
-		.attr('src', data.url)
-		.appendTo(imagesLayer);
+				imagesLayer.removeClass('loader');
+			})
+			.attr('src', data.url)
+			.appendTo(imagesLayer);
 
-		imagesData[data.id] = data;
+			imagesData[data.id] = data;
+		}
 	}
 
 	function removeImage(data) {

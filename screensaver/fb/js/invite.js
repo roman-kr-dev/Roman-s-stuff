@@ -1,18 +1,20 @@
 var FriendsDialog = (function () {
 	var config = {
 		max_selected:40,
+		selectRandomFriends:40,
 		second_action_text:'',
 		personal_message:'',
 		friends_list:[],
+		selected_list:[],
 		action_botton_text:'Continue',
 		cancel_botton_text:'Skip',
 		action_botton_function:'friendsScreenSaver.invite',
 		cancel_botton_function:'friendsScreenSaver.skip',
 		search_default:'Start Typing a Name',
-		title_text:'Choose Friends',
+		title_text:'Choose all your friends that you want to see on your screensaver',
 		no_selected_friends:'You have no selected friends.',
 		too_many_friends:'Too many friends selected.',
-		tab_all:'All',
+		tab_all:'All Friends',
 		tab_selected:'Selected',
 		find_friends_label:'Find Friends:',
 		personal_message_label:'Add a personal message:',
@@ -28,16 +30,15 @@ var FriendsDialog = (function () {
 			this.allTab = true;
 			
 			this.dialog = $('<div />').html(new FriendsDialogHTML(config).html).appendTo('#friends');
+			this.selectFriends(config.selected_list);
 		},
 
 		selectTab:function (all, auto) {
-			var noFriends = $('#friendsScreenSaver.friendsDialog_no_friends'),
-				tabAll = $('#friendsScreenSaver.friendsDialog_tab_all'),
-				tabSelected = $('#friendsScreenSaver.friendsDialog_tab_selected'),
-				maxSelected = $('#friendsScreenSaver.friendsDialog_max_selected');
-			
-			if (this.allTab == all) return;
-			
+			var noFriends = $('#friendsScreenSaver_no_friends'),
+				tabAll = $('#friendsScreenSaver_tab_all'),
+				tabSelected = $('#friendsScreenSaver_tab_selected'),
+				maxSelected = $('#friendsScreenSaver_max_selected');
+					
 			maxSelected.css('display', 'none');
 			clearInterval(this.fade_delay);
 			
@@ -64,18 +65,25 @@ var FriendsDialog = (function () {
 			this.resetSearch();
 			this.showFriends(all);
 		},
+
+		selectActiveTab:function (type) {
+			switch (type) {
+				case 'selected':
+					this.selectTab(false);
+					break;
+			}
+		},
 		
 		selectFriend:function (li) {
-			var id = li.attr('friend') * 1,
+			var id = li.attr('friend'),
 				selecedCount = $('#selected_count');
-			
-			if (this.selected.indexOf(id) == -1 && this.selected.length < config.max_selected) {
+
+			if ($.inArray(id, this.selected) == -1 && this.selected.length < config.max_selected) {
 				li.addClass('selected');
 				this.selected.push(id);
 
 				this.events.fire('friendSelect', {id:id, selected:this.selected});
-			}
-			else if (this.selected.indexOf(id) > -1) {
+			} else if ($.inArray(id, this.selected) > -1) {
 				li.removeClass('selected');
 				this.selected.splice( $.inArray(id, this.selected), 1 );
 				this.events.fire('friendUnSelect', {id:id, selected:this.selected});
@@ -86,23 +94,35 @@ var FriendsDialog = (function () {
 			this.maxSelected(li);
 		},
 
+		selectRandomFriends:function () {
+			this.events.fire('selectRandomFriends');
+		},
+
 		selectFriends:function (friends) {
 			var ul = $('#friendsScreenSaver'),
 				selecedCount = $('#selected_count');
 
+			this.unselectFriends();
+
 			$.each(friends, function (i, id) {
 				var li = ul.find('li[friend="' + id + '"]');
-				
+		
 				li.addClass('selected');
 				thi$.selected.push(id);
 			});
 
 			selecedCount.html(thi$.selected.length);
 		},
+
+		unselectFriends:function () {
+			var selected = $('#friendsScreenSaver').find('li.selected').removeClass('selected');
+
+			thi$.selected = [];
+		},
 		
 		showFriends:function (all) {
 			$('ul#friendsScreenSaver li').each($.proxy(function (i, li) {
-				$(li).css('display', all ? 'block' : this.selected.indexOf($(li).attr('friend') * 1) == -1 ? 'none' : 'block');
+				$(li).css('display', all ? 'block' : $.inArray($(li).attr('friend'), this.selected) == -1 ? 'none' : 'block');
 			}, this));
 		},
 		
@@ -121,7 +141,7 @@ var FriendsDialog = (function () {
 		},
 		
 		maxSelected:function (li) {
-			var maxSelected = $('#friendsScreenSaver.friendsDialog_max_selected');
+			var maxSelected = $('#friendsScreenSaver_max_selected');
 			
 			if (!li.is('.selected') && this.selected.length == config.max_selected) {
 				if (this.fade_delay) clearTimeout(this.fade_delay);
@@ -135,11 +155,15 @@ var FriendsDialog = (function () {
 		},
 		
 		focusInput:function (input) {
-			if (input.value == input.title) $(input).val('').removeClass('input_placeholder');
+			if (input.value == input.title) {
+				$(input).val('').removeClass('input_placeholder');
+			}
 		},
 		
 		blurInput:function (input) {
-			if (input.value == '') $(input).set('value', input.title).addClass('input_placeholder');
+			if (input.value == '') {
+				$(input).val(input.title).addClass('input_placeholder');
+			}
 		},
 		
 		resetSearch:function () {
@@ -155,19 +179,19 @@ var FriendsDialog = (function () {
 		},
 		
 		sendInvites:function () {
-			try {
-				eval(config.action_botton_function + '(this.selected)');
-			}
-			catch (e) {
-			}
+			eval(config.action_botton_function + '(this.selected)');
 		},
 		
 		cancelInvites:function () {
-			try {
-				eval(config.cancel_botton_function + '()');
-			}
-			catch (e) {
-			}
+			eval(config.cancel_botton_function + '()');
+		},
+
+		setActionText:function (text) {
+			$('#friendsScreenSaver-action-button').val(text);
+		},
+
+		showSettingsButton:function () {
+			$('#friendsScreenSaver-settings-button').removeClass('hidden');
 		}
 	});
 })();
@@ -240,6 +264,13 @@ var FriendsDialogHTML = (function () {
 									html.push('<input id="friendsScreenSaver.friendsDialog_filter" onfocus="friendsScreenSaver.friendsDialog.focusInput(this);" onblur="friendsScreenSaver.friendsDialog.blurInput(this);" onkeyup="friendsScreenSaver.friendsDialog.friendsSeach(this.value)" type="text" value="'+config.search_default+'" title="'+config.search_default+'" autocomplete="off" size="42" class="inputtext input_placeholder">');
 									html.push('<div id="friendsScreenSaver.friendsDialog_clear" style="display:none;"><a class="hide" onclick="friendsScreenSaver.friendsDialog.resetSearch(); return false;" href="#"></a></div>');
 								html.push('</td>');
+								
+								html.push('<td class="select-random-friends">');
+									//select X random friends
+									html.push('<label class="uiButton">');
+										html.push('<input type="button" onclick="friendsScreenSaver.friendsDialog.selectRandomFriends();" value="Select ' + config.selectRandomFriends + ' random friends">');
+									html.push('</label>');
+								html.push('</td>');
 							html.push('</tr>');
 						html.push('</table>');
 					html.push('</div>');
@@ -250,7 +281,8 @@ var FriendsDialogHTML = (function () {
 						html.push('<div class="sel_filters">');
 							html.push('<div class="clearfix">');
 								html.push('<ul class="friends_tabs">');
-									html.push('<li id="friendsScreenSaver.friendsDialog_tab_all" class="friends_tab friends_tab_selected">');
+									//all friends
+									html.push('<li id="friendsScreenSaver_tab_all" class="friends_tab friends_tab_selected">');
 										html.push('<a onclick="friendsScreenSaver.friendsDialog.selectTab(true); return false;" href="#">');
 											html.push('<div class="tl">');
 												html.push('<div class="tr">');
@@ -261,7 +293,9 @@ var FriendsDialogHTML = (function () {
 											html.push('</div>');
 										html.push('</a>');
 									html.push('</li>');
-									html.push('<li id="friendsScreenSaver.friendsDialog_tab_selected" class="friends_tab">');
+
+									//selected tab
+									html.push('<li id="friendsScreenSaver_tab_selected" class="friends_tab">');
 										html.push('<a onclick="friendsScreenSaver.friendsDialog.selectTab(false); return false;" href="#">');
 											html.push('<div class="tl">');
 												html.push('<div class="tr">');
@@ -279,17 +313,17 @@ var FriendsDialogHTML = (function () {
 					break;
 
 				case 'no_friends':
-					html.push('<div id="friendsScreenSaver.friendsDialog_no_friends" class="no_friends_notice" style="display: none;">'+config.no_selected_friends+'</div>');
+					html.push('<div id="friendsScreenSaver_no_friends" class="no_friends_notice" style="display: none;">'+config.no_selected_friends+'</div>');
 					break;
 
 				case 'max_selected':
-					html.push('<div id="friendsScreenSaver.friendsDialog_max_selected" class="no_max_selected_notice" style="display: none;">'+config.too_many_friends+'</div>');
+					html.push('<div id="friendsScreenSaver_max_selected" class="no_max_selected_notice" style="display: none;">'+config.too_many_friends+'</div>');
 					break;
 
 				case 'friends':
 					html.push('<ul id="friendsScreenSaver" class="friends">');
 						$(config.friends_list).each(function (i, friend) {
-							html.push('<li friend="'+friend.id+'" name="'+friend.name+'">');
+							html.push('<li friend="' + friend.id + '" name="' + friend.name + '">');
 								html.push('<a onclick="friendsScreenSaver.friendsDialog.selectFriend($(this.parentNode)); return false;" title="'+friend.name+'" href="#"><span style="background-image: url('+friend.icon+');" class="square"><span></span></span><strong>'+friend.name+'</strong></a>');
 							html.push('</li>');
 						});
@@ -302,7 +336,7 @@ var FriendsDialogHTML = (function () {
 
 				case 'personal_message':
 					html.push('<div class="personal_message">');
-						html.push('<label>'+config.personal_message_label+'</label>');
+						html.push('<label>' + config.personal_message_label + '</label>');
 						html.push('<div class="personal_message_wrapper">');
 							html.push('<textarea id="friendsScreenSaver.friendsDialog_message" onfocus="friendsScreenSaver.friendsDialog.focusInput(this);" onblur="friendsScreenSaver.friendsDialog.blurInput(this);" rows="2" title="'+config.personal_message+'" class="input_placeholder">'+config.personal_message+'</textarea>');
 						html.push('</div>');
@@ -311,14 +345,17 @@ var FriendsDialogHTML = (function () {
 
 				case 'buttons':
 					html.push('<div class="buttons">');
-						html.push('<div>');
-							html.push('<label class="uiButton uiButtonConfirm uiButtonLarge">');
-								html.push('<input type="button" onclick="friendsScreenSaver.friendsDialog.sendInvites();" value="'+config.action_botton_text+'">');
+						html.push('<div>');							
+							html.push('<label class="uiButton uiButtonConfirm uiButtonLarge continue-button">');
+								html.push('<input id="friendsScreenSaver-action-button" type="button" onclick="friendsScreenSaver.friendsDialog.sendInvites();" value="'+config.action_botton_text+'">');
 							html.push('</label>');
 
-							html.push('<label class="uiButton uiButtonLarge">');
-								html.push('<input type="button" onclick="friendsScreenSaver.friendsDialog.cancelInvites()" value="'+config.cancel_botton_text+'">');
+							//settings
+							html.push('<label id="friendsScreenSaver-settings-button" class="uiButton settings-button hidden">');
+								html.push('<input type="button" onclick="friendsScreenSaver.openSettingsDialog();" value="Settings">');
 							html.push('</label>');
+
+							html.push('<span class="cancel-button" onclick="friendsScreenSaver.friendsDialog.cancelInvites()">' + config.cancel_botton_text + '</span>');
 						html.push('</div>');
 					html.push('</div>');
 

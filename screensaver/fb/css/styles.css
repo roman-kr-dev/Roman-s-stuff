@@ -1,14 +1,50 @@
 body {
-	font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
+	font-family:"Helvetica Neue",arial,sans-serif;
+	overflow:hidden;
+}
+
+.loader {
+	background-image:url(images/ajax-loader.gif);
+	background-repeat:no-repeat;
+	background-position:center center;
 }
 
 .hidden {
 	display:none;
 }
 
-h1.header-title {
-	
+div.content-container {
+	width:760px;
+	xheight:880px;
 }
+
+/* header - start */
+div.header {
+	height:86px;
+	margin-top:5px;
+}
+
+	div.header img {
+		float:left;
+		width:75px;
+		height:75px;
+	}
+
+	div.header div.taglines {
+		float:left;
+		margin-top:5px;
+		margin-left:15px;
+	}
+
+		div.header div.taglines h1 {
+			font-size:25px;
+			color:#3B5998;
+		}
+
+	div.header div.facebook-like {
+		margin-top:13px;
+	}
+/* header - end */
 
 div.header-sub-title {
 	font-size:12px;
@@ -17,7 +53,6 @@ div.header-sub-title {
 }
 
 div.friends {
-	margin-top:10px;
 	height:300px;
 }
 
@@ -31,33 +66,254 @@ div.install {
 		margin-top:40px;
 	}
 
+/* preview */
 div.preview {
-	width:758px;
-	height:400px;
-	border:1px solid #CCC;
+	width:100%;
+	height:100%;
+	position:absolute;
 }
 
-	div.preview iframe {
-		width:758px;
-		height:400px;
+	/*div.preview div.title {
+		font-size:26px;
+		font-weight:bold;
+		text-align:center;
+		width:100px;
+		border-radius: 5px;
+		color:#03F;
+		background:white;
+		padding:4px;
+		position:relative;
+		top:80px;
+		left:80px;
+		
+		transform: rotate(317deg);
+		-webkit-transform: rotate(317deg);
+		-o-transform: rotate(317deg);
+		-moz-transform: rotate(317deg);
+
+		text-shadow: 1px 2px 2px #FFF;
 	}
 
-a.choose-friends {
+	:root div.preview div.title {
+		top:47px \0/IE9;
+		left:86px \0/IE9;
+	}*/
+
+	div.preview iframe {
+		margin:0px;
+		padding:0px;
+		border:none;
+		width:100%;
+		height:100%;
+	}
+
+	/* approve app box */
+	div.preview div.approve-app-text {
+		position:absolute;
+		top:120px;
+		height:120px;
+		background:#FFF;
+		background:rgba(255, 255, 255, 0.9);
+		border:5px solid #3B5998;
+		padding:8px;
+		text-align:center;
+		-webkit-border-radius:5px;
+		-moz-border-radius:5px;
+		border-radius:5px;
+	}
+
+	div.preview div.approve-app-text-1 {
+		left:205px;
+		width:350px;
+	}
+
+	div.preview div.approve-app-text-2 {
+		left:230px;
+		width:300px;
+	}
+
+		div.preview div.approve-app-text h3 {
+			font-size:20px;
+			letter-spacing:-1px;
+		}
+
+		div.preview div.approve-app-text div.comment {
+			font-size:17px;
+		}
+
+		div.preview div.approve-app-text-1 div.comment {
+			margin-top:9px;
+		}
+
+		div.preview div.approve-app-text-2 div.comment {
+			margin-top:15px;
+		}
+
+		div.preview div.approve-app-text div.approve-app {
+			margin-left:auto;
+			margin-right:auto;
+			margin-top:24px;
+			background:#669C35;
+			color:#FFF;
+			width: 95px;
+			padding: 8px;
+			font-weight: bold;
+			-webkit-border-radius:13px;
+			-moz-border-radius:13px;
+			border-radius:13px;
+			cursor:pointer;
+		}
+
+
+/* update message */
+div.message-update-box {
+	font:normal 20px "Helvetica Neue", arial, sans-serif;
+	letter-spacing:-1px;
+	position:fixed;
+	top:100px;
 	color:white;
-	display:inline-block;
-	background-color:#FFB515;
-	font-size:24px;
-	padding:15px;
-	text-decoration:none;
-	border-bottom:1px solid rgba(0, 0, 0, 0.25);
-	border-radius:5px 5px 5px 5px;
-	box-shadow:0 1px 3px rgba(0, 0, 0, 0.5);
-	cursor: pointer;
-	font-weight:bold;
-	line-height:1;
-	text-shadow:0 -1px 1px rgba(0, 0, 0, 0.25);
+	background-color:black;
+	text-align:center;
+	opacity:0.7;
+	z-index:100000;
+	padding:10px 40px 10px 40px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
 }
 
-a.choose-friends:hover {
-	text-decoration:underline;
+/* not supported browser */
+div.not-support {
+	text-align:center;
+	margin-top:100px;
+	font-weight:bold;
 }
+
+/* not supported mobile */
+div.not-support-mobile {
+	text-align:center;
+	margin-top:50px;
+	font-size:30px;
+	font-weight:bold;
+}
+
+/* settings popup */
+div.screen-saver-settings {
+	direction:ltr;
+	text-align:left;
+
+	z-index:10;
+	position:absolute;
+	top:150px;
+	left:122px;
+	background: rgba(82, 82, 82, 0.7);
+	padding:10px;
+
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+
+	div.screen-saver-settings-container {
+		position:relative;
+		background:#fff;
+		border:1px solid #555;
+		padding:10px;
+		width:500px;
+		height:130px;
+	}
+
+		/* settings close */
+		div.screen-saver-settings-close {
+			position:absolute;
+			top:2px;
+			right:3px;
+			width:20px;
+			height:20px;
+			background:url(images/close.png) no-repeat;
+			cursor:pointer;
+		}
+
+		/* settings title */
+		div.screen-saver-settings-title {
+			font-size:19px;
+			color:#53637D;
+			margin-bottom:4px;
+		}
+
+		/* settings list */
+		div.screen-saver-settings-list {
+			clear:both;
+			padding-top:14px;
+			padding-bottom:14px;
+			border-top:1px solid #EEEEEE;
+		}
+
+			/* settings list name */
+			div.screen-saver-settings-list-name {
+				float:left;
+				width:150px;
+				font-size:18px;
+			}
+
+			/* settings list options */
+			div.screen-saver-settings-list-options {
+				float:left;
+			}
+
+				/* settings list option line */
+				div.screen-saver-settings-list-option-line {
+					margin-bottom:2px;
+				}
+
+					/* settings list option radio / checkbox */
+					div.screen-saver-settings-list-options div input {
+						margin-right:8px;
+					}
+
+					/* settings list option text */
+					div.screen-saver-settings-list-options div span {
+						color:#000;
+						font-size:13px;
+						position:relative;
+						top:-1px;
+					}
+
+				/* hide pink facebook */
+				div.screen-saver-settings-hide-pink-link {
+					margin-left:5px;
+					margin-top:5px;
+				}
+
+				div.screen-saver-settings-hide-pink-box {
+					width:320px;
+					padding:10px;
+					margin-left:5px;
+					margin-top:5px;
+					border:1px solid #CCC;
+					font-size:15px;
+					display:none;
+				}
+
+					a.screen-saver-settings-hide-all {
+						background-color:#A5A5A5;
+						border-bottom:1px solid rgba(0, 0, 0, 0.25);
+						border-radius:5px 5px 5px 5px;
+						box-shadow:0 1px 3px rgba(0, 0, 0, 0.5);
+						color:#FFFFFF;
+						cursor:pointer;
+						display:inline-block;
+						font-weight:bold;
+						line-height:1;
+						padding:4px 8px 5px;
+						position:relative;
+						text-decoration: none;
+						text-shadow:0 -1px 1px rgba(0, 0, 0, 0.25);
+						font-size:12px;
+						margin-top:5px;
+					}
+
+					a.screen-saver-settings-hide-all:hover {
+						background-color:#878787;
+					}
