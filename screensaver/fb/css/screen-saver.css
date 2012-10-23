@@ -1,5 +1,5 @@
 body {
-	background:url(images/mac.png) no-repeat;
+	xbackground:url(images/background-pattern.jpg);
 }
 
 .loader {
@@ -12,6 +12,8 @@ body {
 	left:0;
 	width:100%;
 	height:100%;
+	background:#000;
+	opacity:0.8;
 }
 
 .screen-saver-images {
@@ -20,6 +22,7 @@ body {
 	left:0;
 	width:100%;
 	height:100%;
+	overflow:hidden;
 }
 
 	.screen-saver-images img {

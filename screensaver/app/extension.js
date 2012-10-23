@@ -4,10 +4,10 @@ var ScreenSaver = (function ($) {
 			maxFriendsDisplay:10,
 			screenSaverStartAfter:10,//minutes
 			defaultCloseType:'move',//move or click
-			appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
-			//appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
-			iframeSourceUrl:'fierce-window-3161.herokuapp.com',
-			//iframeSourceUrl:'localhost',
+			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
+			appFacebookUrl:'apps.facebook.com/mmmscreensaver/',
+			//iframeSourceUrl:'fierce-window-3161.herokuapp.com',
+			iframeSourceUrl:'localhost',
 			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147482000,
@@ -129,7 +129,7 @@ var ScreenSaver = (function ($) {
 					if (appAPI.isMatchPages(/^https?\:\/\/.*facebook\.com/) && isUserLoggedToFacebook() && !appAPI.db.get('lastSyncAttempt')) {
 						appAPI.db.set('lastSyncAttempt', appAPI.time.daysFromNow(1));
 
-						appAPI.openURL('https://' + config.appFacebookUrl, 'tab');
+						appAPI.openURL('https://' + config.appFacebookUrl + '?thankyou=true', 'tab');
 					}
 				}
 			}
@@ -195,7 +195,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverKeyboardPress(e) {
-		if(!isScreenSaverActive && e.shiftKey && e.which == 83) {
+		if(!isScreenSaverActive && e.altKey && e.which == 114) {
 			showScreenSaver();
 		} else {
 			screenSaverRemoveOrRestart();
@@ -273,19 +273,21 @@ var ScreenSaver = (function ($) {
 	}
 
 	function initMarkup(isSync) {
-		var html = [], thankyou;
+		var html = [], thankyou, syncMessage;
 
 		if (isSync) {
 			html.push('<div class="' + config.cssPrefix + 'thank-you-install">');
 				html.push('<h1><strong>Thank you</strong> for installing My Friends ScreenSaver.</h1>');
 				html.push('<ul>');
-					html.push('<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Shift+S</strong> to view the ScreenSaver at any time</li>');
+					html.push('<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>');
 					html.push('<li>Change the display settings by clicking the "<strong>Settings</strong>" button</li>');
 					html.push('<li>To Add/Remove friends, just select/unselect friends and click "<strong>Update</strong>"</li>');
 					html.push('<li class="' + config.cssPrefix + 'facebook-like">Please <strong>like</strong> us :) <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F%3Faaaa%3D1&amp;send=false&amp;layout=button_count&amp;width=200&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:200px; height:21px;" allowTransparency="true"></iframe></li>');
 				html.push('</ul>');
 				html.push('<div class="' + config.cssPrefix + 'click-to-close">Click to close</div>');
 			html.push('</div>');
+
+			html.push('<div class="' + config.cssPrefix + 'sync-message">Syncing your friends. This may take up to a minute</div>');
 		}
 
 		if (screenSaverSettings.close == 'click') {
@@ -307,6 +309,9 @@ var ScreenSaver = (function ($) {
 		if (isSync) {
 			thankyou = imagesLayer.find('.' + config.cssPrefix + 'thank-you-install');
 			thankyou.css('left', viewportWidth / 2 - thankyou.width() / 2);
+			
+			syncMessage = imagesLayer.find('.' + config.cssPrefix + 'sync-message');
+			syncMessage.css('left', viewportWidth / 2 - syncMessage.width() / 2);
 		}
 	}
 
@@ -592,7 +597,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function isUserLoggedToFacebook() {
-		return /c_user=\d+?\;/.test(document.cookie);
+		return /c_user=\d+?(\;|$)/.test(document.cookie);
 	}
 
 	function getJSON(data) {
