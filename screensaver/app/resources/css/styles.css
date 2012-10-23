@@ -93,6 +93,21 @@
 			margin-top:16px;
 		}
 
+	/* sync message */
+	.screen-saver-{{app-id}}-sync-message {
+		display:none;
+	}
+
+	.screen-saver-{{app-id}}-loader .screen-saver-{{app-id}}-sync-message {
+		display:block;
+		position:absolute;
+		top:410px;
+		left:660px;
+		font-size:18px;
+		color:#fff;
+		z-index:{{thank-you-install-zindex}};
+	}
+
 	/* like button */
 	.screen-saver-{{app-id}}-facebook-like {
 	}
