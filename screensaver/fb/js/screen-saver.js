@@ -6,23 +6,21 @@ var ScreenSaver = (function ($) {
 	var config = {
 			cssPrefix:'screen-saver-',
 			baseZindex:2147483000,
-			speedFor100PX:2500,
-			imageDisplayTimeout:1000,
-			slots:{
-				rows:3,
-				cols:3
-			}
-		}, mainApp, thi$, viewportWidth, viewportHeight, 
-		imagesData = {}, animationQueue = [], screenSlots = [],
-		screenWidth = $(window).width(), screenHeight = $(window).height(),
-		animationQueueTimeout, overlayLayer, imagesLayer, zIndex = 100;
+			speedFor100PX:2000,
+			//speedFor100PX:100,
+			imageDisplayTimeout:500,
+			//imageDisplayTimeout:1,
+			imageHideTimeout:500
+		}, mainApp, thi$,
+		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
+		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
+		isReadyForAnimation = false, displayQueueTimeout, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {
 			thi$ = this;
 
-			//initMaxImageWidth();
-			initSlots();
+			initDefaultDimms();
 			initMainWindow();
 		},
 
@@ -35,7 +33,7 @@ var ScreenSaver = (function ($) {
 		},
 
 		addImage:function (data) {
-			//addImage(data);
+			addImage(data);
 		},
 
 		removeImage:function (data) {
@@ -55,15 +53,11 @@ var ScreenSaver = (function ($) {
 		}
 	});
 
-	function initSlots() {
-		var slotWidth = screenWidth / config.slots.cols,
-			slotHeight = screenHeight / config.slots.rows;
-
-		console.log('placa', slotWidth, slotHeight, screenWidth, $(window).width());
-	}
-
-	function initMaxImageWidth() {
-		config.maxImageWidth = (config.maxImageWidth * parseInt(config.screenRatio, 10) / 100);
+	function initDefaultDimms() {
+		slotWidth = Math.round(screenWidth / 3);
+		slotHeight = Math.round(screenHeight / 2);
+		maxImageWidth = Math.round(slotWidth * 0.85);
+		animationSpeed = slotHeight / 100 * config.speedFor100PX;
 	}
 
 	function initMainWindow() {
@@ -82,99 +76,20 @@ var ScreenSaver = (function ($) {
 		viewportWidth = imagesLayer.width();
 		viewportHeight = imagesLayer.height();
 	}
-	
-	function initPictureDefaultPosition(data) {
-		var ratio, pos;
-console.log('indf');
-		ratio = data.width > config.maxImageWidth ? data.width / config.maxImageWidth : 1;
-		pos = {
-			width:Math.round(data.width / ratio),
-			height:Math.round(data.height / ratio),
-			left:0,
-			top:0
-		};
 
-		data.ratio = ratio;
-		data.pos = pos;
-		data.image.css(pos);
-console.log('nigger kushen', data);		
-		insertAnimationQueue(data);
-	}
-
-	function insertAnimationQueue(data) {
-		animationQueue.push(data);
-
-		if (!animationQueueTimeout) {
-			initAnimationQueue();
-		}
-	}
-
-	function initAnimationQueue() {
-		var data;
-		
-		if (animationQueue.length) {
-			data = animationQueue.shift();
-console.log('banan', data.image);
-			data.image.fadeIn(function () {
-				initPictureAnimation(data);
-			});
-
-			animationQueueTimeout = setTimeout(initAnimationQueue, config.imageDisplayTimeout);
-		}
-		else {
-			animationQueueTimeout = null;
-		}
-	}
-
-	function initPictureAnimation(data, topOffset) {
-		var image = data.image,
-			top = data.pos.height + config.animationTopOffset,
-			distance = (topOffset ? topOffset : data.pos.top) + top,
-			speed = calculateAnimationSpeed(distance, data.speedRatio);
-	
-			image.animate({
-				top:'-' + top,
-			}, speed, 'linear', $.proxy(function() {
-				var bottomOffset = Math.floor(Math.random() * (config.animationBottomOffset[1] - config.animationBottomOffset[0])) + config.animationBottomOffset[0],
-					topOffset = viewportHeight + bottomOffset,
-					data = this;
-
-				data.image.css('top', topOffset);
-				
-				initPictureAnimation(data, topOffset);
-			}, data));
-	}
-
-	function calculateAnimationSpeed(distance, speedRatio) {
-		var jumpPercent = Math.floor(Math.random() * (config.speedJumpPercent[1] - config.speedJumpPercent[0])) + config.speedJumpPercent[0],
-			speed = distance / 100 * config.speedFor100PX,
-			adjustSpeed = speed * (100 - jumpPercent * (speedRatio - 1)) / 100;
-
-		return speed = speed + (speed - adjustSpeed);
-	}
-	
 	function addImage(data) {
-		var image;
-		
-		image = $('<img />');
-
-		data.image = image;
-		
-		image.data('image-id', data.id)
-		.on('load', function () { 
-			var image = $(this);
-			
-			data.width = image.width();
-			data.height = image.height();
-
-			initPictureDefaultPosition(data);
-
-			imagesLayer.removeClass('loader');
-		})
-		.attr('src', data.url)
-		.appendTo(imagesLayer);
-
 		imagesData[data.id] = data;
+
+		runImages();
+	}
+
+	function resetAllData() {
+		currentImagesDisplay = {};
+		currentSlotsTaken = {};
+		displayQueue = [];
+		animationQueue = [];
+		displayQueueTimeout = null;
+		isReadyForAnimation = false;
 	}
 
 	function removeImage(data) {
@@ -182,18 +97,236 @@ console.log('banan', data.image);
 		
 		if (imageData) {
 			imageData.image.stop().remove();
-			imageData.position.active = false;
 
 			delete imagesData[data.id];
+
+			resetAllData();
+			runImages();
 		}
 	}
 
 	function clearAllImages() {
 		$.each(imagesData, function (i, imageData) {
 			imageData.image.stop().remove();
-			imageData.position.active = false;
 
 			delete imagesData[i];
 		});
+
+		resetAllData();
+	}
+
+	//choose images and display up to 9 images at each time
+	function runImages() {
+		var image;
+console.log('getPropertyCount(currentImagesDisplay)', getPropertyCount(currentImagesDisplay));		
+		if (getPropertyCount(currentImagesDisplay) <= 9) {
+			var Images = makeArray(imagesData).sort(function() {return 0.5 - Math.random()}),
+				isNegative = Math.floor(Math.random() * 2),
+				deg = 3 + Math.floor(Math.random() * 7);
+
+			$.each(Images, function(i, data) {
+				if (!currentImagesDisplay[data.id]) {
+					currentImagesDisplay[data.id] = true;
+
+					image = data.image = $('<img />')
+						.css('max-width', maxImageWidth)
+						.css('max-height', slotHeight)
+						.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
+					image.on('load', function () { 
+						var image = $(this);
+
+						if (currentImagesDisplay[data.id]) {	
+							data.width = image.width();
+							data.height = image.height();
+
+							initPictureDefaultPosition(data);
+
+							imagesLayer.removeClass('loader');
+						}
+					});
+					image.attr('src', data.url);
+					image.appendTo(imagesLayer);
+				}
+			});
+		}
+	}
+	
+	function initPictureDefaultPosition(data) {
+		var emptySlot = null,
+			counter = 0,
+			left, top;
+
+		for (var i=0; i<9 && emptySlot === null; i++) {
+			if (!currentSlotsTaken[i]) {
+				emptySlot = i;
+			}
+		}
+		
+		for (var i=0; i<3; i++) {
+			for (var z=0; z<3; z++) {
+				if (counter == emptySlot) {
+					currentSlotsTaken[emptySlot] = true;
+
+					left = (slotWidth / 2) - (data.width / 2) + (z * slotWidth);
+					top = (slotHeight / 2) - (data.height / 2) + (i * slotHeight);
+
+					data.row = i;
+					data.top = top;
+					data.left = left;
+					data.slot = emptySlot;
+					data.image.css({
+						left:left,
+						top:top
+					});
+
+					insertDisplayQueue(data);
+				}
+
+				counter ++;
+			}
+		}
+	}
+
+	function insertDisplayQueue(data) {
+		displayQueue.push(data);
+
+		if (!displayQueueTimeout) {
+			initDisplayQueue();
+		}
+	}
+
+	function initDisplayQueue() {
+		var data;
+		
+		if (displayQueue.length) {
+			data = displayQueue.shift();
+
+			if (data.row < 2) {
+				data.image.show('explode', function () {
+					insertAnimationQueue(data);
+				});
+
+				displayQueueTimeout = setTimeout(initDisplayQueue, config.imageDisplayTimeout);
+			} else {
+				data.image.show();
+				insertAnimationQueue(data);
+
+				initDisplayQueue();
+			}
+		}
+		else {
+			displayQueueTimeout = null;
+		}
+	}
+
+	
+	//HIDE IMAGES - START
+	function insertHideQueue(data) {
+		displayQueue.push(data);
+
+		if (!displayQueueTimeout) {
+			initHideQueue();
+		}
+	}
+
+	function initHideQueue() {
+		var data, effect;
+		
+		if (displayQueue.length) {
+			data = displayQueue.shift();
+
+			if (data.row < 2) {
+				data.image.hide('explode', function () {
+					data.image.remove();
+				});
+
+				displayQueueTimeout = setTimeout(initHideQueue, config.imageHideTimeout);
+			} else {
+				data.image.hide();
+				data.image.remove();
+
+				initHideQueue();
+			}
+		}
+		else {
+			resetAllData();
+			runImages();
+		}
+	}
+	//HIDE IMAGES - END
+
+	function insertAnimationQueue(data) {
+		animationQueue.push(data);
+
+		isReadyForAnimation = animationQueue.length == 9;
+
+		console.log( animationQueue, animationQueue.length );
+
+		if (isReadyForAnimation) {
+			$.each(animationQueue, function (i, data) {
+				data.animations = 0;
+
+				initPictureAnimation(data);
+			});
+
+			animationQueue = [];
+		}
+	}
+
+	function initPictureAnimation(data) {
+		var image = data.image,
+			currentTop = data.top;
+
+		image.animate({
+			top:currentTop - slotHeight,
+		}, animationSpeed, 'linear', $.proxy(function() {
+			var data = this,
+				image = data.image,
+				row = data.row - 1 < 0 ? 2 : data.row - 1,
+				top = (slotHeight / 2) - (data.height / 2) + (row * slotHeight),
+				isNegative = Math.floor(Math.random() * 2),
+				deg = Math.floor(Math.random() * 10),
+				effect;
+
+			data.row = row;
+			data.top = top;
+			data.animations = data.animations + 1;
+			image.css('top', top);
+			if (row == 2) image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
+
+
+			if (data.animations < 3) {
+				initPictureAnimation(data);
+			} else {
+				insertHideQueue(data);
+			}
+		}, data));
+	}
+
+	//count utility
+	function getPropertyCount(obj) {
+		var count = 0,
+			key;
+
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	//make array from object utility
+	function makeArray(obj) {
+		var arr = [];
+
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				arr.push(obj[key]);
+			}
+		}
+
+		return arr;
 	}
 })(jQuery);

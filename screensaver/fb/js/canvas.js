@@ -1,11 +1,13 @@
 var FriendsScreenSaver = (function () {
 	var config = {
 			fbAddActionUrl:'http://fierce-window-3161.herokuapp.com/fb_action.php?friend_id={@id}&friend_name={@friend_name}&my_name={@my_name}&api=true',
-			defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/photos/{i}.jpeg',
+			//defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/photos/{i}.jpeg',
+			defaultImagesForLogout:'http://localhost/roman/screensaver/fb/images/photos/{i}.jpeg',
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
-			checkInstallTimeout:4000,
+			//checkInstallTimeout:4000,
+			checkInstallTimeout:1,
 			checkInstallTimeoutThankyou:60000,
 			checkInstallTimeoutDelay:20000,
 			messages:{
@@ -19,6 +21,7 @@ var FriendsScreenSaver = (function () {
 		selectedFrinedsList = getSelectedFriends(),
 		iframeScreenSaver, friendsDialog, userData, screenSaverSettings, friendsList = [], friendsById = {}, imagesQueue = {}, imagesCache = {},
 		queueProgress = false, initRandomProgess = false, syncComplete = false, isInstalled = false, 
+		screenWidth = $(window).width(), screenHeight = $(window).height(),
 		dfdInstalled, dfdIframeReady, checkInstallTime, fadeOutTimeout;
 
 	return Class.extend({
@@ -41,7 +44,7 @@ var FriendsScreenSaver = (function () {
 					loadIframe();
 					initEvents();
 
-					_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
+					//_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
 				});
 			}
 		},
@@ -157,7 +160,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function requestAuthConfirm() {
-		_gaq.push(['_trackEvent', 'new_user', 'auth_dialog_open', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
+		//_gaq.push(['_trackEvent', 'new_user', 'auth_dialog_open', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
 
 		FB.login(function (response) {
 			if (response.authResponse) {
@@ -165,7 +168,7 @@ var FriendsScreenSaver = (function () {
 				cfg.userId = response.authResponse.userID;
 				cfg.checkExtensionInstall = false;
 
-				_gaq.push(['_trackEvent', 'new_user', 'auth_success', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
+				//_gaq.push(['_trackEvent', 'new_user', 'auth_success', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
 
 				transitionToLoggedInMode(function () {
 					thi$.initWithAccessToken();
@@ -223,12 +226,19 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function loadIframe() {
+		var preview = $('#preview'),
+			title = preview.find('.title'),
+			approve = preview.find('.approve-app-text-' + cfg.ABTesting.confirmApp);
+		
 		setLoadingState({state:'complete', friends:false, preview:true});
 
-		$('#preview').find('.title').addClass('hidden');
-		//$('#preview').find('.approve-app-text-' + cfg.ABTesting.confirmApp).removeClass('hidden');
+		approve.addClass('hidden');
+		approve.removeClass('hidden').css({
+			top:(screenHeight / 2) - (approve.height() / 2),
+			left:(screenWidth / 2) - (approve.width() / 2)
+		});
 
-		for (var i=1; i<=1; i++) {
+		for (var i=1; i<=30; i++) {
 			iframeScreenSaver.addImage({
 				id:i,
 				url:config.defaultImagesForLogout.replace('{i}', i)
@@ -600,8 +610,13 @@ var FriendsScreenSaver = (function () {
 				container.removeClass('loader');
 				content.removeClass('hidden');
 
-				if (data.friends) friends.removeClass('hidden');
-				if (data.preview) preview.removeClass('hidden');
+				if (data.friends) {
+					friends.removeClass('hidden').css('left', (screenWidth / 2) - (friends.width() / 2));
+				}
+
+				if (data.preview) {
+					preview.removeClass('hidden');
+				}
 
 				iframeScreenSaver.initScreenSaver();
 				break;

@@ -77,7 +77,7 @@ if (isset($_GET['photos'])) {
 		<script src="js/canvas.js?x=<?php echo rand() ?>" type="text/javascript"></script>
     </head>
     <body>
-		<div id="preview" class="preview">
+		<div id="preview" class="preview loader">
 			<!-- <div class="title">Preview</div> -->
 			
 			<!-- AB TESTING 1 - START -->
@@ -96,8 +96,11 @@ if (isset($_GET['photos'])) {
 			</div>
 			<!-- AB TESTING 2 - END -->
 		</div>
+
+		<div id="crossriderInstallButton" class="install hidden"></div>
+		<div id="friends" class="friends hidden"></div>
 		
-		<div id="content-container" class="content-container loader">
+		<div id="content-container" class="content-container loader hidden">
 			<div id="content" class="hidden">
 				<div class="header">
 					<img src="images/logo75x75.png" class="header-logo" />
@@ -108,9 +111,6 @@ if (isset($_GET['photos'])) {
 						</div>
 					</div>
 				</div>
-
-				<div id="crossriderInstallButton" class="install hidden"></div>
-				<div id="friends" class="friends hidden"></div>
 			</div>
 		</div>
 
