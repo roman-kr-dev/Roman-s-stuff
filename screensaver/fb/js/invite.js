@@ -2,6 +2,7 @@ var FriendsDialog = (function () {
 	var config = {
 		max_selected:40,
 		selectRandomFriends:40,
+		initalLoadingImages:20,
 		second_action_text:'',
 		personal_message:'',
 		friends_list:[],
@@ -18,8 +19,9 @@ var FriendsDialog = (function () {
 		tab_selected:'Selected',
 		find_friends_label:'Find Friends:',
 		personal_message_label:'Add a personal message:',
-		action_text:''
-	}, thi$;
+		action_text:'',
+		iconsPendingStatus:[]
+	}, thi$, lastScrollHeightLoaded = 0, isSelectedFriendsIconsLoaded = false;
 	
 	return Class.extend({
 		init: function(cfg){
@@ -31,6 +33,42 @@ var FriendsDialog = (function () {
 			
 			this.dialog = $('<div />').html(new FriendsDialogHTML(config).html).appendTo('#friends');
 			this.selectFriends(config.selected_list);
+			this.initScroller();
+		},
+
+		initScroller:function () {
+			var container = $('#friendsScreenSaver'), top, heightOffset, i;
+
+			container.on('scroll', $.proxy(function () {
+				top = container.scrollTop(),
+				heightOffset = Math.floor(top / 100);
+
+				if (heightOffset > lastScrollHeightLoaded) {
+					this.loadPendingIcons(heightOffset);
+
+					lastScrollHeightLoaded = heightOffset;
+				}
+			}, this));
+		},
+
+		loadPendingIcons:function (icons) {
+			for (i = 0; i < icons * 10; i++) {
+				if (config.iconsPendingStatus[i] && config.iconsPendingStatus[i].pending) {
+					$('#friend-' + config.iconsPendingStatus[i].id + ' .square').css('background-image', 'url(' + config.iconsPendingStatus[i].icon + ')');
+
+					config.iconsPendingStatus[i].pending = false;
+				}
+			}
+		},
+
+		loadPendingIconFromArray:function (arr) {
+			var iconsPendingSelected = $.grep(config.iconsPendingStatus, $.proxy(function (e) { return $.inArray(e.id, arr) > -1; }, this));
+
+			$.each(iconsPendingSelected, function (i, data) {
+				$('#friend-' + data.id + ' .square').css('background-image', 'url(' + data.icon + ')');
+
+				data.pending = false;
+			});
 		},
 
 		selectTab:function (all, auto) {
@@ -70,6 +108,12 @@ var FriendsDialog = (function () {
 			switch (type) {
 				case 'selected':
 					this.selectTab(false);
+
+					if (!isSelectedFriendsIconsLoaded) {
+						this.loadPendingIconFromArray(this.selected);
+						
+						isSelectedFriendsIconsLoaded = true;
+					}
 					break;
 			}
 		},
@@ -127,15 +171,28 @@ var FriendsDialog = (function () {
 		},
 		
 		friendsSeach:function (term) {
+			var found = [], rx, name;
+
 			if (!this.allTab) this.selectTab(true, true);
 			
 			$('ul#friendsScreenSaver li').each(function (i, li) {
-				var rx = new RegExp('('+term+')', "i"),
-					name = $(li).attr('name');
-						
-				if (!$.trim(term).length || rx.test(name)) $(li).css('display', 'block').find('strong').html(name.replace(rx, '<em>$1</em>'));
-				else $(li).css('display', 'none').find('strong').html(name);
+				rx = new RegExp('('+term+')', "i"),
+				name = $(li).attr('name'),
+				id = $(li).attr('friend');
+							
+				if (found.length < 40 && (!$.trim(term).length || rx.test(name))) {
+					$(li).css('display', 'block').find('strong').html(name.replace(rx, '<em>$1</em>'));
+
+					found.push(id);
+				}
+				else {
+					$(li).css('display', 'none').find('strong').html(name);
+				}
 			}.bind(this));
+
+			if (found.length) {
+				this.loadPendingIconFromArray(found);
+			}
 			
 			$('#friendsScreenSaver.friendsDialog_clear').css('display', term.trim().length ? 'block' : 'none');
 		},
@@ -322,9 +379,18 @@ var FriendsDialogHTML = (function () {
 
 				case 'friends':
 					html.push('<ul id="friendsScreenSaver" class="friends">');
+						var pending, icon;
+						
 						$(config.friends_list).each(function (i, friend) {
-							html.push('<li friend="' + friend.id + '" name="' + friend.name + '">');
-								html.push('<a onclick="friendsScreenSaver.friendsDialog.selectFriend($(this.parentNode)); return false;" title="'+friend.name+'" href="#"><span style="background-image: url('+friend.icon+');" class="square"><span></span></span><strong>'+friend.name+'</strong></a>');
+							pending = i >= config.initalLoadingImages,
+							icon = !pending ? friend.icon : 'images/background-pattern.jpg';
+
+							if (pending) {
+								config.iconsPendingStatus.push({id:friend.id, icon:friend.icon, pending:true});
+							}
+							
+							html.push('<li id="friend-' + friend.id + '" friend="' + friend.id + '" name="' + friend.name + '">');
+								html.push('<a onclick="friendsScreenSaver.friendsDialog.selectFriend($(this.parentNode)); return false;" title="'+friend.name+'" href="#"><span style="background-image: url(' + icon + ');" class="square"><span></span></span><strong>'+friend.name+'</strong></a>');
 							html.push('</li>');
 						});
 					html.push('</ul>');

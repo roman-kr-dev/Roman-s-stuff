@@ -73,7 +73,7 @@ if (isset($_GET['photos'])) {
 		<script src="js/base.class.js" type="text/javascript"></script>
 		<script src="js/installer.js" type="text/javascript"></script>
 		<script src="js/jquery.cookie.js" type="text/javascript"></script>
-		<script src="js/invite.js" type="text/javascript"></script>
+		<script src="js/invite.js?x=<?php echo rand() ?>" type="text/javascript"></script>
 		<script src="js/canvas.js?x=<?php echo rand() ?>" type="text/javascript"></script>
     </head>
     <body>
