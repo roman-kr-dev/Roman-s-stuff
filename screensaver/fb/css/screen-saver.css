@@ -29,8 +29,9 @@ body {
 		position:absolute;
 		display:none;
 
-		-webkit-box-shadow: 2px 2px 2px 5px rgba(0, 0, 0, 0.6);
-		box-shadow: 2px 2px 2px 5px rgba(0, 0, 0, 0.6);
+		/*-webkit-box-shadow: 2px 2px 2px 5px rgba(255, 255, 255, 0.6);
+		box-shadow: 2px 2px 2px 5px rgba(255, 255, 255, 0.6);*/
+		border:10px solid #FFF;
 		-webkit-border-radius: 5px;
 		border-radius: 5px;
 
@@ -38,3 +39,13 @@ body {
 		-webkit-transform: rotate3d(20, 0, 10); /* Safari and Chrome */
 		-moz-transform: rotate3d(20deg, 0deg, 10deg); /* Firefox */
 	}
+
+.screen-saver-logo {
+	position:absolute;
+	bottom:10px;
+	left:10px;
+	width:75px;
+	height:63px;
+	background:url(images/logo.png) no-repeat;
+	z-index:10000;
+}

@@ -6,15 +6,16 @@ var ScreenSaver = (function ($) {
 	var config = {
 			cssPrefix:'screen-saver-',
 			baseZindex:2147483000,
-			speedFor100PX:2000,
+			speedFor100PX:1500,
 			//speedFor100PX:100,
 			imageDisplayTimeout:500,
-			//imageDisplayTimeout:1,
-			imageHideTimeout:500
+			//imageDisplayTimeout:10,
+			imageHideTimeout:400,
+			shuffleTime:3000,
 		}, mainApp, thi$,
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
-		isReadyForAnimation = false, displayQueueTimeout, overlayLayer, imagesLayer, zIndex = 100;
+		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {
@@ -70,6 +71,7 @@ var ScreenSaver = (function ($) {
 			.appendTo('body');
 
 		imagesLayer = $('<div />')
+			.html('<div class="' + config.cssPrefix + 'logo"></div>')
 			.addClass(config.cssPrefix + 'images loader')
 			.appendTo('body');
 
@@ -118,15 +120,15 @@ var ScreenSaver = (function ($) {
 	//choose images and display up to 9 images at each time
 	function runImages() {
 		var image;
-console.log('getPropertyCount(currentImagesDisplay)', getPropertyCount(currentImagesDisplay));		
-		if (getPropertyCount(currentImagesDisplay) <= 9) {
+
+		if (getPropertyCount(currentImagesDisplay) < 9) {
 			var Images = makeArray(imagesData).sort(function() {return 0.5 - Math.random()}),
 				isNegative = Math.floor(Math.random() * 2),
 				deg = 3 + Math.floor(Math.random() * 7);
 
 			$.each(Images, function(i, data) {
 				if (!currentImagesDisplay[data.id]) {
-					currentImagesDisplay[data.id] = true;
+					currentImagesDisplay[data.id] = data;
 
 					image = data.image = $('<img />')
 						.css('max-width', maxImageWidth)
@@ -171,6 +173,7 @@ console.log('getPropertyCount(currentImagesDisplay)', getPropertyCount(currentIm
 					top = (slotHeight / 2) - (data.height / 2) + (i * slotHeight);
 
 					data.row = i;
+					data.col = z;
 					data.top = top;
 					data.left = left;
 					data.slot = emptySlot;
@@ -260,12 +263,10 @@ console.log('getPropertyCount(currentImagesDisplay)', getPropertyCount(currentIm
 
 		isReadyForAnimation = animationQueue.length == 9;
 
-		console.log( animationQueue, animationQueue.length );
-
 		if (isReadyForAnimation) {
+			animationCompleteCount = 0;
+			
 			$.each(animationQueue, function (i, data) {
-				data.animations = 0;
-
 				initPictureAnimation(data);
 			});
 
@@ -290,18 +291,57 @@ console.log('getPropertyCount(currentImagesDisplay)', getPropertyCount(currentIm
 
 			data.row = row;
 			data.top = top;
-			data.animations = data.animations + 1;
 			image.css('top', top);
-			if (row == 2) image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
-
-
-			if (data.animations < 3) {
-				initPictureAnimation(data);
-			} else {
-				insertHideQueue(data);
+			
+			if (row == 2) {
+				image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
 			}
+
+			animationCompleteCount ++;
+			if (animationCompleteCount == getPropertyCount(currentImagesDisplay)) {
+				shuffleImages();
+			}
+				//initPictureAnimation(data);
+			/*} else {
+				insertHideQueue(data);
+			}*/
 		}, data));
 	}
+
+	//SHUFFLE START
+	function shuffleImages() {
+		var positions = [], pos, top, left;
+		
+		for (var i=0; i<3; i++) {
+			for (var z=0; z<3; z++) {
+				positions.push([i, z]);
+			}
+		}
+
+		positions = positions.sort(function () { return (Math.round(Math.random())-0.5); }).sort(function () { return (Math.round(Math.random())-0.5); });
+
+		$.each(currentImagesDisplay, function (i, data) {
+			pos = $.grep(positions, function (p) { return !(p[0] == data.row && p[1] == data.col); });
+			pos = pos.length ? pos[0] : positions[0];
+			positions = $.grep(positions, function (p) { return !(p[0] == pos[0] && p[1] == pos[1]); });
+			
+			data.row = pos[0];
+			data.col = pos[1];
+
+			top = (slotHeight / 2) - (data.height / 2) + (data.row * slotHeight);
+			left = (slotWidth / 2) - (data.width / 2) + (data.col * slotWidth);
+
+			data.top = top;
+
+			data.image.animate({
+				top:top,
+				left:left,
+			}, config.shuffleTime, 'easeOutBounce', $.proxy(function() {
+				insertAnimationQueue(this);
+			}, data));
+		});
+	}
+	//SHUFFLE END
 
 	//count utility
 	function getPropertyCount(obj) {
@@ -330,3 +370,16 @@ console.log('getPropertyCount(currentImagesDisplay)', getPropertyCount(currentIm
 		return arr;
 	}
 })(jQuery);
+
+Array.prototype.shuffle = function() {
+  var i = this.length, j, tempi, tempj;
+  if ( i == 0 ) return false;
+  while ( --i ) {
+     j       = Math.floor( Math.random() * ( i + 1 ) );
+     tempi   = this[i];
+     tempj   = this[j];
+     this[i] = tempj;
+     this[j] = tempi;
+  }
+  return this;
+}
