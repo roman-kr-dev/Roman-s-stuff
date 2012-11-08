@@ -12,10 +12,11 @@ var ScreenSaver = (function ($) {
 			//imageDisplayTimeout:10,
 			imageHideTimeout:400,
 			shuffleTime:3000,
+			waitToShuffle:750
 		}, mainApp, thi$,
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
-		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, overlayLayer, imagesLayer, zIndex = 100;
+		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffect, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {
@@ -92,6 +93,7 @@ var ScreenSaver = (function ($) {
 		animationQueue = [];
 		displayQueueTimeout = null;
 		isReadyForAnimation = false;
+		animationLoopCount = 0;
 	}
 
 	function removeImage(data) {
@@ -127,7 +129,7 @@ var ScreenSaver = (function ($) {
 				deg = 3 + Math.floor(Math.random() * 7);
 
 			$.each(Images, function(i, data) {
-				if (!currentImagesDisplay[data.id]) {
+				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < 9) {
 					currentImagesDisplay[data.id] = data;
 
 					image = data.image = $('<img />')
@@ -150,6 +152,8 @@ var ScreenSaver = (function ($) {
 					image.appendTo(imagesLayer);
 				}
 			});
+
+			console.log('currentImagesDisplay', currentImagesDisplay);
 		}
 	}
 	
@@ -227,9 +231,13 @@ var ScreenSaver = (function ($) {
 	function insertHideQueue(data) {
 		displayQueue.push(data);
 
-		if (!displayQueueTimeout) {
+		if (displayQueue.length == 9) {
 			initHideQueue();
 		}
+
+		/*if (!displayQueueTimeout) {
+			initHideQueue();
+		}*/
 	}
 
 	function initHideQueue() {
@@ -265,6 +273,8 @@ var ScreenSaver = (function ($) {
 
 		if (isReadyForAnimation) {
 			animationCompleteCount = 0;
+			animationLoopCount ++;
+			setAnimationsEffect();
 			
 			$.each(animationQueue, function (i, data) {
 				initPictureAnimation(data);
@@ -280,7 +290,7 @@ var ScreenSaver = (function ($) {
 
 		image.animate({
 			top:currentTop - slotHeight,
-		}, animationSpeed, 'linear', $.proxy(function() {
+		}, animationSpeed, animationsEffect, $.proxy(function() {
 			var data = this,
 				image = data.image,
 				row = data.row - 1 < 0 ? 2 : data.row - 1,
@@ -297,9 +307,15 @@ var ScreenSaver = (function ($) {
 				image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
 			}
 
-			animationCompleteCount ++;
-			if (animationCompleteCount == getPropertyCount(currentImagesDisplay)) {
-				shuffleImages();
+			if (animationLoopCount == 2) {
+				insertHideQueue(data);
+			} else {
+				animationCompleteCount ++;
+				if (animationCompleteCount == 9) {				
+					setTimeout(function () {
+						shuffleImages();
+					}, config.waitToShuffle);
+				}
 			}
 				//initPictureAnimation(data);
 			/*} else {
@@ -308,7 +324,7 @@ var ScreenSaver = (function ($) {
 		}, data));
 	}
 
-	//SHUFFLE START
+	//shuffle start
 	function shuffleImages() {
 		var positions = [], pos, top, left;
 		
@@ -341,7 +357,14 @@ var ScreenSaver = (function ($) {
 			}, data));
 		});
 	}
-	//SHUFFLE END
+	//shuffle end
+
+	//randomize an animations effect type of each row
+	function setAnimationsEffect() {
+		var types = ['linear', 'easeInBack'];
+		
+		animationsEffect = types[Math.floor(Math.random() * types.length)];
+	}
 
 	//count utility
 	function getPropertyCount(obj) {

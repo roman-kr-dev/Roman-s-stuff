@@ -228,7 +228,8 @@ var FriendsScreenSaver = (function () {
 	function loadIframe() {
 		var preview = $('#preview'),
 			title = preview.find('.title'),
-			approve = preview.find('.approve-app-text-' + cfg.ABTesting.confirmApp);
+			approve = preview.find('.approve-app-text-' + cfg.ABTesting.confirmApp),
+			Images = [];
 		
 		setLoadingState({state:'complete', friends:false, preview:true});
 
@@ -238,12 +239,18 @@ var FriendsScreenSaver = (function () {
 			left:(screenWidth / 2) - (approve.width() / 2)
 		});
 
-		for (var i=1; i<=30; i++) {
-			iframeScreenSaver.addImage({
+		for (var i=1; i<=40; i++) {
+			Images.push({
 				id:i,
 				url:config.defaultImagesForLogout.replace('{i}', i)
 			});
 		}
+
+		Images = Images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
+
+		$.each(Images, function (i, image) {
+			iframeScreenSaver.addImage(image);
+		});
 	}
 
 	function initFriendsDialog(data) {
