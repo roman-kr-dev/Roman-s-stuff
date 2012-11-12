@@ -77,42 +77,25 @@ if (isset($_GET['photos'])) {
 		<script src="js/canvas.js?x=<?php echo rand() ?>" type="text/javascript"></script>
     </head>
     <body>
-		<div id="preview" class="preview loader">
+		<div id="preview" class="preview">
 			<!-- <div class="title">Preview</div> -->
 			
-			<!-- AB TESTING 1 - START -->
-			<div class="approve-app-text approve-app-text-1 hidden">
-				<h3>Make a ScreenSaver of your Friends</h3>
-				<div class="comment">It takes 1 minute</div>
-				<div class="approve-app">NEXT ></div>
+			<!-- go to app box message - START -->
+			<div class="approve-app-text hidden">
+				<div class="box-logo"></div>
+				<div class="box-message">It takes only one minute</div>
+				<div id="request-app-confirm" class="box-button">Next Step</div>
 			</div>
-			<!-- AB TESTING 1 - END -->
-
-			<!-- AB TESTING 2 - START -->
-			<div class="approve-app-text approve-app-text-2 hidden">
-				<h3>Make your Friends Screensaver</h3>
-				<div class="approve-app">NEXT ></div>
-				<div class="comment">It takes 1 minute</div>
-			</div>
-			<!-- AB TESTING 2 - END -->
+			<!-- go to app box message - END -->
 		</div>
 
-		<div id="crossriderInstallButton" class="install hidden"></div>
+		<!-- go to app box message - START -->
+		<div id="install-app" class="install-app-box hidden">
+			<div class="box-logo"></div>	
+			<div id="crossriderInstallButton" class="install"></div>
+		</div>
+		<!-- go to app box message - END -->
 		<div id="friends" class="friends hidden"></div>
-		
-		<div id="content-container" class="content-container loader hidden">
-			<div id="content" class="hidden">
-				<div class="header">
-					<img src="images/logo75x75.png" class="header-logo" />
-					<div class="taglines">
-						<h1>My friends screensaver</h1>
-						<div class="facebook-like">
-							<!-- <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe> -->
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 
 		<!-- message update dialog - start -->
 		<div class="message-update-box hidden" id="message-update-box">
@@ -177,7 +160,7 @@ if (isset($_GET['photos'])) {
 		});
 		</script>
 
-		<!-- <script type="text/javascript">
+		<script type="text/javascript">
 		var _gaq = _gaq || [];
 		_gaq.push(['_setAccount', 'UA-35381638-1']);
 		_gaq.push(['_trackPageview']);
@@ -187,7 +170,7 @@ if (isset($_GET['photos'])) {
 			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		})();
-		</script> -->
+		</script>
 
 		<style type="text/css">
 		.hidden {

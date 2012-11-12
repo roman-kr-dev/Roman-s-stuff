@@ -1,5 +1,6 @@
 var FriendsDialog = (function () {
 	var config = {
+		min_selected:9,
 		max_selected:40,
 		selectRandomFriends:40,
 		initalLoadingImages:20,
@@ -15,6 +16,7 @@ var FriendsDialog = (function () {
 		title_text:'Choose all your friends that you want to see on your screensaver',
 		no_selected_friends:'You have no selected friends.',
 		too_many_friends:'Too many friends selected.',
+		too_few_friends:'Select at least 9 friends to view animation',
 		tab_all:'All Friends',
 		tab_selected:'Selected',
 		find_friends_label:'Find Friends:',
@@ -135,6 +137,7 @@ var FriendsDialog = (function () {
 
 			selecedCount.html(this.selected.length);
 			
+			this.minSelected();
 			this.maxSelected(li);
 		},
 
@@ -156,6 +159,7 @@ var FriendsDialog = (function () {
 			});
 
 			selecedCount.html(thi$.selected.length);
+			this.minSelected();
 		},
 
 		unselectFriends:function () {
@@ -195,6 +199,22 @@ var FriendsDialog = (function () {
 			}
 			
 			$('#friendsScreenSaver.friendsDialog_clear').css('display', term.trim().length ? 'block' : 'none');
+		},
+
+		minSelected:function () {
+			var minSelected = $('#friendsScreenSaver_min_selected');
+
+			if (this.selected.length < config.min_selected) {
+				minSelected.stop().fadeIn('slow');
+			} else {
+				minSelected.stop().fadeOut('fast');
+			}
+		},
+
+		hideMinSelected:function () {
+			var minSelected = $('#friendsScreenSaver_min_selected');
+			
+			minSelected.hide();
 		},
 		
 		maxSelected:function (li) {
@@ -266,6 +286,7 @@ var FriendsDialogHTML = (function () {
 				.replace('[[@@finder]]', this.getContent('finder'))
 				.replace('[[@@tabs]]', this.getContent('tabs'))
 				.replace('[[@@no_friends]]', this.getContent('no_friends'))
+				.replace('[[@@min_selected]]', this.getContent('min_selected'))
 				.replace('[[@@max_selected]]', this.getContent('max_selected'))
 				.replace('[[@@friends]]', this.getContent('friends'))
 				//.replace('[[@@promotional]]', this.getContent('promotional'))
@@ -278,7 +299,7 @@ var FriendsDialogHTML = (function () {
 			
 			html.push('<div class="fb_dialog_popup">');
 				html.push('<div class="pop_content">');
-					html.push('<h2 class="dialog_title"><span>[[@@title]]</span></h2>');
+					html.push('<div class="dialog_title"><div></div></div>');
 					html.push('<div class="dialog_content">');
 						html.push('<div class="dialog_body">');
 							html.push('<div class="friends_selector">');
@@ -287,6 +308,7 @@ var FriendsDialogHTML = (function () {
 									html.push('[[@@finder]]');
 									html.push('[[@@tabs]]');
 									html.push('[[@@no_friends]]');
+									html.push('[[@@min_selected]]');
 									html.push('[[@@max_selected]]');
 									html.push('[[@@friends]]');
 									//html.push('[[@@promotional]]');
@@ -324,9 +346,7 @@ var FriendsDialogHTML = (function () {
 								
 								html.push('<td class="select-random-friends">');
 									//select X random friends
-									html.push('<label class="uiButton">');
-										html.push('<input type="button" onclick="friendsScreenSaver.friendsDialog.selectRandomFriends();" value="Select ' + config.selectRandomFriends + ' random friends">');
-									html.push('</label>');
+									html.push('<div class="select-random-friends-button" onclick="friendsScreenSaver.friendsDialog.selectRandomFriends();">Select ' + config.selectRandomFriends + ' random friends</div>');
 								html.push('</td>');
 							html.push('</tr>');
 						html.push('</table>');
@@ -334,7 +354,7 @@ var FriendsDialogHTML = (function () {
 					break;
 
 				case 'tabs':
-					html.push('<div class="filters clearfix">');
+					html.push('<div class="filters clearfix">');						
 						html.push('<div class="sel_filters">');
 							html.push('<div class="clearfix">');
 								html.push('<ul class="friends_tabs">');
@@ -377,6 +397,10 @@ var FriendsDialogHTML = (function () {
 					html.push('<div id="friendsScreenSaver_max_selected" class="no_max_selected_notice" style="display: none;">'+config.too_many_friends+'</div>');
 					break;
 
+				case 'min_selected':
+					html.push('<div id="friendsScreenSaver_min_selected" class="no_max_selected_notice" style="display: none;">'+config.too_few_friends+'</div>');
+					break;
+
 				case 'friends':
 					html.push('<ul id="friendsScreenSaver" class="friends">');
 						var pending, icon;
@@ -411,10 +435,10 @@ var FriendsDialogHTML = (function () {
 
 				case 'buttons':
 					html.push('<div class="buttons">');
-						html.push('<div>');							
-							html.push('<label class="uiButton uiButtonConfirm uiButtonLarge continue-button">');
-								html.push('<input id="friendsScreenSaver-action-button" type="button" onclick="friendsScreenSaver.friendsDialog.sendInvites();" value="'+config.action_botton_text+'">');
-							html.push('</label>');
+						html.push('<div>');
+							html.push('<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>');
+							
+							html.push('<div class="continue-button" onclick="friendsScreenSaver.friendsDialog.sendInvites();">'+config.action_botton_text+'</div>');
 
 							//settings
 							html.push('<label id="friendsScreenSaver-settings-button" class="uiButton settings-button hidden">');

@@ -54,14 +54,15 @@ div.header-sub-title {
 
 div.friends {
 	position:absolute;
-	height:300px;
-	width:760px;
+	height:340px;
+	width:761px;
 	z-index:1000000;
 	top:150px;
+	background:url(images/friends_box_bg.png)
 }
 
 div.install {
-	margin-top:10px;
+	margin-top:40px;
 	height:130px;
 	text-align:center;
 }
@@ -77,32 +78,6 @@ div.preview {
 	position:absolute;
 }
 
-	/*div.preview div.title {
-		font-size:26px;
-		font-weight:bold;
-		text-align:center;
-		width:100px;
-		border-radius: 5px;
-		color:#03F;
-		background:white;
-		padding:4px;
-		position:relative;
-		top:80px;
-		left:80px;
-		
-		transform: rotate(317deg);
-		-webkit-transform: rotate(317deg);
-		-o-transform: rotate(317deg);
-		-moz-transform: rotate(317deg);
-
-		text-shadow: 1px 2px 2px #FFF;
-	}
-
-	:root div.preview div.title {
-		top:47px \0/IE9;
-		left:86px \0/IE9;
-	}*/
-
 	div.preview iframe {
 		margin:0px;
 		padding:0px;
@@ -111,60 +86,70 @@ div.preview {
 		height:100%;
 	}
 
-	/* approve app box */
-	div.preview div.approve-app-text {
+/* approve app box */
+div.approve-app-text {
+	position:absolute;
+	width:336px;
+	height:200px;
+	background:url(images/message_box_bg.png) no-repeat;
+}
+
+	div.approve-app-text div.box-logo {
 		position:absolute;
-		height:120px;
-		background:#FFF;
-		background:rgba(255, 255, 255, 0.9);
-		border:5px solid #3B5998;
-		padding:8px;
+		top:-44px;
+		left:106px;
+		width:124px;
+		height:101px;
+		background:url(images/logo_large.png) no-repeat;
+	}
+
+	div.preview div.approve-app-text div.box-message {
+		margin-top:95px;
 		text-align:center;
-		-webkit-border-radius:5px;
-		-moz-border-radius:5px;
-		border-radius:5px;
+		color:#575757;
+		font-size:14px;
 	}
 
-	div.preview div.approve-app-text-1 {
-		width:350px;
+	div.preview div.approve-app-text div.box-button {
+		margin-left:auto;
+		margin-right:auto;
+		margin-top:32px;
+		width:154px;
+		height:37px;
+		background-image:url(images/generic_buttons.png);
+		background-position:0 0;
+		cursor:pointer;
+		text-align:center;
+		font-family:"Myriad Pro",arial,sans-serif;
+		color:#545454;
+		line-height:32px;
 	}
 
-	div.preview div.approve-app-text-2 {
-		width:300px;
+	div.preview div.approve-app-text div.box-button:hover {
+		background-position:0 -94px;
 	}
 
-		div.preview div.approve-app-text h3 {
-			font-size:20px;
-			letter-spacing:-1px;
-		}
+	div.preview div.approve-app-text div.box-button:active {
+		background-position:0 -47px;
+	}
 
-		div.preview div.approve-app-text div.comment {
-			font-size:17px;
-		}
 
-		div.preview div.approve-app-text-1 div.comment {
-			margin-top:9px;
-		}
+/* install app box */
+div.install-app-box {
+	position:absolute;
+	width:336px;
+	height:200px;
+	background:url(images/message_box_empty_bg.png) no-repeat;
+}
 
-		div.preview div.approve-app-text-2 div.comment {
-			margin-top:15px;
-		}
-
-		div.preview div.approve-app-text div.approve-app {
-			margin-left:auto;
-			margin-right:auto;
-			margin-top:24px;
-			background:#669C35;
-			color:#FFF;
-			width: 95px;
-			padding: 8px;
-			font-weight: bold;
-			-webkit-border-radius:13px;
-			-moz-border-radius:13px;
-			border-radius:13px;
-			cursor:pointer;
-		}
-
+	div.install-app-box div.box-logo {
+		position:absolute;
+		top:-44px;
+		left:106px;
+		width:124px;
+		height:101px;
+		background:url(images/logo_large.png) no-repeat;
+	}
 
 /* update message */
 div.message-update-box {

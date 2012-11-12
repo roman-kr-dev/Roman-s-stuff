@@ -1,6 +1,5 @@
 /* dialog structure */
 div.fb_dialog {
-	background:#fff;
 	font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
 	font-size:11px;
 	color:#333;
@@ -52,15 +51,8 @@ div.pop_content {
 	direction:ltr;
 }
 
-div.pop_content div.dialog_content {
-	background:#fff;
-	border:1px solid #555;
-	border-top-width:0;
-}
-
 div.pop_content div.dialog_body {
 	padding:10px;
-	border-bottom:1px solid #ccc;
 }
 
 div.pop_content div.dialog_body {
@@ -68,22 +60,18 @@ div.pop_content div.dialog_body {
 }
 
 /* dialog title */
-div.pop_content h2.dialog_title {
-	color:#333;
-	margin:0;
-	padding:0;
-	background:#6d84b4 url(images/arrow-right.png) no-repeat 6px 4px;
-	border:1px solid #3b5998;
-	border-bottom:none;
-	color:#fff;
-	font-size:16px;
-	font-weight:bold;
-	margin:0;
+div.pop_content div.dialog_title {
+	height:54px;
+	position:relative;
 }
 
-div.pop_content h2.dialog_title span {
-	display:block;
-	padding:5px 32px
+div.pop_content div.dialog_title div {
+	position:absolute;
+	top:-10px;
+	left:0px;
+	width:67px;
+	height:10px;
+	background:url(images/big_box_logo_top.png) no-repeat;
 }
 
 /* user friend css */
@@ -108,7 +96,6 @@ div.friends_selector {
 	visibility:visible;
 	white-space:normal;
 	word-spacing:normal;
-	background:#f7f7f7;
 	margin:0px;
 	text-align:left;
 	font-size:11px;
@@ -117,7 +104,6 @@ div.friends_selector {
 div.friends_selector div.friends_selector_wrapper {
 	padding:11px;
 	padding-bottom:5px;
-	background:#f7f7f7;
 }
 
 div.friends_selector a:focus,
@@ -131,7 +117,7 @@ div.friends_selector div.finder {
 	position:relative;
 	color:#555;
 	font-size:13px;
-	padding:8px 0 10px 2px;
+	padding:4px 0 3px 2px;
 }
 
 div.friends_selector div.finder label {
@@ -181,6 +167,14 @@ div.friends_selector div.filters div.sel_filters {
 	float:right;
 	font-size:11px;
 	padding:3px 10px 3px;
+}
+
+div.friends_selector div.filters div.select-warning {
+	float:left;
+	margin-top:5px;
+	margin-left:5px;
+	font-size:13px;
+	color:#545454;
 }
 
 /* tabs */
@@ -442,18 +436,47 @@ div.friends_selector div.personal_message_wrapper textarea {
 /* dialog buttons */
 div.buttons {
 	padding:5px 0 0 0;
+	position:relative;
 }
 
-	div.buttons .continue-button {
-		margin-left:306px;
-		-webkit-border-radius:4px;
-		border-radius:4px;
+	iframe.facebook-like {
+		position:absolute;
+		top:28px;
+		left:0px;
+		border:none;
+		overflow:hidden;
+		width:120px;
+		height:21px;
+	}
+
+	div.buttons div.continue-button {
+		float:left;
+		width:154px;
+		height:37px;
+		background-image:url(images/generic_buttons.png);
+		background-position:0 0;
+		cursor:pointer;
+		text-align:center;
+		font-family:"Myriad Pro",arial,sans-serif;
+		color:#545454;
+		line-height:32px;
+		font-size:14px;
+		margin-left:292px;
+		margin-top:18px;
+	}
+
+	div.buttons div.continue-button:hover {
+		background-position:0 -94px;
+	}
+
+	div.buttons div.continue-button:active {
+		background-position:0 -47px;
 	}
 
 	div.buttons .cancel-button {
 		display:block;
 		float:right;
-		margin-top:12px;
+		margin-top:27px;
 		margin-right:10px;
 		cursor:pointer;
 	}
@@ -563,13 +586,31 @@ div.buttons {
 }
 
 td.select-random-friends {
-	text-align:right;
 	vertical-align:top;
 }
 
-	td.select-random-friends label {
-		float:right !important;
-		padding:0px !important;
+	td.select-random-friends .select-random-friends-button {
+		position:relative;
+		top:-6px;
+		float:right;
+		width:182px;
+		height:34px;
+		background-image:url(images/select_random_buttons.png);
+		background-position:0 0;
+		cursor:pointer;
+		font-family:"Myriad Pro",arial,sans-serif;
+		color:#545454;
+		line-height:32px;
+		text-align:center;
+		font-size:14px;
+	}
+
+	td.select-random-friends .select-random-friends-button:hover {
+		background-position:0 -88px;
+	}
+
+	td.select-random-friends .select-random-friends-button:active {
+		background-position:0 -44px;
 	}
 
 label.settings-button {

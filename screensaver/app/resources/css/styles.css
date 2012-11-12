@@ -31,10 +31,13 @@
 		position:absolute;
 		display:none;
 
-		-webkit-box-shadow: 2px 2px 2px 5px rgba(0, 0, 0, 0.6);
-		box-shadow: 2px 2px 2px 5px rgba(0, 0, 0, 0.6);
+		border:10px solid #FFF;
 		-webkit-border-radius: 5px;
 		border-radius: 5px;
+
+		transform: rotate3d(20deg, 0deg, 10deg);
+		-webkit-transform: rotate3d(20, 0, 10); /* Safari and Chrome */
+		-moz-transform: rotate3d(20deg, 0deg, 10deg); /* Firefox */
 	}
 
 	.screen-saver-{{app-id}}-picture-1 {

@@ -1,20 +1,15 @@
 var FriendsScreenSaver = (function () {
 	var config = {
 			fbAddActionUrl:'http://fierce-window-3161.herokuapp.com/fb_action.php?friend_id={@id}&friend_name={@friend_name}&my_name={@my_name}&api=true',
-			//defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/photos/{i}.jpeg',
-			defaultImagesForLogout:'http://localhost/roman/screensaver/fb/images/photos/{i}.jpeg',
+			defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/photos/{i}.jpeg',
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
-			//checkInstallTimeout:4000,
-			checkInstallTimeout:1,
+			checkInstallTimeout:4000,
 			checkInstallTimeoutThankyou:60000,
 			checkInstallTimeoutDelay:20000,
 			messages:{
 				inviteText:'wants to add your photo to My Friends ScreenSaver'
-			},
-			ABTesting:{
-				confirmApp:null
 			}
 		},
 		thi$, cfg, 
@@ -38,13 +33,11 @@ var FriendsScreenSaver = (function () {
 				this.initWithAccessToken();
 			} else {
 				console.log('Not access token');
-				$.when(checkIfPreviewReady()).then(function () {
-					cfg.ABTesting.confirmApp = Math.floor(Math.random() * 2) + 1;
-					
-					loadIframe();
+				$.when(checkIfPreviewReady()).then(function () {				
+					loadPreviewIframe();
 					initEvents();
 
-					//_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
+					_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_1', 1]);
 				});
 			}
 		},
@@ -87,6 +80,8 @@ var FriendsScreenSaver = (function () {
 							if (!selectedFrinedsList.length) {
 								initRandomProgess = true;
 								selectRandomFriends();
+
+								thi$.friendsDialog.hideMinSelected();
 							} else {
 								thi$.friendsDialog.selectActiveTab('selected');
 							}
@@ -118,9 +113,7 @@ var FriendsScreenSaver = (function () {
 		},
 
 		requestCallback:function (requestData) {
-			if (requestData) {
-				chooseFriendsAction();
-			}
+			chooseFriendsAction();
 		},
 
 		openSettingsDialog:function () {
@@ -156,11 +149,11 @@ var FriendsScreenSaver = (function () {
 			}
 		}, false);
 
-		$('#preview .approve-app').on('click', requestAuthConfirm);
+		$('#request-app-confirm').on('click', requestAuthConfirm);
 	}
 
 	function requestAuthConfirm() {
-		//_gaq.push(['_trackEvent', 'new_user', 'auth_dialog_open', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
+		_gaq.push(['_trackEvent', 'new_user', 'auth_dialog_open', 'message_type_1', 1]);
 
 		FB.login(function (response) {
 			if (response.authResponse) {
@@ -168,7 +161,7 @@ var FriendsScreenSaver = (function () {
 				cfg.userId = response.authResponse.userID;
 				cfg.checkExtensionInstall = false;
 
-				//_gaq.push(['_trackEvent', 'new_user', 'auth_success', 'message_type_' + cfg.ABTesting.confirmApp, 1]);
+				_gaq.push(['_trackEvent', 'new_user', 'auth_success', 'message_type_1', 1]);
 
 				transitionToLoggedInMode(function () {
 					thi$.initWithAccessToken();
@@ -225,31 +218,29 @@ var FriendsScreenSaver = (function () {
 		populateScreenSaverIframe();
 	}
 
-	function loadIframe() {
+	function loadPreviewIframe() {
 		var preview = $('#preview'),
-			title = preview.find('.title'),
-			approve = preview.find('.approve-app-text-' + cfg.ABTesting.confirmApp),
-			Images = [];
+			approve = preview.find('.approve-app-text'),
+			images = [];
 		
 		setLoadingState({state:'complete', friends:false, preview:true});
 
-		approve.addClass('hidden');
 		approve.removeClass('hidden').css({
-			top:(screenHeight / 2) - (approve.height() / 2),
+			top:(screenHeight / 2) - (approve.height() / 2) - 100,
 			left:(screenWidth / 2) - (approve.width() / 2)
 		});
 
 		for (var i=1; i<=40; i++) {
-			Images.push({
+			images.push({
 				id:i,
-				url:config.defaultImagesForLogout.replace('{i}', i)
+				images:[config.defaultImagesForLogout.replace('{i}', i)]
 			});
 		}
 
-		Images = Images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
+		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
 
-		$.each(Images, function (i, image) {
-			iframeScreenSaver.addImage(image);
+		$.each(images, function (i, data) {
+			iframeScreenSaver.addFriendImages(data);
 		});
 	}
 
@@ -318,10 +309,10 @@ var FriendsScreenSaver = (function () {
 	//add friends to screen saver iframe
 	function populateScreenSaverIframe() {
 		var friends = selectedFrinedsList.sort(function () { return Math.round(Math.random()) - 0.5; });
-
+		
 		iframeScreenSaver.setLoader();
 		iframeScreenSaver.clearAllImages();
-		
+
 		setQueue(friends);
 	}
 
@@ -394,16 +385,15 @@ var FriendsScreenSaver = (function () {
 
 	function runQueue() {
 		var queue = Object.keys(imagesQueue),
-			activeImages = Object.keys(iframeScreenSaver.getActiveImages()), 
 			id;
 
-		if (queue.length && activeImages.length < config.maxFriendsDisplay) {
+		if (queue.length) {
 			id = queue[0];
 			queueProgress = true;
 
 			$.when(fetchUserImages(id)).then(function (data) {
 				if (imagesQueue[data.id]) {
-					iframeScreenSaver.addImage(data);
+					iframeScreenSaver.addFriendImages(data);
 
 					delete imagesQueue[data.id];
 				}
@@ -417,7 +407,7 @@ var FriendsScreenSaver = (function () {
 
 	//load user images and store in cache
 	function fetchUserImages(userId) {
-		var dfd = new $.Deferred(), image;
+		var dfd = new $.Deferred(), images = [];
 		
 		if (imagesCache[userId]) {
 			return dfd.resolve(imagesCache[userId]);
@@ -427,13 +417,15 @@ var FriendsScreenSaver = (function () {
 			access_token:cfg.accessToken
 		}, function (json) {
 			if (json.data && json.data.length) {
-				image = json.data[Math.floor(Math.random() * json.data.length)].images[1].source;
+				$.each(json.data, function (i, data) {
+					images.push(data.images[1].source);
+				});
 			}
 			else {
-				image = friendsById[userId].image;
+				images.push(friendsById[userId].image);
 			}
 
-			imagesCache[userId] = {id:userId, url:image};
+			imagesCache[userId] = {id:userId, images:images};
 
 			dfd.resolve(imagesCache[userId]);
 		});
@@ -607,16 +599,11 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function setLoadingState(data) {
-		var container = $('#content-container'),
-			content = $('#content'),
-			friends = $('#friends'),
+		var friends = $('#friends'),
 			preview = $('#preview');
 		
 		switch (data.state) {
 			case 'complete':
-				container.removeClass('loader');
-				content.removeClass('hidden');
-
 				if (data.friends) {
 					friends.removeClass('hidden').css('left', (screenWidth / 2) - (friends.width() / 2));
 				}
@@ -624,8 +611,6 @@ var FriendsScreenSaver = (function () {
 				if (data.preview) {
 					preview.removeClass('hidden');
 				}
-
-				iframeScreenSaver.initScreenSaver();
 				break;
 		}
 	}
@@ -633,12 +618,11 @@ var FriendsScreenSaver = (function () {
 	function transitionToLoggedInMode(callback) {
 		$('#preview').fadeOut(function () {
 			$(this).addClass('hidden').css('display', 'block');
-			$(this).find('.approve-app-text-' + cfg.ABTesting.confirmApp).addClass('hidden');
-			$(this).find('.title').removeClass('hidden');
+			$(this).find('.approve-app-text').addClass('hidden');
+			iframeScreenSaver.clearAllImages();
 			
 			callback();
 		});
-		$('#content-container').addClass('loader');
 	}
 
 	function showUpdateSuccessMessage() {
@@ -659,9 +643,17 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function showInstallWidget() {
+		var friends = $('#friends');
+			installBox = $('#install-app');
+
 		if (isBrowserSupport()) {
-			$('#friends').fadeOut('slow', function () {
-				$('#crossriderInstallButton').fadeIn('slow');
+			installBox.removeClass('hidden').css({
+				top:(screenHeight / 2) - (installBox.height() / 2) - 100,
+				left:(screenWidth / 2) - (installBox.width() / 2)
+			}).addClass('hidden');
+			
+			friends.fadeOut('slow', function () {
+				installBox.fadeIn('slow');
 			});
 		}
 	}

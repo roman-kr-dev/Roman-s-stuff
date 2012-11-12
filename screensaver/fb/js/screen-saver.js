@@ -12,30 +12,27 @@ var ScreenSaver = (function ($) {
 			//imageDisplayTimeout:10,
 			imageHideTimeout:400,
 			shuffleTime:3000,
-			waitToShuffle:750
+			waitToShuffle:1200
 		}, mainApp, thi$,
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
-		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffect, overlayLayer, imagesLayer, zIndex = 100;
+		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {
 			thi$ = this;
 
 			initDefaultDimms();
-			initMainWindow();
-		},
-
-		initScreenSaver:function () {
 			initMarkup();
+			initMainWindow();
 		},
 
 		bindMainApp:function (app) {
 			mainApp = app;
 		},
 
-		addImage:function (data) {
-			addImage(data);
+		addFriendImages:function (data) {
+			addFriendImages(data);
 		},
 
 		removeImage:function (data) {
@@ -44,10 +41,6 @@ var ScreenSaver = (function ($) {
 
 		clearAllImages:function () {
 			clearAllImages();
-		},
-
-		getActiveImages:function () {
-			return imagesData;
 		},
 
 		setLoader:function () {
@@ -80,7 +73,7 @@ var ScreenSaver = (function ($) {
 		viewportHeight = imagesLayer.height();
 	}
 
-	function addImage(data) {
+	function addFriendImages(data) {
 		imagesData[data.id] = data;
 
 		runImages();
@@ -100,28 +93,29 @@ var ScreenSaver = (function ($) {
 		var imageData = imagesData[data.id];
 		
 		if (imageData) {
-			imageData.image.stop().remove();
+			if (imageData.image) {
+				imageData.image.stop().remove();
+			}
 
 			delete imagesData[data.id];
-
-			resetAllData();
-			runImages();
 		}
 	}
 
 	function clearAllImages() {
-		$.each(imagesData, function (i, imageData) {
-			imageData.image.stop().remove();
-
-			delete imagesData[i];
+		$.each(imagesData, function (i, data) {
+			if (data.image) {
+				data.image.stop();
+			}
 		});
-
+		
+		imagesLayer.html('');
+		imagesData = {};
 		resetAllData();
 	}
 
 	//choose images and display up to 9 images at each time
 	function runImages() {
-		var image;
+		var image, url;
 
 		if (getPropertyCount(currentImagesDisplay) < 9) {
 			var Images = makeArray(imagesData).sort(function() {return 0.5 - Math.random()}),
@@ -131,6 +125,8 @@ var ScreenSaver = (function ($) {
 			$.each(Images, function(i, data) {
 				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < 9) {
 					currentImagesDisplay[data.id] = data;
+	
+					url = data.images[Math.floor(Math.random() * data.images.length)];
 
 					image = data.image = $('<img />')
 						.css('max-width', maxImageWidth)
@@ -148,12 +144,10 @@ var ScreenSaver = (function ($) {
 							imagesLayer.removeClass('loader');
 						}
 					});
-					image.attr('src', data.url);
+					image.attr('src', url);
 					image.appendTo(imagesLayer);
 				}
 			});
-
-			console.log('currentImagesDisplay', currentImagesDisplay);
 		}
 	}
 	
@@ -234,10 +228,6 @@ var ScreenSaver = (function ($) {
 		if (displayQueue.length == 9) {
 			initHideQueue();
 		}
-
-		/*if (!displayQueueTimeout) {
-			initHideQueue();
-		}*/
 	}
 
 	function initHideQueue() {
@@ -274,7 +264,7 @@ var ScreenSaver = (function ($) {
 		if (isReadyForAnimation) {
 			animationCompleteCount = 0;
 			animationLoopCount ++;
-			setAnimationsEffect();
+			setAnimationsEffects();
 			
 			$.each(animationQueue, function (i, data) {
 				initPictureAnimation(data);
@@ -287,10 +277,11 @@ var ScreenSaver = (function ($) {
 	function initPictureAnimation(data) {
 		var image = data.image,
 			currentTop = data.top;
+			animSpeed = (animationSpeed - 500) + (Math.floor(Math.random() * 1000));
 
 		image.animate({
 			top:currentTop - slotHeight,
-		}, animationSpeed, animationsEffect, $.proxy(function() {
+		}, animSpeed, animationsEffects[data.col], $.proxy(function() {
 			var data = this,
 				image = data.image,
 				row = data.row - 1 < 0 ? 2 : data.row - 1,
@@ -317,10 +308,6 @@ var ScreenSaver = (function ($) {
 					}, config.waitToShuffle);
 				}
 			}
-				//initPictureAnimation(data);
-			/*} else {
-				insertHideQueue(data);
-			}*/
 		}, data));
 	}
 
@@ -360,10 +347,14 @@ var ScreenSaver = (function ($) {
 	//shuffle end
 
 	//randomize an animations effect type of each row
-	function setAnimationsEffect() {
-		var types = ['linear', 'easeInBack'];
+	function setAnimationsEffects() {
+		var types = ['linear', 'easeInBack', 'easeOutExpo'];
 		
-		animationsEffect = types[Math.floor(Math.random() * types.length)];
+		animationsEffects = {
+			0:types[Math.floor(Math.random() * types.length)],
+			1:types[Math.floor(Math.random() * types.length)],
+			2:types[Math.floor(Math.random() * types.length)]
+		}
 	}
 
 	//count utility
@@ -393,16 +384,3 @@ var ScreenSaver = (function ($) {
 		return arr;
 	}
 })(jQuery);
-
-Array.prototype.shuffle = function() {
-  var i = this.length, j, tempi, tempj;
-  if ( i == 0 ) return false;
-  while ( --i ) {
-     j       = Math.floor( Math.random() * ( i + 1 ) );
-     tempi   = this[i];
-     tempj   = this[j];
-     this[i] = tempj;
-     this[j] = tempi;
-  }
-  return this;
-}

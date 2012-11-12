@@ -1,7 +1,6 @@
 var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
-			maxFriendsDisplay:10,
 			screenSaverStartAfter:10,//minutes
 			defaultCloseType:'move',//move or click
 			//appFacebookUrl:'apps.facebook.com/topfriendscreensaver/',
@@ -11,94 +10,19 @@ var ScreenSaver = (function ($) {
 			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			baseZindex:2147482000,
-			speedFor100PX:2500,
-			imageDisplayTimeout:1000,
-			speedJumpPercent:[25, 35],
-			screenRatio:'75%',
-			animationTopOffset:20,
-			animationBottomOffset:[20, 120],
-			maxImageWidth:[600, 420, 250],
-			screenPositions:[
-				{
-					x:'25%',
-					xOffset:25,
-					y:'50%',
-					yOffset:50,
-					maxWidthBinding:0,
-					speedRatio:1
-				}, {
-					x:'75%',
-					xOffset:25,
-					y:'50%',
-					yOffset:50,
-					maxWidthBinding:0,
-					speedRatio:1
-				}, {
-					x:'25%',
-					xOffset:20,
-					y:'25%',
-					yOffset:40,
-					maxWidthBinding:1,
-					speedRatio:2
-				}, {
-					x:'75%',
-					xOffset:20,
-					y:'75%',
-					yOffset:40,
-					maxWidthBinding:1,
-					speedRatio:2
-				}, {
-					x:'50%',
-					xOffset:20,
-					y:'50%',
-					yOffset:40,
-					maxWidthBinding:1,
-					speedRatio:2
-				}, {
-					x:'50%',
-					xOffset:20,
-					y:'100%',
-					yOffset:40,
-					maxWidthBinding:1,
-					speedRatio:2
-				}, {
-					x:'15%',
-					xOffset:20,
-					y:'50%',
-					yOffset:40,
-					maxWidthBinding:2,
-					speedRatio:3
-				}, {
-					x:'55%',
-					xOffset:20,
-					y:'55%',
-					yOffset:40,
-					maxWidthBinding:2,
-					speedRatio:3
-				}, {
-					x:'22%',
-					xOffset:20,
-					y:'150%',
-					yOffset:40,
-					maxWidthBinding:2,
-					speedRatio:3
-				}, {
-					x:'88%',
-					xOffset:20,
-					y:'150%',
-					yOffset:40,
-					maxWidthBinding:2,
-					speedRatio:3
-				}
-			]
+			speedFor100PX:1500,
+			//speedFor100PX:100,
+			imageDisplayTimeout:500,
+			//imageDisplayTimeout:10,
+			imageHideTimeout:400,
+			shuffleTime:3000,
+			waitToShuffle:1200
 		},
-		win = $(window),
-		viewportWidth = win.width(),
-		viewportHeight = win.height(),
-		imagesData = {}, maxImageWidth = [], animationQueue = [],
-		isTabActive = true, isScreenSaverActive = false,
-		screenSaverTimeout, animationQueueTimeout, initImagesTimeout, screenSaverSettings, overlayLayer, imagesLayer, dfdIsPopup, logClientX, logClientY;
-	
+		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
+		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
+		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer,
+		isTabActive = true, isScreenSaverActive = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
+
 	return $.Class.extend({
 		init:function (data) {
 			var synced = appAPI.db.get('has_synced') ? true : false;
@@ -106,7 +30,7 @@ var ScreenSaver = (function ($) {
 			config.blacklist = data.blacklist;
 
 			initDatabase();
-			initMaxImageWidth();
+			initDefaultDimms();
 			initCSS();
 			loadFriendsImages();
 
@@ -140,7 +64,7 @@ var ScreenSaver = (function ($) {
 	/****************** Screen saver functions - start ***********************/
 	/*************************************************************************/
 	function initEvents() {
-		$(document).on('mousemove', screenSaverMouseMove);
+		//$(document).on('mousemove', screenSaverMouseMove);
 		$(document).on('click', screenSaverMouseClick);
 		$(document).on('keydown', screenSaverKeyboardPress);
 		$(document).on('scroll', screenSaverRemoveOrRestart);
@@ -195,7 +119,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverKeyboardPress(e) {
-		if(!isScreenSaverActive && e.altKey && e.which == 114) {
+		if(!isScreenSaverActive && e.altKey && (e.which == 114 || e.which == 82)) {
 			showScreenSaver();
 		} else {
 			screenSaverRemoveOrRestart();
@@ -257,10 +181,11 @@ var ScreenSaver = (function ($) {
 		return dfdIsPopup.promise();
 	}
 
-	function initMaxImageWidth() {
-		$.each(config.maxImageWidth, function (i, imageWidth) {
-			maxImageWidth.push(imageWidth * parseInt(config.screenRatio, 10) / 100);
-		});
+	function initDefaultDimms() {
+		slotWidth = Math.round(screenWidth / 3);
+		slotHeight = Math.round(screenHeight / 2);
+		maxImageWidth = Math.round(slotWidth * 0.85);
+		animationSpeed = slotHeight / 100 * config.speedFor100PX;
 	}
 
 	function initCSS() {
@@ -303,20 +228,18 @@ var ScreenSaver = (function ($) {
 			.html(html.join(''))
 			.appendTo('body');
 
-		viewportWidth = imagesLayer.width();
-		viewportHeight = imagesLayer.height();
-
 		if (isSync) {
 			thankyou = imagesLayer.find('.' + config.cssPrefix + 'thank-you-install');
-			thankyou.css('left', viewportWidth / 2 - thankyou.width() / 2);
+			thankyou.css('left', screenWidth / 2 - thankyou.width() / 2);
 			
 			syncMessage = imagesLayer.find('.' + config.cssPrefix + 'sync-message');
-			syncMessage.css('left', viewportWidth / 2 - syncMessage.width() / 2);
+			syncMessage.css('left', screenWidth / 2 - syncMessage.width() / 2);
 		}
 	}
 
 	function initImages() {
-		var friends = Object.keys(appAPI.db.get('friends_list')).sort(function () { return Math.round(Math.random()) - 0.5; }).slice(0, config.maxFriendsDisplay),
+		var queue = appAPI.db.get('friends_queue'),
+			friends = Object.keys(appAPI.db.get('friends_list')).sort(function () { return Math.round(Math.random()) - 0.5; }),
 			data, image;
 
 		$.each(friends, function (i, id) {
@@ -324,137 +247,298 @@ var ScreenSaver = (function ($) {
 				data = appAPI.db.get('friend_' + id);
 
 				if (data) {
-					image = data.data[Math.floor(Math.random() * data.data.length)].images[1].source;
-
-					addImage({id:id, url:image});
+					addFriendImages({id:id, images:data.images});
 				}
 			}
 		});
 
-		if (friends.length < config.maxFriendsDisplay) {
+		if (queue && queue.length) {
 			initImagesTimeout = setTimeout(initImages, 2000);
 		}
 	}
 
-	function addImage(data) {
-		$('<img />')
-		.data('image-id', data.id)
-		.on('load', function () { 
-			var image = $(this);
-
-			//it may been removed already
-			if (imagesData[data.id]) {
-				data.width = image.width();
-				data.height = image.height();
-				data.image = image;
-
-				initPictureDefaultPosition(data);
-			}
-		})
-		.attr('src', data.url)
-		.appendTo(imagesLayer);
-
+	function addFriendImages(data) {
 		imagesData[data.id] = data;
+
+		runImages();
+	}
+
+	//choose images and display up to 9 images at each time
+	function runImages() {
+		var image, url;
+
+		if (getPropertyCount(currentImagesDisplay) < 9) {
+			var Images = makeArray(imagesData).sort(function() {return 0.5 - Math.random()}),
+				isNegative = Math.floor(Math.random() * 2),
+				deg = 3 + Math.floor(Math.random() * 7);
+
+			$.each(Images, function(i, data) {
+				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < 9) {
+					currentImagesDisplay[data.id] = data;
+
+					url = data.images[Math.floor(Math.random() * data.images.length)];
+
+					image = data.image = $('<img />')
+						.css('max-width', maxImageWidth)
+						.css('max-height', slotHeight)
+						.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
+					image.on('load', function () { 
+						var image = $(this);
+
+						if (currentImagesDisplay[data.id]) {	
+							data.width = image.width();
+							data.height = image.height();
+
+							initPictureDefaultPosition(data);
+
+							imagesLayer.removeClass(config.cssPrefix + 'loader');
+						}
+					});
+					image.attr('src', url);
+					image.appendTo(imagesLayer);
+				}
+			});
+		}
 	}
 
 	function initPictureDefaultPosition(data) {
-		var currentPosition, ratio, pos;
+		var emptySlot = null,
+			counter = 0,
+			left, top;
 
-		$.each(config.screenPositions, function (i, position) {
-			if (!currentPosition && !position.active) {
-				currentPosition = data.position = position;
-				position.active = true;
+		for (var i=0; i<9 && emptySlot === null; i++) {
+			if (!currentSlotsTaken[i]) {
+				emptySlot = i;
 			}
-		});
+		}
+		
+		for (var i=0; i<3; i++) {
+			for (var z=0; z<3; z++) {
+				if (counter == emptySlot) {
+					currentSlotsTaken[emptySlot] = true;
 
-		if (currentPosition) {
-			ratio = data.width > maxImageWidth[currentPosition.maxWidthBinding] ? data.width / maxImageWidth[currentPosition.maxWidthBinding] : 1;
-			pos = {
-				width:Math.round(data.width / ratio),
-				height:Math.round(data.height / ratio),
-				left:Math.max(0, (viewportWidth * parseInt(currentPosition.x, 10) / 100) + (Math.floor(Math.random() * currentPosition.xOffset * 2) - currentPosition.xOffset) - ((data.width / ratio) / 2)),
-				top:(viewportHeight * parseInt(currentPosition.y, 10) / 100) + (Math.floor(Math.random() * currentPosition.yOffset * 2) - currentPosition.yOffset) - ((data.height / ratio) / 2)
-			};
-	
-			data.speedRatio = currentPosition.speedRatio;
-			data.ratio = ratio;
-			data.pos = pos;
-			data.image.css(pos);
+					left = (slotWidth / 2) - (data.width / 2) + (z * slotWidth);
+					top = (slotHeight / 2) - (data.height / 2) + (i * slotHeight);
 
-			insertAnimationQueue(data);
+					data.row = i;
+					data.col = z;
+					data.top = top;
+					data.left = left;
+					data.slot = emptySlot;
+					data.image.css({
+						left:left,
+						top:top
+					});
+
+					insertDisplayQueue(data);
+				}
+
+				counter ++;
+			}
 		}
 	}
+
+	function insertDisplayQueue(data) {
+		displayQueue.push(data);
+
+		if (!displayQueueTimeout) {
+			initDisplayQueue();
+		}
+	}
+
+	function initDisplayQueue() {
+		var data;
+		
+		if (displayQueue.length) {
+			data = displayQueue.shift();
+
+			if (data.row < 2) {
+				data.image.show('explode', function () {
+					insertAnimationQueue(data);
+				});
+
+				displayQueueTimeout = setTimeout(initDisplayQueue, config.imageDisplayTimeout);
+			} else {
+				data.image.show();
+				insertAnimationQueue(data);
+
+				initDisplayQueue();
+			}
+		}
+		else {
+			displayQueueTimeout = null;
+		}
+	}
+
+	
+	//HIDE IMAGES - START
+	function insertHideQueue(data) {
+		displayQueue.push(data);
+
+		if (displayQueue.length == 9) {
+			initHideQueue();
+		}
+	}
+
+	function initHideQueue() {
+		var data, effect;
+		
+		if (displayQueue.length) {
+			data = displayQueue.shift();
+
+			if (data.row < 2) {
+				data.image.hide('explode', function () {
+					data.image.remove();
+				});
+
+				displayQueueTimeout = setTimeout(initHideQueue, config.imageHideTimeout);
+			} else {
+				data.image.hide();
+				data.image.remove();
+
+				initHideQueue();
+			}
+		}
+		else {
+			resetAllData();
+			runImages();
+		}
+	}
+	//HIDE IMAGES - END
 
 	function insertAnimationQueue(data) {
 		animationQueue.push(data);
 
-		if (!animationQueueTimeout) {
-			initAnimationQueue();
-		}
-	}
+		isReadyForAnimation = animationQueue.length == 9;
 
-	function initAnimationQueue() {
-		var data;
-		
-		if (animationQueue.length) {
-			data = animationQueue.shift();
+		if (isReadyForAnimation) {
+			animationCompleteCount = 0;
+			animationLoopCount ++;
+			setAnimationsEffects();
 			
-			data.image.fadeIn(function () {
+			$.each(animationQueue, function (i, data) {
 				initPictureAnimation(data);
 			});
-		
-			animationQueueTimeout = setTimeout(initAnimationQueue, config.imageDisplayTimeout);
-		}
-		else {
-			animationQueueTimeout = null;
-		}
 
-		imagesLayer.removeClass(config.cssPrefix + 'loader');
+			animationQueue = [];
+		}
 	}
 
-	function initPictureAnimation(data, topOffset) {
+	function initPictureAnimation(data) {
 		var image = data.image,
-			top = data.pos.height + config.animationTopOffset,
-			distance = (topOffset ? topOffset : data.pos.top) + top,
-			speed = calculateAnimationSpeed(distance, data.speedRatio);
+			currentTop = data.top;
+			animSpeed = (animationSpeed - 500) + (Math.floor(Math.random() * 1000));
 
 		image.animate({
-			top:'-' + top
-		}, speed, 'linear', $.proxy(function() {
-			var bottomOffset = Math.floor(Math.random() * (config.animationBottomOffset[1] - config.animationBottomOffset[0])) + config.animationBottomOffset[0],
-				topOffset = viewportHeight + bottomOffset,
-				data = this;
+			top:currentTop - slotHeight,
+		}, animSpeed, animationsEffects[data.col], $.proxy(function() {
+			var data = this,
+				image = data.image,
+				row = data.row - 1 < 0 ? 2 : data.row - 1,
+				top = (slotHeight / 2) - (data.height / 2) + (row * slotHeight),
+				isNegative = Math.floor(Math.random() * 2),
+				deg = Math.floor(Math.random() * 10),
+				effect;
 
-			data.image.css('top', topOffset);
+			data.row = row;
+			data.top = top;
+			image.css('top', top);
 			
-			initPictureAnimation(data, topOffset);
+			if (row == 2) {
+				image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
+			}
+
+			if (animationLoopCount == 2) {
+				insertHideQueue(data);
+			} else {
+				animationCompleteCount ++;
+				if (animationCompleteCount == 9) {				
+					setTimeout(function () {
+						shuffleImages();
+					}, config.waitToShuffle);
+				}
+			}
 		}, data));
 	}
 
-	function calculateAnimationSpeed(distance, speedRatio) {
-		var jumpPercent = Math.floor(Math.random() * (config.speedJumpPercent[1] - config.speedJumpPercent[0])) + config.speedJumpPercent[0],
-			speed = distance / 100 * config.speedFor100PX,
-			adjustSpeed = speed * (100 - jumpPercent * (speedRatio - 1)) / 100;
+	//shuffle start
+	function shuffleImages() {
+		var positions = [], pos, top, left;
+		
+		for (var i=0; i<3; i++) {
+			for (var z=0; z<3; z++) {
+				positions.push([i, z]);
+			}
+		}
 
-		return speed = speed + (speed - adjustSpeed);
+		positions = positions.sort(function () { return (Math.round(Math.random())-0.5); }).sort(function () { return (Math.round(Math.random())-0.5); });
+
+		$.each(currentImagesDisplay, function (i, data) {
+			pos = $.grep(positions, function (p) { return !(p[0] == data.row && p[1] == data.col); });
+			pos = pos.length ? pos[0] : positions[0];
+			positions = $.grep(positions, function (p) { return !(p[0] == pos[0] && p[1] == pos[1]); });
+			
+			data.row = pos[0];
+			data.col = pos[1];
+
+			top = (slotHeight / 2) - (data.height / 2) + (data.row * slotHeight);
+			left = (slotWidth / 2) - (data.width / 2) + (data.col * slotWidth);
+
+			data.top = top;
+
+			data.image.animate({
+				top:top,
+				left:left,
+			}, config.shuffleTime, 'easeOutBounce', $.proxy(function() {
+				insertAnimationQueue(this);
+			}, data));
+		});
+	}
+	//shuffle end
+
+	//randomize an animations effect type of each row
+	function setAnimationsEffects() {
+		var types = ['linear', 'easeInBack', 'easeOutExpo'];
+		
+		animationsEffects = {
+			0:types[Math.floor(Math.random() * types.length)],
+			1:types[Math.floor(Math.random() * types.length)],
+			2:types[Math.floor(Math.random() * types.length)]
+		}
 	}
 
-	function removeAllImages() {
-		clearTimeout(initImagesTimeout);
-		initImagesTimeout = null;
-		
-		clearTimeout(animationQueueTimeout);
-		animationQueueTimeout = null;
-
+	function resetAllData() {
+		currentImagesDisplay = {};
+		currentSlotsTaken = {};
+		displayQueue = [];
 		animationQueue = [];
+		displayQueueTimeout = null;
+		isReadyForAnimation = false;
+		animationLoopCount = 0;
+	}
 
-		$.each(imagesData, function (id, image) {
-			if (image.position) {
-				image.position.active = false;
+	function removeImage(data) {
+		var imageData = imagesData[data.id];
+		
+		if (imageData) {
+			if (imageData.image) {
+				imageData.image.stop().remove();
 			}
 
-			delete imagesData[id];
+			delete imagesData[data.id];
+		}
+	}
+
+	function clearAllImages() {
+		$.each(imagesData, function (i, data) {
+			if (data.image) {
+				data.image.stop();
+			}
 		});
+		
+		imagesLayer.html('');
+		imagesData = {};
+		resetAllData();
 	}
 
 	/*************************************************************************/
@@ -508,28 +592,30 @@ var ScreenSaver = (function ($) {
 		var queue = appAPI.db.get('friends_queue'),
 			friendsList = appAPI.db.get('friends_list'),
 			accessToken = appAPI.db.get('access_token'),
-			friend;
+			images = [], friend;
 
 		if (queue && queue.length) {
 			friend = queue.shift();
 
 			if (friend) {
-				appAPI.request.get('https://graph.facebook.com/' + friend.id + '/photos?access_token=' + accessToken, function (data) {
-					data = getJSON(data);
+				appAPI.request.get('https://graph.facebook.com/' + friend.id + '/photos?access_token=' + accessToken, function (json) {
+					json = getJSON(json);
 
-					if (!data.data.length) {
-						data.data = [
-							{
-								images:[0, {source:friend.image}]
-							}
-						];
+					if (json.data && json.data.length) {
+						$.each(json.data, function (i, data) {
+							images.push(data.images[1].source);
+						});
+					}
+					else {
+						images.push(friend.image);
 					}
 
+					json.images = images;
 
 					friendsList[friend.id] = true;
 
-					appAPI.db.set('friend_' + friend.id, data);
-					appAPI.db.set('friends_list', friendsList)
+					appAPI.db.set('friend_' + friend.id, json);
+					appAPI.db.set('friends_list', friendsList);
 
 					appAPI.db.set('friends_queue', queue);
 
@@ -608,9 +694,39 @@ var ScreenSaver = (function ($) {
 			return {};
 		}
 	}
+
+	//count utility
+	function getPropertyCount(obj) {
+		var count = 0,
+			key;
+
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	//make array from object utility
+	function makeArray(obj) {
+		var arr = [];
+
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				arr.push(obj[key]);
+			}
+		}
+
+		return arr;
+	}
 })(jQuery);
 
 appAPI.ready(function($) {
+	appAPI.resources.jQueryUI('1.8.24');
+	appAPI.resources.includeJS('js/jquery.transform.js');
+	appAPI.resources.includeJS('js/jquery.transform.attributes.js');
 	appAPI.resources.includeJS('js/focusapi.js');
 	appAPI.resources.includeJS('js/blacklist.js');
 	if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
