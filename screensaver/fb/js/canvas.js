@@ -5,7 +5,8 @@ var FriendsScreenSaver = (function () {
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
-			checkInstallTimeout:4000,
+			//checkInstallTimeout:4000,
+			checkInstallTimeout:500,
 			checkInstallTimeoutThankyou:60000,
 			checkInstallTimeoutDelay:20000,
 			messages:{
@@ -57,7 +58,7 @@ var FriendsScreenSaver = (function () {
 								syncToExtension();
 
 								//init friends dialog and screen saver iframe
-								loadDialogAndIframe();
+								loadDialog();
 							} else {
 								selectedFrinedsList = data.friends;
 
@@ -80,8 +81,6 @@ var FriendsScreenSaver = (function () {
 							if (!selectedFrinedsList.length) {
 								initRandomProgess = true;
 								selectRandomFriends();
-
-								thi$.friendsDialog.hideMinSelected();
 							} else {
 								thi$.friendsDialog.selectActiveTab('selected');
 							}
@@ -135,6 +134,7 @@ var FriendsScreenSaver = (function () {
 						//if not synced
 						if (!data.synced) {
 							//sync data to extension
+							iframeScreenSaver.hideScreenSaver();
 							syncToExtension();
 						}
 
@@ -145,6 +145,10 @@ var FriendsScreenSaver = (function () {
 					else {
 						dfdInstalled.resolve({friends:data.friends, synced:data.synced});
 					}
+				}
+
+				if (data.action == 'screen-saver-closed') {
+					populateScreenSaverIframe();
 				}
 			}
 		}, false);
@@ -197,10 +201,15 @@ var FriendsScreenSaver = (function () {
 	function openSettingsDialog() {
 		var dialog = $('#settings-dialog');
 
+		dialog.removeClass('hidden').css({
+			top:(screenHeight / 2) - (dialog.height() / 2) - 100,
+			left:(screenWidth / 2) - (dialog.width() / 2)
+		}).addClass('hidden');
+
 		dialog.fadeIn();
 	}
 
-	function loadDialogAndIframe() {
+	function loadDialog() {
 		initFriendsDialog({
 			friends:friendsList,
 			selected:selectedFrinedsList
@@ -214,7 +223,10 @@ var FriendsScreenSaver = (function () {
 		}
 		
 		setLoadingState({state:'complete', friends:true, preview:true});
+	}
 
+	function loadDialogAndIframe() {
+		loadDialog();
 		populateScreenSaverIframe();
 	}
 
@@ -310,6 +322,7 @@ var FriendsScreenSaver = (function () {
 	function populateScreenSaverIframe() {
 		var friends = selectedFrinedsList.sort(function () { return Math.round(Math.random()) - 0.5; });
 		
+		iframeScreenSaver.showScreenSaver();
 		iframeScreenSaver.setLoader();
 		iframeScreenSaver.clearAllImages();
 
@@ -335,7 +348,7 @@ var FriendsScreenSaver = (function () {
 	function removeFriendFromScreenSaver(data) {
 		var list, friend;
 		
-		iframeScreenSaver.removeImage(data);
+		iframeScreenSaver.removeFriendImage(data);
 		removeQueue(data.id);
 		
 		selectedFrinedsList = data.selected;
@@ -609,7 +622,7 @@ var FriendsScreenSaver = (function () {
 				}
 
 				if (data.preview) {
-					preview.removeClass('hidden');
+					preview.removeClass('hidden loader');
 				}
 				break;
 		}

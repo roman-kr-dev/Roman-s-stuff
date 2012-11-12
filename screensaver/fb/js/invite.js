@@ -286,7 +286,7 @@ var FriendsDialogHTML = (function () {
 				.replace('[[@@finder]]', this.getContent('finder'))
 				.replace('[[@@tabs]]', this.getContent('tabs'))
 				.replace('[[@@no_friends]]', this.getContent('no_friends'))
-				.replace('[[@@min_selected]]', this.getContent('min_selected'))
+				//.replace('[[@@min_selected]]', this.getContent('min_selected'))
 				.replace('[[@@max_selected]]', this.getContent('max_selected'))
 				.replace('[[@@friends]]', this.getContent('friends'))
 				//.replace('[[@@promotional]]', this.getContent('promotional'))
@@ -308,7 +308,7 @@ var FriendsDialogHTML = (function () {
 									html.push('[[@@finder]]');
 									html.push('[[@@tabs]]');
 									html.push('[[@@no_friends]]');
-									html.push('[[@@min_selected]]');
+									//html.push('[[@@min_selected]]');
 									html.push('[[@@max_selected]]');
 									html.push('[[@@friends]]');
 									//html.push('[[@@promotional]]');
@@ -355,6 +355,8 @@ var FriendsDialogHTML = (function () {
 
 				case 'tabs':
 					html.push('<div class="filters clearfix">');						
+						html.push('<div id="friendsScreenSaver_min_selected" class="no_max_selected_notice" style="display:none;">Select at least 9 to view animation in preview</div>');
+
 						html.push('<div class="sel_filters">');
 							html.push('<div class="clearfix">');
 								html.push('<ul class="friends_tabs">');
@@ -397,9 +399,9 @@ var FriendsDialogHTML = (function () {
 					html.push('<div id="friendsScreenSaver_max_selected" class="no_max_selected_notice" style="display: none;">'+config.too_many_friends+'</div>');
 					break;
 
-				case 'min_selected':
-					html.push('<div id="friendsScreenSaver_min_selected" class="no_max_selected_notice" style="display: none;">'+config.too_few_friends+'</div>');
-					break;
+				//case 'min_selected':
+				//	html.push('<div id="friendsScreenSaver_min_selected" class="no_max_selected_notice" style="display: none;">'+config.too_few_friends+'</div>');
+				//	break;
 
 				case 'friends':
 					html.push('<ul id="friendsScreenSaver" class="friends">');

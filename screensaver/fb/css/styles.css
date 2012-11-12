@@ -15,7 +15,6 @@ body {
 
 div.content-container {
 	width:760px;
-	xheight:880px;
 }
 
 /* header - start */
@@ -157,8 +156,8 @@ div.message-update-box {
 	letter-spacing:-1px;
 	position:fixed;
 	top:100px;
-	color:white;
-	background-color:black;
+	color:black;
+	background-color:white;
 	text-align:center;
 	opacity:0.7;
 	z-index:100000;
@@ -188,10 +187,8 @@ div.screen-saver-settings {
 	direction:ltr;
 	text-align:left;
 
-	z-index:10;
+	z-index: 1000001;
 	position:absolute;
-	top:150px;
-	left:122px;
 	background: rgba(82, 82, 82, 0.7);
 	padding:10px;
 

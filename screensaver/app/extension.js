@@ -64,7 +64,7 @@ var ScreenSaver = (function ($) {
 	/****************** Screen saver functions - start ***********************/
 	/*************************************************************************/
 	function initEvents() {
-		//$(document).on('mousemove', screenSaverMouseMove);
+		$(document).on('mousemove', screenSaverMouseMove);
 		$(document).on('click', screenSaverMouseClick);
 		$(document).on('keydown', screenSaverKeyboardPress);
 		$(document).on('scroll', screenSaverRemoveOrRestart);
@@ -88,7 +88,11 @@ var ScreenSaver = (function ($) {
 	}
 
 	function initEventsFacebook() {
-		$(document).on('click', removeScreenSaver);
+		$(document).on('click', function () {
+			window.postMessage(JSON.stringify({action:'screen-saver-closed'}), '*');
+
+			removeScreenSaver();
+		});
 	}
 
 	function screenSaverMouseMove(e) {
@@ -252,7 +256,7 @@ var ScreenSaver = (function ($) {
 			}
 		});
 
-		if (queue && queue.length) {
+		if (!friends.length || (queue && queue.length)) {
 			initImagesTimeout = setTimeout(initImages, 2000);
 		}
 	}
@@ -517,19 +521,7 @@ var ScreenSaver = (function ($) {
 		animationLoopCount = 0;
 	}
 
-	function removeImage(data) {
-		var imageData = imagesData[data.id];
-		
-		if (imageData) {
-			if (imageData.image) {
-				imageData.image.stop().remove();
-			}
-
-			delete imagesData[data.id];
-		}
-	}
-
-	function clearAllImages() {
+	function removeAllImages() {
 		$.each(imagesData, function (i, data) {
 			if (data.image) {
 				data.image.stop();

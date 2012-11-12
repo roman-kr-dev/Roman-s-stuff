@@ -77,7 +77,7 @@ if (isset($_GET['photos'])) {
 		<script src="js/canvas.js?x=<?php echo rand() ?>" type="text/javascript"></script>
     </head>
     <body>
-		<div id="preview" class="preview">
+		<div id="preview" class="preview loader">
 			<!-- <div class="title">Preview</div> -->
 			
 			<!-- go to app box message - START -->

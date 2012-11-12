@@ -23,6 +23,12 @@
 				window.postMessage(e.data, '*');
 			}
 		}
+
+		if (/^https?:\/\/apps\.facebook\.com/.test(e.origin)) {
+			if (data.action == 'screen-saver-closed') {
+				iframeWin.postMessage(e.data, '*');
+			}
+		}
 	}, false);
 
 })('[@FRIENDS]', '[@SOURCE_URL]', [@SYNCED], [@SETTINGS]);

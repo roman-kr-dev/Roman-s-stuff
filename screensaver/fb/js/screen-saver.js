@@ -35,8 +35,8 @@ var ScreenSaver = (function ($) {
 			addFriendImages(data);
 		},
 
-		removeImage:function (data) {
-			removeImage(data);
+		removeFriendImage:function (data) {
+			removeFriendImage(data);
 		},
 
 		clearAllImages:function () {
@@ -45,6 +45,18 @@ var ScreenSaver = (function ($) {
 
 		setLoader:function () {
 			imagesLayer.addClass('loader');
+		},
+
+		showScreenSaver:function () {
+			overlayLayer.show();
+			imagesLayer.show();
+		},
+
+		hideScreenSaver:function () {
+			clearAllImages();
+
+			overlayLayer.hide();
+			imagesLayer.hide();
 		}
 	});
 
@@ -62,11 +74,13 @@ var ScreenSaver = (function ($) {
 	function initMarkup() {
 		overlayLayer = $('<div />')
 			.addClass(config.cssPrefix + 'overlay')
+			.hide()
 			.appendTo('body');
 
 		imagesLayer = $('<div />')
 			.html('<div class="' + config.cssPrefix + 'logo"></div>')
 			.addClass(config.cssPrefix + 'images loader')
+			.hide()
 			.appendTo('body');
 
 		viewportWidth = imagesLayer.width();
@@ -89,20 +103,35 @@ var ScreenSaver = (function ($) {
 		animationLoopCount = 0;
 	}
 
-	function removeImage(data) {
-		var imageData = imagesData[data.id];
+	function removeFriendImage(data) {
+		var imageData = imagesData[data.id],
+			currentImageDisplay = currentImagesDisplay[data.id];
 		
 		if (imageData) {
-			if (imageData.image) {
-				imageData.image.stop().remove();
+			var slot = imageData.row + '_' + imageData.col;
+			
+			if (!isReadyForAnimation) {
+				if (imageData.image) {
+					imageData.image.stop().remove();
+				}
+
+				if (currentImageDisplay) {
+					delete currentImagesDisplay[data.id];
+				}
 			}
+			
+			if (currentSlotsTaken[slot]) {
+				delete currentSlotsTaken[slot];
+			}
+
+			animationQueue = $.grep(animationQueue, function (item) { return item.id != data.id });
 
 			delete imagesData[data.id];
 		}
 	}
 
 	function clearAllImages() {
-		$.each(imagesData, function (i, data) {
+		$.each(currentImagesDisplay, function (i, data) {
 			if (data.image) {
 				data.image.stop();
 			}
@@ -152,40 +181,33 @@ var ScreenSaver = (function ($) {
 	}
 	
 	function initPictureDefaultPosition(data) {
-		var emptySlot = null,
-			counter = 0,
-			left, top;
+		var left, top, emptySlot, row, col, i ,z;
 
-		for (var i=0; i<9 && emptySlot === null; i++) {
-			if (!currentSlotsTaken[i]) {
-				emptySlot = i;
-			}
-		}
-		
-		for (var i=0; i<3; i++) {
-			for (var z=0; z<3; z++) {
-				if (counter == emptySlot) {
-					currentSlotsTaken[emptySlot] = true;
-
-					left = (slotWidth / 2) - (data.width / 2) + (z * slotWidth);
-					top = (slotHeight / 2) - (data.height / 2) + (i * slotHeight);
-
-					data.row = i;
-					data.col = z;
-					data.top = top;
-					data.left = left;
-					data.slot = emptySlot;
-					data.image.css({
-						left:left,
-						top:top
-					});
-
-					insertDisplayQueue(data);
+		for (i=0; i<3; i++) {
+			for (z=0; z<3; z++) {
+				if (!emptySlot && !currentSlotsTaken[i + '_' + z]) {
+					row = i;
+					col = z;
+					emptySlot = row + '_' + col;
 				}
-
-				counter ++;
 			}
 		}
+
+		currentSlotsTaken[emptySlot] = true;
+
+		left = (slotWidth / 2) - (data.width / 2) + (col * slotWidth);
+		top = (slotHeight / 2) - (data.height / 2) + (row * slotHeight);
+
+		data.row = row;
+		data.col = col;
+		data.top = top;
+		data.left = left;
+		data.image.css({
+			left:left,
+			top:top
+		});
+
+		insertDisplayQueue(data);
 	}
 
 	function insertDisplayQueue(data) {
@@ -321,13 +343,14 @@ var ScreenSaver = (function ($) {
 			}
 		}
 
+		currentSlotsTaken = {};
 		positions = positions.sort(function () { return (Math.round(Math.random())-0.5); }).sort(function () { return (Math.round(Math.random())-0.5); });
 
 		$.each(currentImagesDisplay, function (i, data) {
 			pos = $.grep(positions, function (p) { return !(p[0] == data.row && p[1] == data.col); });
 			pos = pos.length ? pos[0] : positions[0];
 			positions = $.grep(positions, function (p) { return !(p[0] == pos[0] && p[1] == pos[1]); });
-			
+		
 			data.row = pos[0];
 			data.col = pos[1];
 
@@ -335,6 +358,8 @@ var ScreenSaver = (function ($) {
 			left = (slotWidth / 2) - (data.width / 2) + (data.col * slotWidth);
 
 			data.top = top;
+
+			currentSlotsTaken[data.row + '_' + data.col] = true;
 
 			data.image.animate({
 				top:top,
