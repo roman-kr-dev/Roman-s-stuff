@@ -434,7 +434,7 @@ var ScreenSaver = (function ($) {
 			animSpeed = (animationSpeed - 500) + (Math.floor(Math.random() * 1000));
 
 		image.animate({
-			top:currentTop - slotHeight,
+			top:currentTop - slotHeight
 		}, animSpeed, animationsEffects[data.col], $.proxy(function() {
 			var data = this,
 				image = data.image,

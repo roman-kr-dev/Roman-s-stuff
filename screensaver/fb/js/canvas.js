@@ -5,8 +5,7 @@ var FriendsScreenSaver = (function () {
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
-			//checkInstallTimeout:4000,
-			checkInstallTimeout:500,
+			checkInstallTimeout:3000,
 			checkInstallTimeoutThankyou:60000,
 			checkInstallTimeoutDelay:20000,
 			messages:{
@@ -251,6 +250,8 @@ var FriendsScreenSaver = (function () {
 
 		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
 
+		iframeScreenSaver.showScreenSaver();
+		
 		$.each(images, function (i, data) {
 			iframeScreenSaver.addFriendImages(data);
 		});
