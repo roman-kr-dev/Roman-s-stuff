@@ -2,7 +2,7 @@ body {
 	xbackground:url(images/background-pattern.jpg);
 }
 
-.loader {
+.screen-saver-loader {
 	background:url(images/ajax-loader.gif) no-repeat center center;
 }
 

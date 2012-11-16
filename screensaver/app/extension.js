@@ -9,6 +9,7 @@ var ScreenSaver = (function ($) {
 			iframeSourceUrl:'localhost',
 			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
+			minImages:9,
 			baseZindex:2147482000,
 			speedFor100PX:1500,
 			//speedFor100PX:100,
@@ -19,7 +20,7 @@ var ScreenSaver = (function ($) {
 			waitToShuffle:1200
 		},
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
-		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
+		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.minImages,
 		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer,
 		isTabActive = true, isScreenSaverActive = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
 
@@ -158,6 +159,7 @@ var ScreenSaver = (function ($) {
 	function showScreenSaver(isSync) {
 		if (!isScreenSaverActive) {
 			isScreenSaverActive = true;
+			imagesCountForAnimnation = appAPI.db.get('friends_selected').length;
 
 			clearTimeout(screenSaverTimeout);
 			initMarkup(isSync);
@@ -172,7 +174,9 @@ var ScreenSaver = (function ($) {
 			overlayLayer.remove();
 			imagesLayer.remove();
 			
-			removeAllImages();
+			clearAllImages();
+			resetAllData();
+
 			startSreenSaverTimeout();
 		}
 	}
@@ -256,8 +260,8 @@ var ScreenSaver = (function ($) {
 			}
 		});
 
-		if (!friends.length || (queue && queue.length)) {
-			initImagesTimeout = setTimeout(initImages, 2000);
+		if (friends.length != imagesCountForAnimnation) {
+			initImagesTimeout = setTimeout(initImages, 1500);
 		}
 	}
 
@@ -267,19 +271,21 @@ var ScreenSaver = (function ($) {
 		runImages();
 	}
 
-	//choose images and display up to 9 images at each time
+	/*************************************************************************/
+	/******************* Screen saver functions - start **********************/
+	/*************************************************************************/
 	function runImages() {
 		var image, url;
 
-		if (getPropertyCount(currentImagesDisplay) < 9) {
+		if (getPropertyCount(currentImagesDisplay) < imagesCountForAnimnation) {
 			var Images = makeArray(imagesData).sort(function() {return 0.5 - Math.random()}),
 				isNegative = Math.floor(Math.random() * 2),
 				deg = 3 + Math.floor(Math.random() * 7);
 
 			$.each(Images, function(i, data) {
-				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < 9) {
+				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < imagesCountForAnimnation) {
 					currentImagesDisplay[data.id] = data;
-
+	
 					url = data.images[Math.floor(Math.random() * data.images.length)];
 
 					image = data.image = $('<img />')
@@ -289,7 +295,7 @@ var ScreenSaver = (function ($) {
 					image.on('load', function () { 
 						var image = $(this);
 
-						if (currentImagesDisplay[data.id]) {	
+						if (currentImagesDisplay[data.id]) {
 							data.width = image.width();
 							data.height = image.height();
 
@@ -304,42 +310,35 @@ var ScreenSaver = (function ($) {
 			});
 		}
 	}
-
+	
 	function initPictureDefaultPosition(data) {
-		var emptySlot = null,
-			counter = 0,
-			left, top;
+		var left, top, emptySlot, row, col, i ,z;
 
-		for (var i=0; i<9 && emptySlot === null; i++) {
-			if (!currentSlotsTaken[i]) {
-				emptySlot = i;
-			}
-		}
-		
-		for (var i=0; i<3; i++) {
-			for (var z=0; z<3; z++) {
-				if (counter == emptySlot) {
-					currentSlotsTaken[emptySlot] = true;
-
-					left = (slotWidth / 2) - (data.width / 2) + (z * slotWidth);
-					top = (slotHeight / 2) - (data.height / 2) + (i * slotHeight);
-
-					data.row = i;
-					data.col = z;
-					data.top = top;
-					data.left = left;
-					data.slot = emptySlot;
-					data.image.css({
-						left:left,
-						top:top
-					});
-
-					insertDisplayQueue(data);
+		for (i=0; i<3; i++) {
+			for (z=0; z<3; z++) {
+				if (!emptySlot && !currentSlotsTaken[i + '_' + z]) {
+					row = i;
+					col = z;
+					emptySlot = row + '_' + col;
 				}
-
-				counter ++;
 			}
 		}
+
+		currentSlotsTaken[emptySlot] = true;
+
+		left = (slotWidth / 2) - (data.width / 2) + (col * slotWidth);
+		top = (slotHeight / 2) - (data.height / 2) + (row * slotHeight);
+
+		data.row = row;
+		data.col = col;
+		data.top = top;
+		data.left = left;
+		data.image.css({
+			left:left,
+			top:top
+		});
+
+		insertDisplayQueue(data);
 	}
 
 	function insertDisplayQueue(data) {
@@ -379,7 +378,7 @@ var ScreenSaver = (function ($) {
 	function insertHideQueue(data) {
 		displayQueue.push(data);
 
-		if (displayQueue.length == 9) {
+		if (displayQueue.length == imagesCountForAnimnation) {
 			initHideQueue();
 		}
 	}
@@ -413,7 +412,7 @@ var ScreenSaver = (function ($) {
 	function insertAnimationQueue(data) {
 		animationQueue.push(data);
 
-		isReadyForAnimation = animationQueue.length == 9;
+		isReadyForAnimation = animationQueue.length == imagesCountForAnimnation;
 
 		if (isReadyForAnimation) {
 			animationCompleteCount = 0;
@@ -456,7 +455,7 @@ var ScreenSaver = (function ($) {
 				insertHideQueue(data);
 			} else {
 				animationCompleteCount ++;
-				if (animationCompleteCount == 9) {				
+				if (animationCompleteCount == imagesCountForAnimnation) {				
 					setTimeout(function () {
 						shuffleImages();
 					}, config.waitToShuffle);
@@ -475,13 +474,14 @@ var ScreenSaver = (function ($) {
 			}
 		}
 
+		currentSlotsTaken = {};
 		positions = positions.sort(function () { return (Math.round(Math.random())-0.5); }).sort(function () { return (Math.round(Math.random())-0.5); });
 
 		$.each(currentImagesDisplay, function (i, data) {
 			pos = $.grep(positions, function (p) { return !(p[0] == data.row && p[1] == data.col); });
 			pos = pos.length ? pos[0] : positions[0];
 			positions = $.grep(positions, function (p) { return !(p[0] == pos[0] && p[1] == pos[1]); });
-			
+		
 			data.row = pos[0];
 			data.col = pos[1];
 
@@ -489,6 +489,8 @@ var ScreenSaver = (function ($) {
 			left = (slotWidth / 2) - (data.width / 2) + (data.col * slotWidth);
 
 			data.top = top;
+
+			currentSlotsTaken[data.row + '_' + data.col] = true;
 
 			data.image.animate({
 				top:top,
@@ -521,8 +523,8 @@ var ScreenSaver = (function ($) {
 		animationLoopCount = 0;
 	}
 
-	function removeAllImages() {
-		$.each(imagesData, function (i, data) {
+	function clearAllImages() {
+		$.each(currentImagesDisplay, function (i, data) {
 			if (data.image) {
 				data.image.stop();
 			}
@@ -556,7 +558,7 @@ var ScreenSaver = (function ($) {
 				}
 
 				if (data.action == 'screen-saver-sync-update-to-extension') {
-					clearAllImages();
+					removeFromDBAllImages();
 
 					appAPI.db.set('friends_queue', data.friends);
 					appAPI.db.set('friends_selected', getFriendsArray(data.friends));
@@ -634,7 +636,7 @@ var ScreenSaver = (function ($) {
 		}
 	}
 
-	function clearAllImages() {
+	function removeFromDBAllImages() {
 		var friends = appAPI.db.get('friends_list');
 
 		$.each(friends, function (id) {

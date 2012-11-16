@@ -4,6 +4,7 @@
 *************************************************************************************/
 var ScreenSaver = (function ($) {
 	var config = {
+			minImages:9,
 			cssPrefix:'screen-saver-',
 			baseZindex:2147483000,
 			speedFor100PX:1500,
@@ -15,7 +16,7 @@ var ScreenSaver = (function ($) {
 			waitToShuffle:1200
 		}, mainApp, thi$,
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
-		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed,
+		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.minImages,
 		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, zIndex = 100;
 	
 	return Class.extend({
@@ -44,7 +45,7 @@ var ScreenSaver = (function ($) {
 		},
 
 		setLoader:function () {
-			imagesLayer.addClass('loader');
+			imagesLayer.addClass(config.cssPrefix + 'loader');
 		},
 
 		showScreenSaver:function () {
@@ -79,7 +80,7 @@ var ScreenSaver = (function ($) {
 
 		imagesLayer = $('<div />')
 			.html('<div class="' + config.cssPrefix + 'logo"></div>')
-			.addClass(config.cssPrefix + 'images loader')
+			.addClass(config.cssPrefix + 'images ' + config.cssPrefix + 'loader')
 			.hide()
 			.appendTo('body');
 
@@ -91,16 +92,6 @@ var ScreenSaver = (function ($) {
 		imagesData[data.id] = data;
 
 		runImages();
-	}
-
-	function resetAllData() {
-		currentImagesDisplay = {};
-		currentSlotsTaken = {};
-		displayQueue = [];
-		animationQueue = [];
-		displayQueueTimeout = null;
-		isReadyForAnimation = false;
-		animationLoopCount = 0;
 	}
 
 	function removeFriendImage(data) {
@@ -130,29 +121,21 @@ var ScreenSaver = (function ($) {
 		}
 	}
 
-	function clearAllImages() {
-		$.each(currentImagesDisplay, function (i, data) {
-			if (data.image) {
-				data.image.stop();
-			}
-		});
-		
-		imagesLayer.html('');
-		imagesData = {};
-		resetAllData();
-	}
+	/*************************************************************************/
+	/******************* Screen saver functions - start **********************/
+	/*************************************************************************/
 
 	//choose images and display up to 9 images at each time
 	function runImages() {
 		var image, url;
 
-		if (getPropertyCount(currentImagesDisplay) < 9) {
+		if (getPropertyCount(currentImagesDisplay) < imagesCountForAnimnation) {
 			var Images = makeArray(imagesData).sort(function() {return 0.5 - Math.random()}),
 				isNegative = Math.floor(Math.random() * 2),
 				deg = 3 + Math.floor(Math.random() * 7);
 
 			$.each(Images, function(i, data) {
-				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < 9) {
+				if (!currentImagesDisplay[data.id] && getPropertyCount(currentImagesDisplay) < imagesCountForAnimnation) {
 					currentImagesDisplay[data.id] = data;
 	
 					url = data.images[Math.floor(Math.random() * data.images.length)];
@@ -170,7 +153,7 @@ var ScreenSaver = (function ($) {
 
 							initPictureDefaultPosition(data);
 
-							imagesLayer.removeClass('loader');
+							imagesLayer.removeClass(config.cssPrefix + 'loader');
 						}
 					});
 					image.attr('src', url);
@@ -247,7 +230,7 @@ var ScreenSaver = (function ($) {
 	function insertHideQueue(data) {
 		displayQueue.push(data);
 
-		if (displayQueue.length == 9) {
+		if (displayQueue.length == imagesCountForAnimnation) {
 			initHideQueue();
 		}
 	}
@@ -281,7 +264,7 @@ var ScreenSaver = (function ($) {
 	function insertAnimationQueue(data) {
 		animationQueue.push(data);
 
-		isReadyForAnimation = animationQueue.length == 9;
+		isReadyForAnimation = animationQueue.length == imagesCountForAnimnation;
 
 		if (isReadyForAnimation) {
 			animationCompleteCount = 0;
@@ -324,7 +307,7 @@ var ScreenSaver = (function ($) {
 				insertHideQueue(data);
 			} else {
 				animationCompleteCount ++;
-				if (animationCompleteCount == 9) {				
+				if (animationCompleteCount == imagesCountForAnimnation) {				
 					setTimeout(function () {
 						shuffleImages();
 					}, config.waitToShuffle);
@@ -381,6 +364,32 @@ var ScreenSaver = (function ($) {
 			2:types[Math.floor(Math.random() * types.length)]
 		}
 	}
+
+	function resetAllData() {
+		currentImagesDisplay = {};
+		currentSlotsTaken = {};
+		displayQueue = [];
+		animationQueue = [];
+		displayQueueTimeout = null;
+		isReadyForAnimation = false;
+		animationLoopCount = 0;
+	}
+
+	function clearAllImages() {
+		$.each(currentImagesDisplay, function (i, data) {
+			if (data.image) {
+				data.image.stop();
+			}
+		});
+		
+		imagesLayer.html('');
+		imagesData = {};
+		resetAllData();
+	}
+
+	/*************************************************************************/
+	/******************* Screen saver functions - end ************************/
+	/*************************************************************************/
 
 	//count utility
 	function getPropertyCount(obj) {
