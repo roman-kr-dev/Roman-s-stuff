@@ -62,10 +62,10 @@ if (isset($_GET['photos'])) {
 		<meta property="og:title" content="My Friends ScreenSaver" />
 		<meta property="og:description" content="See the latest photos of your friends and family on this first ever social screensaver"/>
 		<meta property="og:url" content="http://apps.facebook.com/topfriendscreensaver/"/>
-		<meta property="og:image" content="http://www.nikitastudios.com/images/logo200x200.png"/>
+		<meta property="og:image" content="http://www.nikitastudios.com/images/logo128x128.png"/>
 
 		<link href="css/reset.css" rel="stylesheet" type="text/css" />
-		<link href="css/styles.css?x=<?php echo rand() ?>" rel="stylesheet" type="text/css" />
+		<link href="css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
 
 		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
@@ -73,13 +73,11 @@ if (isset($_GET['photos'])) {
 		<script src="js/base.class.js" type="text/javascript"></script>
 		<script src="js/installer.js" type="text/javascript"></script>
 		<script src="js/jquery.cookie.js" type="text/javascript"></script>
-		<script src="js/invite.js?x=<?php echo rand() ?>" type="text/javascript"></script>
+		<script src="js/invite.js" type="text/javascript"></script>
 		<script src="js/canvas.js?x=<?php echo rand() ?>" type="text/javascript"></script>
     </head>
     <body>
-		<div id="preview" class="preview loader">
-			<!-- <div class="title">Preview</div> -->
-			
+		<div id="preview" class="preview loader">		
 			<!-- go to app box message - START -->
 			<div class="approve-app-text hidden">
 				<div class="box-logo"></div>

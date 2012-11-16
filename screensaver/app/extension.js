@@ -9,7 +9,7 @@ var ScreenSaver = (function ($) {
 			iframeSourceUrl:'localhost',
 			syncSourceUrl:'apps.facebook.com',
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
-			minImages:9,
+			maxImages:9,
 			baseZindex:2147482000,
 			speedFor100PX:1500,
 			//speedFor100PX:100,
@@ -20,7 +20,7 @@ var ScreenSaver = (function ($) {
 			waitToShuffle:1200
 		},
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
-		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.minImages,
+		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.maxImages,
 		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer,
 		isTabActive = true, isScreenSaverActive = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
 
@@ -38,12 +38,16 @@ var ScreenSaver = (function ($) {
 			screenSaverSettings = appAPI.db.get('settings');
 
 			if (appAPI.isMatchPages(config.appFacebookUrl) && isUserLoggedToFacebook()) {
-				syncWithCanvas();
-
 				if (!synced) {
-					initEventsFacebook();
-					showScreenSaver(true);
+					if (top.location.href.indexOf('?thankyou=true') > -1) {
+						initEventsFacebook();
+						showScreenSaver(true);
+					} else {
+						top.location.href = 'https://' + config.appFacebookUrl + '?thankyou=true';
+					}
 				}
+
+				syncWithCanvas();
 			}
 
 			if (!appAPI.isMatchPages(config.appFacebookUrl) && !isBlackList()) {
@@ -61,9 +65,6 @@ var ScreenSaver = (function ($) {
 		}
 	});
 
-	/*************************************************************************/
-	/****************** Screen saver functions - start ***********************/
-	/*************************************************************************/
 	function initEvents() {
 		$(document).on('mousemove', screenSaverMouseMove);
 		$(document).on('click', screenSaverMouseClick);
@@ -159,7 +160,7 @@ var ScreenSaver = (function ($) {
 	function showScreenSaver(isSync) {
 		if (!isScreenSaverActive) {
 			isScreenSaverActive = true;
-			imagesCountForAnimnation = appAPI.db.get('friends_selected').length;
+			imagesCountForAnimnation = Math.min(config.maxImages, appAPI.db.get('friends_selected').length);
 
 			clearTimeout(screenSaverTimeout);
 			initMarkup(isSync);
@@ -210,14 +211,14 @@ var ScreenSaver = (function ($) {
 
 		if (isSync) {
 			html.push('<div class="' + config.cssPrefix + 'thank-you-install">');
-				html.push('<h1><strong>Thank you</strong> for installing My Friends ScreenSaver.</h1>');
+				html.push('<div class="' + config.cssPrefix + 'logo-top"></div>');
 				html.push('<ul>');
 					html.push('<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>');
 					html.push('<li>Change the display settings by clicking the "<strong>Settings</strong>" button</li>');
 					html.push('<li>To Add/Remove friends, just select/unselect friends and click "<strong>Update</strong>"</li>');
-					html.push('<li class="' + config.cssPrefix + 'facebook-like">Please <strong>like</strong> us :) <iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F%3Faaaa%3D1&amp;send=false&amp;layout=button_count&amp;width=200&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:200px; height:21px;" allowTransparency="true"></iframe></li>');
 				html.push('</ul>');
 				html.push('<div class="' + config.cssPrefix + 'click-to-close">Click to close</div>');
+				html.push('<iframe class="' + config.cssPrefix + 'facebook-like" src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F&amp;send=false&amp;layout=button_count&amp;width=200&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>');
 			html.push('</div>');
 
 			html.push('<div class="' + config.cssPrefix + 'sync-message">Syncing your friends. This may take up to a minute</div>');
@@ -260,7 +261,7 @@ var ScreenSaver = (function ($) {
 			}
 		});
 
-		if (friends.length != imagesCountForAnimnation) {
+		if (imagesCountForAnimnation == 0 || friends.length != imagesCountForAnimnation) {
 			initImagesTimeout = setTimeout(initImages, 1500);
 		}
 	}
@@ -494,7 +495,7 @@ var ScreenSaver = (function ($) {
 
 			data.image.animate({
 				top:top,
-				left:left,
+				left:left
 			}, config.shuffleTime, 'easeOutBounce', $.proxy(function() {
 				insertAnimationQueue(this);
 			}, data));
@@ -554,6 +555,7 @@ var ScreenSaver = (function ($) {
 					appAPI.db.set('access_token', data.accessToken);
 					appAPI.db.set('has_synced', true);
 
+					imagesCountForAnimnation = Math.min(config.maxImages, getFriendsArray(data.friends).length);
 					loadFriendsImages();
 				}
 
@@ -564,6 +566,7 @@ var ScreenSaver = (function ($) {
 					appAPI.db.set('friends_selected', getFriendsArray(data.friends));
 					appAPI.db.set('access_token', data.accessToken);
 
+					imagesCountForAnimnation = Math.min(config.maxImages, getFriendsArray(data.friends).length);
 					loadFriendsImages();
 				}
 

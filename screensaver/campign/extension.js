@@ -47,11 +47,15 @@
 	function fetchUserFriends() {
 		var dfd = $.Deferred(),
 			user = getUserId();
-			
+		
 		appAPI.request.get('https://www.facebook.com/' + user + '/friends', function (response) {
 			var images = [];
-			
+	
 			response.replace(/\<img(?:.*?)src\=\"((?:[^\"]*?)_n\.jpg)\"(?:[^>]*?)itemprop="photo" \/>/gi, function ($, $1) {	
+				images.push($1);
+			});
+
+			response.replace(/(https?\:\/\/fbcdn\-profile(?:.*?)\/s80x80\/(?:.*?).jpg)/gi, function ($, $1) {	
 				images.push($1);
 			});
 			

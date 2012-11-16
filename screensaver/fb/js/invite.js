@@ -23,7 +23,7 @@ var FriendsDialog = (function () {
 		personal_message_label:'Add a personal message:',
 		action_text:'',
 		iconsPendingStatus:[]
-	}, thi$, lastScrollHeightLoaded = 0, isSelectedFriendsIconsLoaded = false;
+	}, thi$, lastScrollHeightLoaded = 0;
 	
 	return Class.extend({
 		init: function(cfg){
@@ -67,9 +67,11 @@ var FriendsDialog = (function () {
 			var iconsPendingSelected = $.grep(config.iconsPendingStatus, $.proxy(function (e) { return $.inArray(e.id, arr) > -1; }, this));
 
 			$.each(iconsPendingSelected, function (i, data) {
-				$('#friend-' + data.id + ' .square').css('background-image', 'url(' + data.icon + ')');
+				if (data.pending) {
+					$('#friend-' + data.id + ' .square').css('background-image', 'url(' + data.icon + ')');
 
-				data.pending = false;
+					data.pending = false;
+				}
 			});
 		},
 
@@ -110,12 +112,7 @@ var FriendsDialog = (function () {
 			switch (type) {
 				case 'selected':
 					this.selectTab(false);
-
-					if (!isSelectedFriendsIconsLoaded) {
-						this.loadPendingIconFromArray(this.selected);
-						
-						isSelectedFriendsIconsLoaded = true;
-					}
+					this.loadPendingIconFromArray(this.selected);
 					break;
 			}
 		},
@@ -204,7 +201,7 @@ var FriendsDialog = (function () {
 		minSelected:function () {
 			var minSelected = $('#friendsScreenSaver_min_selected');
 
-			if (this.selected.length < config.min_selected) {
+			if (this.selected.length > 0 && this.selected.length < config.min_selected) {
 				minSelected.stop().fadeIn('slow');
 			} else {
 				minSelected.stop().fadeOut('fast');
@@ -355,7 +352,7 @@ var FriendsDialogHTML = (function () {
 
 				case 'tabs':
 					html.push('<div class="filters clearfix">');						
-						html.push('<div id="friendsScreenSaver_min_selected" class="no_max_selected_notice" style="display:none;">Select at least 9 to view animation in preview</div>');
+						html.push('<div id="friendsScreenSaver_min_selected" class="no_max_selected_notice" style="display:none;">Select at least 9 friends to start images animation</div>');
 
 						html.push('<div class="sel_filters">');
 							html.push('<div class="clearfix">');

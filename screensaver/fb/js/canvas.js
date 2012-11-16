@@ -29,10 +29,8 @@ var FriendsScreenSaver = (function () {
 			initPreviewIframe();
 
 			if (cfg.accessToken) {
-				console.log('initWithAccessToken');
 				this.initWithAccessToken();
 			} else {
-				console.log('Not access token');
 				$.when(checkIfPreviewReady()).then(function () {				
 					loadPreviewIframe();
 					initEvents();
@@ -294,10 +292,11 @@ var FriendsScreenSaver = (function () {
 						image:image
 					}
 				
-				friendsById[friend.id] = friend;
-			
+				friendsById[friend.id] = friend;		
 				friendsList.push(friend);
 			});
+
+			fixSelectedFriends();
 
 			dfd.resolve();
 		});
@@ -596,6 +595,16 @@ var FriendsScreenSaver = (function () {
 		dfdIframeReady = new $.Deferred();
 
 		return dfdIframeReady.promise();
+	}
+
+	function fixSelectedFriends() {
+		var origLen = selectedFrinedsList.length;
+		
+		selectedFrinedsList = $.grep(selectedFrinedsList, function (id) { return friendsById[id]; });
+
+		if (origLen != selectedFrinedsList.length) {
+			localStorage.setItem('selected_friends', selectedFrinedsList);
+		}
 	}
 
 	function selectRandomFriends() {	

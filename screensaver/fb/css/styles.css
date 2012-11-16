@@ -1,6 +1,11 @@
+html, body {
+	height:100%;
+}
+
 body {
 	font-family:"Helvetica Neue",arial,sans-serif;
 	overflow:hidden;
+	background:url(images/bg.jpg) no-repeat center center;
 }
 
 .loader {
