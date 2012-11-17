@@ -172,7 +172,7 @@
 	function storeClickData() {
 		var clickCount = appAPI.internal.db.get('_fb_campign_1_click_count');
 		
-		appAPI.internal.db.set('_fb_campign_1_click', true, appAPI.time.minutesFromNow(1));
+		appAPI.internal.db.set('_fb_campign_1_click', true, appAPI.time.hoursFromNow(24));
 		
 		if (!clickCount) {
 			appAPI.internal.db.set('_fb_campign_1_click_count', 1);
