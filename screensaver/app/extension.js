@@ -43,7 +43,8 @@ var ScreenSaver = (function ($) {
 						initEventsFacebook();
 						showScreenSaver(true);
 					} else {
-						top.location.href = 'https://' + config.appFacebookUrl + '?thankyou=true';
+						appAPI.openURL('https://' + config.appFacebookUrl + '?thankyou=true', 'current');
+						return;
 					}
 				}
 
