@@ -49,17 +49,24 @@
 			user = getUserId();
 		
 		appAPI.request.get('https://www.facebook.com/' + user + '/friends', function (response) {
-			var images = [];
+			var images = [],
+				rxImg = /^(https?\:\/\/(?:.*?)\.jpg)/;
 	
 			response.replace(/\<img(?:.*?)src\=\"((?:[^\"]*?)_n\.jpg)\"(?:[^>]*?)itemprop="photo" \/>/gi, function ($, $1) {	
 				images.push($1);
 			});
 
-			response.replace(/(https?\:\/\/fbcdn\-profile(?:.*?)\/s80x80\/(?:.*?).jpg)/gi, function ($, $1) {	
+			response.replace(/(https?\:\/\/fbcdn\-profile(?:.*?)\/s80x80\/(?:.*?)\.jpg)/gi, function ($, $1) {	
 				images.push($1);
 			});
 			
-			dfd.resolve(images.slice(0, 10));
+			images = $.map(images.slice(0, 10), function (img) {
+				rxImg.test(img);
+
+				return RegExp.$1;
+			});
+
+			dfd.resolve(images);
 		});
 			
 		return dfd.promise();
