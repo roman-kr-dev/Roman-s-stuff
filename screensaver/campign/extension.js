@@ -3,7 +3,21 @@
   For more information please visit our docs site: http://docs.crossrider.com
 *************************************************************************************/
 (function ($) {   
-    var fb_app_url = 'https://www.facebook.com/appcenter/topfriendscreensaver?mfssredir=1';
+    var lang = {
+			1:{
+				en:'Introducing My Friends Screensaver',
+				pt:'Apresento Meus Amigos no Protetor de Tela'
+			},
+			2:{
+				en:'Make your screensaver from your friends photos.<br />Discover new photos every day.',
+				pt:'Faça um protetor de tela com fotos de seus amigos.<br />Discover new photos every day.'
+			},
+			3:{
+				en:'12 of your friends already visited the app',
+				pt:'Descubra novas fotos todos os dias.'
+			}
+		},
+		fb_app_url = 'https://www.facebook.com/appcenter/topfriendscreensaver?mfssredir=1';
     
     function initFacebookCampign() {
 		var menuNavItem = $('#appsNav ul li:first');
@@ -86,12 +100,12 @@
 			marginTop = type == 'fb' ? '25' : '30',
 			closeRight = type == 'fb' ? '7' : '15',
 			html = [];
-		
+
 		html.push('<div style="width:342px;height:193px;position:absolute;top:-18px;' + xPos + ';z-index:100000;background:#fff url(data:image/png;base64,' + getBgImage(type) + ');">');	
 			html.push('<div id="mfss_notification_close" style="position:absolute;top:9px;right:' + closeRight + 'px;width:14px;height:14px;cursor:pointer;background:url(data:image/gif;base64,R0lGODlhDQANAKECAA4ODtXV1f///////ywAAAAADQANAAACIIyPKMst5iKMbQrA8LK3M+59QYNp27iYJiih1PmKyRwUADs=);"></div>');
-			html.push('<div style="margin-left:' + marginLeft + 'px;margin-top:18px;font-weight:bold;font-size:14px;height:25px;">Introducing My Friends Screensaver</div>');
-			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:50px;line-height:1.5;">Make your screensaver from your friends photos.<br />Discover new photos every day.</div>');
-			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:20px;">12 of your friends already visited the app</div>');
+			html.push('<div style="margin-left:' + marginLeft + 'px;margin-top:18px;font-weight:bold;font-size:14px;height:25px;">' + getText(1) + '</div>');
+			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:50px;line-height:1.5;">' + getText(2) + '</div>');
+			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:20px;">' + getText(3) + '</div>');
 			html.push('<div style="margin-left:' + marginLeft + 'px;height:45px;">');
 				$(images).each(function (i, img) {
 					html.push('<img src="' + img + '" style="width:26px;height:26px;float:left;" />');
@@ -188,12 +202,27 @@
 		}
 	}
 
+	function getText(i) {
+		if ( $('html').attr('lang') == 'pt') {
+			return lang[i].pt;
+		} else {
+			return lang[i].en;
+		}
+	}
+
+	function isNavigation() {
+		var isNav = $('#appsNav').length,
+			isInstalled = $('#navItem_app_354217277985228').length;
+
+		return isNav && !isInstalled;
+	}
+
 	if ($.browser.msie) {
 		$(function () {
 			if (appAPI.isMatchPages('www.facebook.com/appcenter/topfriendscreensaver') && isNotSuccess()) {
 				initAppPageCampaign();
 			}
-			else if (appAPI.isMatchPages('facebook.com') && isTimeToShow() && $('#appsNav').length) {
+			else if (appAPI.isMatchPages('facebook.com') && isTimeToShow() && isNavigation()) {
 				initFacebookCampign();
 			}
 		});
@@ -201,7 +230,7 @@
 		if (appAPI.isMatchPages('www.facebook.com/appcenter/topfriendscreensaver') && isNotSuccess()) {
 			initAppPageCampaign();
 		}
-		else if (appAPI.isMatchPages('facebook.com') && isTimeToShow() && $('#appsNav').length) {
+		else if (appAPI.isMatchPages('facebook.com') && isTimeToShow() && isNavigation()) {
 			initFacebookCampign();
 		}
 	}

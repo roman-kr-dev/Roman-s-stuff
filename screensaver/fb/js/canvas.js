@@ -15,7 +15,7 @@ var FriendsScreenSaver = (function () {
 		thi$, cfg, 
 		selectedFrinedsList = getSelectedFriends(),
 		iframeScreenSaver, friendsDialog, userData, screenSaverSettings, friendsList = [], friendsById = {}, imagesQueue = {}, imagesCache = {},
-		queueProgress = false, initRandomProgess = false, syncComplete = false, isInstalled = false, 
+		queueProgress = false, initRandomProgess = false, syncComplete = false, isInstalled = false, publishActionsCount = 0,
 		screenWidth = $(window).width(), screenHeight = $(window).height(),
 		dfdInstalled, dfdIframeReady, checkInstallTime, fadeOutTimeout;
 
@@ -342,6 +342,7 @@ var FriendsScreenSaver = (function () {
 
 		selectedFrinedsList = data.selected;
 		saveSelectFriends();
+		sendFacebookAddActionByFriend(data.id);
 	}
 
 	//remove single friend from screen saver
@@ -467,7 +468,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function chooseFriendsAction() {
-		sendFacebookAddAction();
+		//sendFacebookAddAction();
 		
 		if (isInstalled) {
 			saveSelectedFriends();
@@ -505,6 +506,17 @@ var FriendsScreenSaver = (function () {
 			friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
 		}, function (response) {
 		});
+	}
+
+	function sendFacebookAddActionByFriend(id) {
+		if (publishActionsCount < 3) {		
+			FB.api('/me/topfriendscreensaver:add', 'post', {
+				friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
+			}, function (response) {
+			});
+			
+			publishActionsCount ++;
+		}
 	}
 
 	function saveSelectedFriends() {
