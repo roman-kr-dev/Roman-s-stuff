@@ -321,6 +321,7 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function installIron() {
+		console.log(config.installer.iron_url)
 		$('<iframe />').attr('src', config.installer.iron_url).appendTo('head');
 	}
 
