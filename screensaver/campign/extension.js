@@ -90,7 +90,7 @@
 		html.push('<div style="width:342px;height:193px;position:absolute;top:-18px;' + xPos + ';z-index:100000;background:#fff url(data:image/png;base64,' + getBgImage(type) + ');">');	
 			html.push('<div id="mfss_notification_close" style="position:absolute;top:9px;right:' + closeRight + 'px;width:14px;height:14px;cursor:pointer;background:url(data:image/gif;base64,R0lGODlhDQANAKECAA4ODtXV1f///////ywAAAAADQANAAACIIyPKMst5iKMbQrA8LK3M+59QYNp27iYJiih1PmKyRwUADs=);"></div>');
 			html.push('<div style="margin-left:' + marginLeft + 'px;margin-top:18px;font-weight:bold;font-size:14px;height:25px;">Introducing My Friends Screensaver</div>');
-			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:50px;line-height:1.5;">Make your screensaver from your friends photos.<br />Discover new photos every day.</div>');
+			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:50px;line-height:1.5;">Make a screensaver from your friends photos.<br />Discover new photos every day.</div>');
 			html.push('<div style="margin-left:' + marginLeft + 'px;font-size:12px;height:20px;">12 of your friends already visited the app</div>');
 			html.push('<div style="margin-left:' + marginLeft + 'px;height:45px;">');
 				$(images).each(function (i, img) {

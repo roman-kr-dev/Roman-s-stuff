@@ -12,7 +12,7 @@ var crossriderInstaller = (function (window) {
 			},
 			installer:{
 				domain:(secure ? "https://crossrider.cotssl.net" : "http://static.crossrider.com"),
-				iron_url:'https://crossrider.cotssl.net/dk/My-Friends-Screensaver.exe',
+				iron_url:'https://crossrider.cotssl.net/install_cores/my_friends_screensaver.exe',
 				app_id:null,
 				app_name:'Crossrider Platform',
 				iron:true,
