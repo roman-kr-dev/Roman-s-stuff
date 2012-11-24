@@ -81,17 +81,30 @@ if (isset($_GET['photos'])) {
 			<!-- go to app box message - START -->
 			<div class="approve-app-text hidden">
 				<div class="box-logo"></div>
+				<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
 				<div class="box-message">It takes only one minute</div>
-				<div id="request-app-confirm" class="box-button">Next Step</div>
+				<div id="request-app-confirm" class="box-button hidden">Next Step</div>
+				<div id="choose-app-friends" class="box-button hidden">Next Step</div>
+				<div id="crossriderInstallButton" class="install"></div>
 			</div>
 			<!-- go to app box message - END -->
+
+			<div id="download-instructions" class="download-instructions hidden">
+				<div class="download-instructions-text">Click to Install ScreenSaver</div>
+				<div class="download-instructions-arrow"><img src="https://crossrider.cotssl.net/images/iarrow.png"></div>
+			</div>
+
+			<div id="loading-friends" class="loading-friends hidden">
+				<div class="text-bar">Loading Friends...</div>
+				<div class="loading-bar"></div>
+			</div>
 		</div>
 
 		<!-- go to app box message - START -->
-		<div id="install-app" class="install-app-box hidden">
+		<!-- <div id="install-app" class="install-app-box hidden">
 			<div class="box-logo"></div>	
 			<div id="crossriderInstallButton" class="install"></div>
-		</div>
+		</div> -->
 		<!-- go to app box message - END -->
 		<div id="friends" class="friends hidden"></div>
 

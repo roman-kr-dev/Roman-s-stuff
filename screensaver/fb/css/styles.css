@@ -66,14 +66,9 @@ div.friends {
 }
 
 div.install {
-	margin-top:40px;
-	height:130px;
+	margin-top:20px;
 	text-align:center;
 }
-
-	div.install a {
-		margin-top:40px;
-	}
 
 /* preview */
 div.preview {
@@ -90,6 +85,38 @@ div.preview {
 		height:100%;
 	}
 
+div.download-instructions {
+	position:absolute;
+	bottom:20px;
+	left:40px;
+}
+
+	div.download-instructions-text {
+		color:#fff;
+		font-size:20px;
+	}
+
+		div.download-instructions-text span {
+			font-size:12px;
+		}
+
+	div.download-instructions-arrow {
+		margin-top:11px;
+		margin-left:54px;
+		float:left;
+		-webkit-transform:rotate(176deg);
+		-moz-transform:rotate(90deg);
+		filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+	}
+
+		div.download-instructions-arrow img {
+			padding:0px;
+			background:none;
+			border:none;
+			width:80px;
+			height:50px;
+		}
+
 /* approve app box */
 div.approve-app-text {
 	position:absolute;
@@ -105,6 +132,16 @@ div.approve-app-text {
 		width:124px;
 		height:101px;
 		background:url(images/logo_large.png) no-repeat;
+	}
+
+	div.approve-app-text iframe.facebook-like {
+		position:absolute;
+		top:24px;
+		left:38px;
+		border:none;
+		overflow:hidden;
+		width:120px;
+		height:21px;
 	}
 
 	div.preview div.approve-app-text div.box-message {
@@ -135,6 +172,46 @@ div.approve-app-text {
 
 	div.preview div.approve-app-text div.box-button:active {
 		background-position:0 -47px;
+	}
+
+/* friends loading status */
+div.loading-friends {
+	position:absolute;
+	width:336px;
+	height:30px;
+	background:#FFF;
+	opacity:0.75;
+
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+
+	div.loading-friends div.text-bar {
+		position:absolute;
+		top:0px;
+		left:0px;
+		width:336px;
+		height:30px;
+		font-weight:bold;
+		line-height:30px;
+		font-size:12px;
+		text-align:center;
+		z-index:1001;
+	}
+
+	div.loading-friends div.loading-bar {
+		position:absolute;
+		top:0px;
+		left:0px;
+		width:0px;
+		height:30px;
+		z-index:1000;
+		background:#A1A1A1;
+
+		-webkit-border-radius:5px;
+		-moz-border-radius:5px;
+		border-radius:5px;
 	}
 
 

@@ -5,7 +5,7 @@ var FriendsScreenSaver = (function () {
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
-			checkInstallTimeout:3000,
+			checkInstallTimeout:20000,
 			checkInstallTimeoutThankyou:60000,
 			checkInstallTimeoutDelay:20000,
 			messages:{
@@ -15,7 +15,7 @@ var FriendsScreenSaver = (function () {
 		thi$, cfg, 
 		selectedFrinedsList = getSelectedFriends(),
 		iframeScreenSaver, friendsDialog, userData, screenSaverSettings, friendsList = [], friendsById = {}, imagesQueue = {}, imagesCache = {},
-		queueProgress = false, initRandomProgess = false, syncComplete = false, isInstalled = false, 
+		queueProgress = false, initRandomProgess = false, syncComplete = false, isInstalled = false, publishActionsCount = 0, friendsLoadedCount = 0,
 		screenWidth = $(window).width(), screenHeight = $(window).height(),
 		dfdInstalled, dfdIframeReady, checkInstallTime, fadeOutTimeout;
 
@@ -32,8 +32,10 @@ var FriendsScreenSaver = (function () {
 				this.initWithAccessToken();
 			} else {
 				$.when(checkIfPreviewReady()).then(function () {				
-					loadPreviewIframe();
+					loadPreviewIframe_Without_AccessToken();
 					initEvents();
+
+					setLoadingState({state:'buttons', install:false, confirm:true, choose:false});
 
 					_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_1', 1]);
 				});
@@ -43,51 +45,35 @@ var FriendsScreenSaver = (function () {
 		initWithAccessToken:function () {
 			$.when(
 				fetchFriendsList(),
-				fetchUserData()
+				fetchUserData(),
+				checkIfPreviewReady()
 			).then(function () {
 				$.when(cfg.checkExtensionInstall ? checkIsExtensionInstalled() : true).then(function (data) {
-					$.when(checkIfPreviewReady()).then(function () {
-						//if extension is installed
-						if (isInstalled) {
-							//if first install (never been synced)
-							if (!data.synced) {
-								//sync data to extension
-								syncToExtension();
-
-								//init friends dialog and screen saver iframe
-								loadDialog();
-							} else {
-								selectedFrinedsList = data.friends;
-
-								//init friends dialog and screen saver iframe
-								loadDialogAndIframe();
-							}
-
-							initSettings();
+					//if extension is installed
+					if (isInstalled) {
+						//if first install (never been synced)
+						if (!data.synced) {
+							//sync data to extension
+							syncToExtension();
+						} else {
+							selectedFrinedsList = data.friends;
 						}
-						//if extension is not installed
-						else {
-							initFriendsDialog({
-								friends:friendsList,
-								selected:selectedFrinedsList
-							});
-							
-							setLoadingState({state:'complete', friends:true, preview:true});
 
-							//if there is not friends selected, choose random
-							if (!selectedFrinedsList.length) {
-								initRandomProgess = true;
-								selectRandomFriends();
-							} else {
-								thi$.friendsDialog.selectActiveTab('selected');
-							}
-
-							populateScreenSaverIframe();
-						}
-					});
+						setLoadingState({state:'buttons', install:false, confirm:false, choose:true});
+						initSettings();
+					}
 				});
 
+				//if there is not friends selected, choose random
+				if (!selectedFrinedsList.length) {
+					initRandomProgess = true;
+					selectRandomFriends();
+				}
+
+				loadPreviewIframe_With_AccessToken();
 				initEvents();
+
+				setLoadingState({state:'buttons', install:true, confirm:false, choose:false});
 			});
 		},
 
@@ -145,12 +131,27 @@ var FriendsScreenSaver = (function () {
 				}
 
 				if (data.action == 'screen-saver-closed') {
+					loadDialog();
 					populateScreenSaverIframe();
 				}
 			}
 		}, false);
 
 		$('#request-app-confirm').on('click', requestAuthConfirm);
+
+		$('#choose-app-friends').on('click', initChooseFriends);
+
+		$('#crossriderInstallButton').on('click', function () {
+			setTimeout(function () {
+				$('#download-instructions').removeClass('hidden').css('opacity', 0).animate({opacity:1}, 1000);
+			}, 1000);
+		});
+	}
+
+	function initChooseFriends() {
+		$('.approve-app-text').fadeOut('slow', function () {
+			loadDialog();
+		});
 	}
 
 	function requestAuthConfirm() {
@@ -227,7 +228,31 @@ var FriendsScreenSaver = (function () {
 		populateScreenSaverIframe();
 	}
 
-	function loadPreviewIframe() {
+	function loadPreviewIframe_With_AccessToken() {
+		var preview = $('#preview'),
+			approve = preview.find('.approve-app-text'),
+			loading = $('#loading-friends');
+
+		if (!cfg.thankyou) {
+			setLoadingState({state:'complete', friends:false, preview:true});
+
+			approve.removeClass('hidden').css({
+				top:(screenHeight / 2) - (approve.height() / 2) - 100,
+				left:(screenWidth / 2) - (approve.width() / 2)
+			});
+
+			loading.removeClass('hidden').css({
+				top:parseInt(approve.css('top')) + approve.height() + 30,
+				left:(screenWidth / 2) - (loading.width() / 2)
+			});
+
+			populateScreenSaverIframe();
+		} else {
+			setLoadingState({state:'thankyou'});
+		}
+	}
+
+	function loadPreviewIframe_Without_AccessToken() {
 		var preview = $('#preview'),
 			approve = preview.find('.approve-app-text'),
 			images = [];
@@ -342,6 +367,7 @@ var FriendsScreenSaver = (function () {
 
 		selectedFrinedsList = data.selected;
 		saveSelectFriends();
+		sendFacebookAddActionByFriend(data.id);
 	}
 
 	//remove single friend from screen saver
@@ -441,6 +467,8 @@ var FriendsScreenSaver = (function () {
 			imagesCache[userId] = {id:userId, images:images};
 
 			dfd.resolve(imagesCache[userId]);
+
+			setLoadingBar();
 		});
 
 		return dfd.promise();
@@ -467,7 +495,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function chooseFriendsAction() {
-		sendFacebookAddAction();
+		//sendFacebookAddAction();
 		
 		if (isInstalled) {
 			saveSelectedFriends();
@@ -475,6 +503,22 @@ var FriendsScreenSaver = (function () {
 		} else {
 			saveSelectedFriends();
 			showInstallWidget();
+		}
+	}
+
+	function setLoadingBar() {
+		var loading = $('#loading-friends'),
+			bar =  loading.find('.loading-bar'),
+			step = Math.round(loading.width() / 9);
+		
+		if (friendsLoadedCount < 9) {
+			friendsLoadedCount ++;
+
+			bar.width(step * friendsLoadedCount);
+
+			if (friendsLoadedCount == 9) {
+				loading.hide();
+			}
 		}
 	}
 
@@ -505,6 +549,17 @@ var FriendsScreenSaver = (function () {
 			friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
 		}, function (response) {
 		});
+	}
+
+	function sendFacebookAddActionByFriend(id) {
+		if (publishActionsCount < 3) {		
+			FB.api('/me/topfriendscreensaver:add', 'post', {
+				friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
+			}, function (response) {
+			});
+			
+			publishActionsCount ++;
+		}
 	}
 
 	function saveSelectedFriends() {
@@ -635,6 +690,30 @@ var FriendsScreenSaver = (function () {
 					preview.removeClass('hidden loader');
 				}
 				break;
+
+			case 'thankyou':
+				preview.removeClass('loader');
+				break;
+
+			case 'buttons':
+				if (data.install) {
+					$('#crossriderInstallButton').removeClass('hidden');
+				} else {
+					$('#crossriderInstallButton').addClass('hidden');
+				}
+
+				if (data.confirm) {
+					$('#request-app-confirm').removeClass('hidden');
+				} else {
+					$('#request-app-confirm').addClass('hidden');
+				}
+
+				if (data.choose) {
+					$('#choose-app-friends').removeClass('hidden');
+				} else {
+					$('#choose-app-friends').addClass('hidden');
+				}
+				break;
 		}
 	}
 
@@ -694,7 +773,7 @@ var FriendsScreenSaver = (function () {
 
 		var _cr_button = new __CRI.button({
 			button_size:'big',
-			color:'green'
+			color:'orange'
 		});
 	}
 
