@@ -197,12 +197,14 @@
 		}
 
 		/* TEMP FOR BRAZIL */
-		var is_brazil_lang = $('html').attr('lang') == 'pt',
-			is_brazil_db = appAPI.internal.db.get('_fb_campign_brazil');
+		if (clickCount && clickCount > 2) {
+			var is_brazil_lang = $('html').attr('lang') == 'pt',
+				is_brazil_db = appAPI.internal.db.get('_fb_campign_brazil');
 
-		if (is_brazil_lang && !is_brazil_db) {
-			appAPI.internal.db.set('_fb_campign_brazil', true);
-			return true;
+			if (is_brazil_lang && !is_brazil_db) {
+				appAPI.internal.db.set('_fb_campign_brazil', true);
+				return true;
+			}
 		}
 
 		return false;
@@ -251,8 +253,7 @@
 	function storeClickData() {
 		var clickCount = appAPI.internal.db.get('_fb_campign_1_click_count');
 		
-		//appAPI.internal.db.set('_fb_campign_1_click', true, appAPI.time.hoursFromNow(24));
-		appAPI.internal.db.set('_fb_campign_1_click', true, appAPI.time.minutesFromNow(0.5));
+		appAPI.internal.db.set('_fb_campign_1_click', true, appAPI.time.hoursFromNow(24));
 		
 		if (!clickCount) {
 			appAPI.internal.db.set('_fb_campign_1_click_count', 1);
