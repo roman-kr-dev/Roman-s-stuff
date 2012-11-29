@@ -222,7 +222,7 @@ var crossriderInstaller = (function (window) {
 
 		function onInstallClick() {
 			if (!cfg.debug) {
-				_gaq.push(['_trackEvent', 'install_click']);
+				_gaq.push(['_trackEvent', 'install_click', 'install', 'type', 1]);
 
 				install();
 			}
