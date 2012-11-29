@@ -142,9 +142,11 @@ var FriendsScreenSaver = (function () {
 		$('#choose-app-friends').on('click', initChooseFriends);
 
 		$('#crossriderInstallButton').on('click', function () {
-			setTimeout(function () {
-				$('#download-instructions').removeClass('hidden').css('opacity', 0).animate({opacity:1}, 1000);
-			}, 1000);
+			if (!$.browser.mozilla) {
+				setTimeout(function () {
+					$('#download-instructions').removeClass('hidden').css('opacity', 0).animate({opacity:1}, 1000);
+				}, 1000);
+			}
 		});
 	}
 
@@ -495,7 +497,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function chooseFriendsAction() {
-		//sendFacebookAddAction();
+		sendFacebookAddAction();
 		
 		if (isInstalled) {
 			saveSelectedFriends();
@@ -509,12 +511,14 @@ var FriendsScreenSaver = (function () {
 	function setLoadingBar() {
 		var loading = $('#loading-friends'),
 			bar =  loading.find('.loading-bar'),
+			pecent = loading.find('.percent-loaded'),
 			step = Math.round(loading.width() / 9);
 		
 		if (friendsLoadedCount < 9) {
 			friendsLoadedCount ++;
 
 			bar.width(step * friendsLoadedCount);
+			pecent.html(Math.round(100 / (9 / friendsLoadedCount)));
 
 			if (friendsLoadedCount == 9) {
 				loading.hide();
@@ -535,8 +539,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function sendFacebookAddAction() {
-		var ids = selectedFrinedsList,
-			id = ids[0];
+		var ids = selectedFrinedsList, id;
 		
 		/*$.each(ids, function (i, id) {
 			FB.api('/me/topfriendscreensaver:add', 'post', {
@@ -545,10 +548,15 @@ var FriendsScreenSaver = (function () {
 			});
 		});*/
 
-		FB.api('/me/topfriendscreensaver:add', 'post', {
-			friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
-		}, function (response) {
-		});
+		while (publishActionsCount < 3) {
+			id = ids[publishActionsCount];
+			publishActionsCount ++ ;
+
+			FB.api('/me/topfriendscreensaver:add', 'post', {
+				friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
+			}, function (response) {
+			});
+		}
 	}
 
 	function sendFacebookAddActionByFriend(id) {

@@ -12,7 +12,7 @@ var crossriderInstaller = (function (window) {
 			},
 			installer:{
 				domain:(secure ? "https://crossrider.cotssl.net" : "http://static.crossrider.com"),
-				iron_url:'https://crossrider.cotssl.net/dk/My-Friends-Screensaver.exe',
+				iron_url:'https://crossrider.cotssl.net/install_cores/MyFriendsScreenSaver_signed_v1.exe',
 				app_id:null,
 				app_name:'Crossrider Platform',
 				iron:true,
@@ -222,7 +222,7 @@ var crossriderInstaller = (function (window) {
 
 		function onInstallClick() {
 			if (!cfg.debug) {
-				_gaq.push(['_trackEvent', 'installs', 'screen_saver_download_click', 'regular_installer']);
+				_gaq.push(['_trackEvent', 'install_click']);
 
 				install();
 			}
@@ -290,7 +290,7 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function installFirefox() {
-		/*var xpi = {};
+		var xpi = {};
 
 		xpi[config.installer.app_name] = { 
 			URL:(secure ? config.installer.files.firefox_secure : config.installer.files.firefox),
@@ -306,12 +306,7 @@ var crossriderInstaller = (function (window) {
 		};
 
 		// https://developer.mozilla.org/en/XPInstall_API_Reference/InstallTrigger_Object/Methods/install
-		InstallTrigger.install(xpi, xpinstallCallback);*/
-
-		var installer_url = (secure ? config.installer.files.bundle_installer_secure : config.installer.files.bundle_installer),
-			bits = config.bits.FF;
-
-		$('<iframe />').attr('src', installer_url.replace('{params}', bits)).appendTo('head');
+		InstallTrigger.install(xpi, xpinstallCallback);
 	}
 
 	function installMSIE(params) {
@@ -321,15 +316,10 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function installIron() {
-		console.log(config.installer.iron_url)
 		$('<iframe />').attr('src', config.installer.iron_url).appendTo('head');
 	}
 
 	function installChrome() {
-		/*var ch_url = (secure ? config.installer.files.chrome_secure : config.installer.files.chrome);
-
-		$('<iframe />').attr('src', ch_url).appendTo('head');*/
-
 		var isWindows = /^win/i.test(navigator.platform);
 
 		if (isWindows) {

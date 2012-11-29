@@ -95,7 +95,7 @@ if (isset($_GET['photos'])) {
 			</div>
 
 			<div id="loading-friends" class="loading-friends hidden">
-				<div class="text-bar">Loading Friends...</div>
+				<div class="text-bar">Loading Friends... (<span class="percent-loaded">0</span>%)</div>
 				<div class="loading-bar"></div>
 			</div>
 		</div>
