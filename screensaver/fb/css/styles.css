@@ -89,11 +89,17 @@ div.download-instructions {
 	position:absolute;
 	bottom:20px;
 	left:40px;
+	z-index:999999;
 }
 
 	div.download-instructions-text {
-		color:#fff;
+		color:#333333;
+		padding:5px;
 		font-size:20px;
+		background:#fff;
+		background:rgba(255, 255, 255, 0.8);
+		-webkit-border-radius: 8px;
+		border-radius: 8px;
 	}
 
 		div.download-instructions-text span {

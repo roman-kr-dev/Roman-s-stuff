@@ -261,7 +261,7 @@ var FriendsDialog = (function () {
 		},
 
 		setActionText:function (text) {
-			$('#friendsScreenSaver-action-button').val(text);
+			$('#friendsScreenSaver-action-button').html(text);
 		},
 
 		showSettingsButton:function () {
@@ -437,7 +437,7 @@ var FriendsDialogHTML = (function () {
 						html.push('<div>');
 							html.push('<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>');
 							
-							html.push('<div class="continue-button" onclick="friendsScreenSaver.friendsDialog.sendInvites();">'+config.action_botton_text+'</div>');
+							html.push('<div id="friendsScreenSaver-action-button" class="continue-button" onclick="friendsScreenSaver.friendsDialog.sendInvites();">'+config.action_botton_text+'</div>');
 
 							//settings
 							html.push('<label id="friendsScreenSaver-settings-button" class="uiButton settings-button hidden">');

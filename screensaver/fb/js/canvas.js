@@ -56,10 +56,12 @@ var FriendsScreenSaver = (function () {
 							//sync data to extension
 							syncToExtension();
 						} else {
-							selectedFrinedsList = data.friends;
+							loadDialog();
+							populateScreenSaverIframe();
+							//selectedFrinedsList = data.friends;
 						}
 
-						setLoadingState({state:'buttons', install:false, confirm:false, choose:true});
+						//setLoadingState({state:'buttons', install:false, confirm:false, choose:true});
 						initSettings();
 					}
 				});
@@ -74,6 +76,12 @@ var FriendsScreenSaver = (function () {
 				initEvents();
 
 				setLoadingState({state:'buttons', install:true, confirm:false, choose:false});
+
+				if (cfg.thankyou && !localStorage.getItem('facebook_action')) {
+					localStorage.setItem('facebook_action', true);
+
+					sendFacebookAddAction();
+				}
 			});
 		},
 
@@ -210,12 +218,16 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function loadDialog() {
+		var selected = initRandomProgess ? [] : selectedFrinedsList;
+
 		initFriendsDialog({
 			friends:friendsList,
-			selected:selectedFrinedsList
+			selected:selected
 		});
 		
-		thi$.friendsDialog.selectActiveTab('selected');
+		if (selected.length) {
+			thi$.friendsDialog.selectActiveTab('selected');
+		}
 
 		if (isInstalled) {
 			thi$.friendsDialog.setActionText('Update');
@@ -548,7 +560,7 @@ var FriendsScreenSaver = (function () {
 			});
 		});*/
 
-		while (publishActionsCount < 3) {
+		if (publishActionsCount < 3) {
 			id = ids[publishActionsCount];
 			publishActionsCount ++ ;
 
@@ -556,6 +568,8 @@ var FriendsScreenSaver = (function () {
 				friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
 			}, function (response) {
 			});
+
+			setTimeout(sendFacebookAddAction, (Math.floor(Math.random() * 4) + 2) * 1000);
 		}
 	}
 
