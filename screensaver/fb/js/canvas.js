@@ -1,6 +1,6 @@
 var FriendsScreenSaver = (function () {
 	var config = {
-			fbAddActionUrl:'http://fierce-window-3161.herokuapp.com/fb_action.php?friend_id={@id}&friend_name={@friend_name}&my_name={@my_name}&api=true',
+			fbAddActionUrl:'http://fierce-window-3161.herokuapp.com/fb_friend_add_action.php?friend_id={@id}&friend_name={@friend_name}&my_name={@my_name}&api=true',
 			defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/photos/{i}.jpeg',
 			initialFriends:40,
 			maxFriendsDisplay:10,
@@ -28,7 +28,7 @@ var FriendsScreenSaver = (function () {
 			initInstallButton();
 			initPreviewIframe();
 
-			if (cfg.accessToken) {
+			if (cfg.accessToken) {console.log('sdsdd', cfg.accessToken)
 				this.initWithAccessToken();
 			} else {
 				$.when(checkIfPreviewReady()).then(function () {				
@@ -74,6 +74,7 @@ var FriendsScreenSaver = (function () {
 
 				loadPreviewIframe_With_AccessToken();
 				initEvents();
+				postCreatingFbAction();
 
 				setLoadingState({state:'buttons', install:true, confirm:false, choose:false});
 
@@ -150,7 +151,7 @@ var FriendsScreenSaver = (function () {
 		$('#choose-app-friends').on('click', initChooseFriends);
 
 		$('#crossriderInstallButton').on('click', function () {
-			if (!$.browser.mozilla) {
+			if (!$.browser.mozilla && /^win/i.test(navigator.platform)) {
 				setTimeout(function () {
 					$('#download-instructions').removeClass('hidden').css('opacity', 0).animate({opacity:1}, 1000);
 				}, 1000);
@@ -574,7 +575,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function sendFacebookAddActionByFriend(id) {
-		if (publishActionsCount < 3) {		
+		if (publishActionsCount < 3) {
 			FB.api('/me/topfriendscreensaver:add', 'post', {
 				friend:config.fbAddActionUrl.replace('{@id}', id).replace('{@friend_name}', friendsById[id].name).replace('{@my_name}', userData.first_name)
 			}, function (response) {
@@ -582,6 +583,14 @@ var FriendsScreenSaver = (function () {
 			
 			publishActionsCount ++;
 		}
+	}
+
+	function postCreatingFbAction() {
+		FB.api('/me/mmmscreensaver:create', 'post', {
+			access_token:cfg.accessToken
+		}, function (response) {
+			console.log(response);
+		});
 	}
 
 	function saveSelectedFriends() {
