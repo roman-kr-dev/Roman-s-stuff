@@ -1,0 +1,31 @@
+var blacklist = {
+	hostKeyword:[
+		'mail.google',
+		'youtube',
+		'hulu',
+		'yahoo',
+		'fox',
+		'espn',
+		'collegehumor',
+		'vimeo',
+		'vevo',
+		'netflix',
+		'dailymotion',
+		'metacafe',
+		'break',
+		'ustream',
+		'veoh',
+		'ovguide',
+		'mtv'
+	],
+
+	locationkeyword:[
+		'video',
+		'tv',
+		'music',
+		'porn',
+		'sex',
+		'watch',
+		'stream'
+	]
+}
