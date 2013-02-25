@@ -1,0 +1,49 @@
+Friend name
+suffle
+			conputer background
+current z index
+			when selecting friend - load from chache if allready selected before
+			fix max selected
+			fix selected tab
+			fix quick select error
+user must be logged in to facebook ?
+			remove ajax spinner
+support FF
+support IE 9
+support IE 8
+support IE 7
+if user has closed browser and access token is expired - open a hidden iframe with the screen saver app to get new access token
+			de select friend
+			select random 40 tab
+settings icon - close on click
+if user in not loggen in to facebook after installer
+			selected = my friends
+			download CRX BOX
+			publish action permission
+screen saver - when clicking on a friend open the image on facebook
+			if user did not installed - load friends from cookie if exists
+			continue in middle, skip as small link
+			change cookie to localstorage to cookie fallback
+			make debug mode work (staging extension and mmmscreensaver)
+when using api to get friends see if paging is needed
+better loader with update status text
+			keypress - also clear appear timeout of screen saver
+			use document visibility api: http://www.samdutton.com/pageVisibility/js/pageVisibility.js
+			do not show in popups
+if user removed the facebook app dont show the screen saver
+			close screen saver on keyppress / up
+			update is not working
+			when updated show noltification "updated"
+			how to redirect to heroku the DNS
+support user tagging
+			run screen saver from shortcut alt+s
+			support blacklist
+alt+d - don't show again on this site
+			run in iframe / bigger blacklist? 
+			add like buttons after install / on the canvas page
+publish a tagged photo with all his friends
+add analytics
+support mobile app
+update to new logo on extension
+currect installers from all browsers / operating systems
+new thank you text

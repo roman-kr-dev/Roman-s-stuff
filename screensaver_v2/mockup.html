@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+		<link href="css/reset.css" rel="stylesheet" type="text/css" />
+		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<script src="js/jquery.transform.js" type="text/javascript"></script>
+		<script src="js/jquery.transform.attributes.js" type="text/javascript"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js"></script>
+		<script src="js/base.class.js" type="text/javascript"></script>
+
+		<style type="text/css">
+		body {
+			background-color:#333333;
+		}
+
+		img {
+			position:absolute;
+			max-width:500px;
+		}
+
+		.img1 {
+			top:10px;
+			left:10px;
+		}
+
+		.img2 {
+			top:10px;
+			left:10px;
+		}
+
+		.img3 {
+			top:10px;
+			left:10px;
+		}
+
+		.img4 {
+			top:10px;
+			left:10px;
+		}
+
+		.img5 {
+			top:10px;
+			left:10px;
+		}
+
+		.img6 {
+			top:10px;
+			left:10px;
+		}
+
+		.img7 {
+			top:10px;
+			left:10px;
+		}
+		
+		.img8 {
+			top:10px;
+			left:10px;
+		}
+
+		.img9 {
+			top:10px;
+			left:10px;
+		}
+		</style>
+
+		<script type="text/javascript">
+		$(function () {
+			setTimeout(function () {
+				var width = $(window).width() / 3,
+					height = $(window).height() / 2,
+					counter = 0;
+
+				for (var i = 0; i<3; i++) {
+					for (var z = 0; z<2; z++) {
+						var img = $('.img' + (++ counter)),
+							imgWidth = img.width(),
+							imgHeight = img.height();
+
+						var left = (width / 2) - (imgWidth / 2) + (i * width);
+						var top = (height / 2) - (imgHeight / 2) + (z * height)
+
+						img.css('left', left);
+						img.css('top', top);
+
+						img.transform({rotate: (Math.floor((Math.random() * 2)) ? '' : '-') + Math.floor((Math.random() * 15)) +'deg'});
+					}
+				}
+
+				setTimeout(function () {
+					$('.img1').toggle( Math.floor((Math.random() * 2)) ? "explode" : "puff" );
+					
+					setTimeout(function () {
+						$('.img2').toggle( Math.floor((Math.random() * 2)) ?  "explode" : "puff" );
+
+						setTimeout(function () {
+							$('.img3').toggle( Math.floor((Math.random() * 2)) ?  "explode" : "puff" );
+
+								setTimeout(function () {
+									$('.img4').toggle( Math.floor((Math.random() * 2)) ?  "explode" : "puff" );
+
+									setTimeout(function () {
+										$('.img5').toggle( Math.floor((Math.random() * 2)) ?  "explode" : "puff" );
+
+										setTimeout(function () {
+											$('.img6').toggle( Math.floor((Math.random() * 2)) ?  "explode" : "puff" );
+										}, 750)
+									}, 750)
+								}, 750)
+						}, 750)
+					}, 750)
+				}, 2000)
+			}, 1000);
+		})
+		</script>
+    </head>
+    <body>
+		<img src="http://localhost/roman/screensaver/fb/images/photos/1.jpeg" class="img1" />
+		<img src="http://localhost/roman/screensaver/fb/images/photos/2.jpeg" class="img2" />
+		<img src="http://localhost/roman/screensaver/fb/images/photos/3.jpeg" class="img3" />
+
+		<img src="http://localhost/roman/screensaver/fb/images/photos/4.jpeg" class="img4" />
+		<img src="http://localhost/roman/screensaver/fb/images/photos/5.jpeg" class="img5" />
+		<img src="http://localhost/roman/screensaver/fb/images/photos/6.jpeg" class="img6" />
+
+		<!-- <img src="http://localhost/roman/screensaver/fb/images/photos/7.jpeg" class="img7" />
+		<img src="http://localhost/roman/screensaver/fb/images/photos/8.jpeg" class="img8" />
+		<img src="http://localhost/roman/screensaver/fb/images/photos/9.jpeg" class="img9" /> -->
+    </body>
+</html>
