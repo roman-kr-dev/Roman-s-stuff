@@ -124,6 +124,42 @@ div.preview {
 		background:yellow;
 	}
 
+	div.preview div.option-4 {
+		position:absolute;
+		top:80px;
+		left:-160px;
+		width:150px;
+		height:150px;
+		background:yellow;
+	}
+
+	div.preview div.option-5 {
+		position:absolute;
+		bottom:80px;
+		left:-160px;
+		width:150px;
+		height:150px;
+		background:yellow;
+	}
+
+	div.preview div.option-6 {
+		position:absolute;
+		top:80px;
+		right:-160px;
+		width:150px;
+		height:150px;
+		background:yellow;
+	}
+
+	div.preview div.option-7 {
+		position:absolute;
+		bottom:80px;
+		right:-160px;
+		width:150px;
+		height:150px;
+		background:yellow;
+	}
+
 	div.preview div.option-8 {
 		position:absolute;
 		bottom:-160px;
