@@ -244,30 +244,6 @@ var FriendsScreenSaver = (function () {
 		populateScreenSaverIframe();
 	}
 
-	function loadPreviewIframe_With_AccessToken() {
-		var preview = $('#preview'),
-			approve = preview.find('.approve-app-text'),
-			loading = $('#loading-friends');
-
-		if (!cfg.thankyou) {
-			setLoadingState({state:'complete', friends:false, preview:true});
-
-			approve.removeClass('hidden').css({
-				top:(screenHeight / 2) - (approve.height() / 2) - 100,
-				left:(screenWidth / 2) - (approve.width() / 2)
-			});
-
-			loading.removeClass('hidden').css({
-				top:parseInt(approve.css('top')) + approve.height() + 30,
-				left:(screenWidth / 2) - (loading.width() / 2)
-			});
-
-			populateScreenSaverIframe();
-		} else {
-			setLoadingState({state:'thankyou'});
-		}
-	}
-
 	function loadPreviewIframe_Without_AccessToken() {
 		var preview = $('#preview'),
 			approve = preview.find('.approve-app-text'),
@@ -276,8 +252,8 @@ var FriendsScreenSaver = (function () {
 		setLoadingState({state:'complete', friends:false, preview:true});
 
 		approve.removeClass('hidden').css({
-			top:(screenHeight / 2) - (approve.height() / 2) - 100,
-			left:(screenWidth / 2) - (approve.width() / 2)
+			top:(preview.outerHeight() / 2 - approve.outerHeight() / 2),
+			left:(preview.outerWidth() / 2 - approve.outerWidth() / 2)
 		});
 
 		for (var i=1; i<=115; i++) {

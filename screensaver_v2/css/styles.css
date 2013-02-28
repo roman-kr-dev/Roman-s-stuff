@@ -75,7 +75,7 @@ div.preview {
 	position:absolute;
 }
 
-	div.preview iframe {
+	div.preview #preview-iframe {
 		padding:0px;
 		margin:0px;
 		border:none;
