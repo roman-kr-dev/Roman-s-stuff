@@ -1,7 +1,7 @@
 var FriendsScreenSaver = (function () {
 	var config = {
 			fbAddActionUrl:'http://fierce-window-3161.herokuapp.com/fb_friend_add_action.php?friend_id={@id}&friend_name={@friend_name}&my_name={@my_name}&api=true',
-			defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/photos/{i}.jpeg',
+			defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/bar/bar{i}.jpg',
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
@@ -26,8 +26,8 @@ var FriendsScreenSaver = (function () {
 
 			initBrowserCompatibility();
 			initInstallButton();
-			initPreviewPosition();
 			initPreviewIframe();
+			initPreviewPosition();
 
 			if (cfg.accessToken) {
 				this.initWithAccessToken();
@@ -280,7 +280,7 @@ var FriendsScreenSaver = (function () {
 			left:(screenWidth / 2) - (approve.width() / 2)
 		});
 
-		for (var i=1; i<=40; i++) {
+		for (var i=1; i<=115; i++) {
 			images.push({
 				id:i,
 				images:[config.defaultImagesForLogout.replace('{i}', i)]
@@ -794,19 +794,27 @@ var FriendsScreenSaver = (function () {
 
 	function initPreviewPosition() {
 		var preview = $('#preview'),
+			iframe = $('#preview-iframe'),
 			screenWidth = $(window).width(),
 			screenHeight = $(window).height(),
-			previewWidth = preview.outerWidth(),
-			previewHeight = preview.outerHeight();
+			previewWidth = screenWidth - 320,
+			previewHeight = screenHeight - 320;
 
 		preview.css({
+			width:previewWidth,
+			height:previewHeight,
 			top:Math.round(screenHeight / 2 - previewHeight / 2),
 			left:Math.round(screenWidth / 2 - previewWidth / 2)
+		});
+
+		iframe.css({
+			width:previewWidth - 20,
+			height:previewHeight - 20,
 		});
 	}
 
 	function initPreviewIframe() {
-		$('<iframe src="preview.php" frameborder="0" scrolling="no"></iframe>').appendTo('#preview');
+		$('<iframe id="preview-iframe" src="preview.php" frameborder="0" scrolling="no"></iframe>').appendTo('#preview');
 	}
 
 	function initInstallButton() {

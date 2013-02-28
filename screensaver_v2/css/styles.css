@@ -73,16 +73,12 @@ div.install {
 /* preview */
 div.preview {
 	position:absolute;
-	width:880px;
-	height:560px;
 }
 
 	div.preview iframe {
 		padding:0px;
 		margin:0px;
 		border:none;
-		width:860px;
-		height:540px;
 		border:10px solid #000;
 		-webkit-border-radius: 10px;
 		border-radius: 10px;
@@ -92,99 +88,82 @@ div.preview {
 
 	div.preview div.extension-option {
 		position:absolute;
-		width:150px;
-		height:150px;
-		background:yellow;
+		width:130px;
+		height:130px;
+		border:10px solid rgba(170, 212, 255, 0.65);
+		-webkit-border-radius: 10px;
+		border-radius: 10px;
+		cursor:pointer;
 	}
 
 	div.preview div.option-1 {
 		position:absolute;
 		top:-160px;
 		left:0px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/barca.jpg);
 	}
 
 	div.preview div.option-2 {
 		position:absolute;
 		top:-160px;
-		left:430px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		left:348px;
+		background:url(images/thumbs/bar.jpg);
 	}
 
 	div.preview div.option-3 {
 		position:absolute;
 		top:-160px;
 		right:0px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/realmadrid.jpg);
 	}
 
 	div.preview div.option-4 {
 		position:absolute;
 		top:80px;
 		left:-160px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/adele.jpg);
 	}
 
 	div.preview div.option-5 {
 		position:absolute;
 		bottom:80px;
 		left:-160px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/manchester.jpg);
 	}
 
 	div.preview div.option-6 {
 		position:absolute;
 		top:80px;
 		right:-160px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/gaga.jpg);
 	}
 
 	div.preview div.option-7 {
 		position:absolute;
 		bottom:80px;
 		right:-160px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/messi.jpg);
 	}
 
 	div.preview div.option-8 {
 		position:absolute;
 		bottom:-160px;
 		left:0px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/shake.jpg);
 	}
 
 	div.preview div.option-9 {
 		position:absolute;
 		bottom:-160px;
-		left:430px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		left:348px;
+		background:url(images/thumbs/ronaldo.jpg);
 	}
 
 	div.preview div.option-10 {
 		position:absolute;
 		bottom:-160px;
 		right:0px;
-		width:150px;
-		height:150px;
-		background:yellow;
+		background:url(images/thumbs/justin.jpg);
 	}
 
 
