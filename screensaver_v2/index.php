@@ -21,14 +21,37 @@ $crossriderAppId = '16998';
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
 
 		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<script src="js/jquery.carouFredSel-6.2.0-packed.js" type="text/javascript"></script>
 		<script src="js/jquery.client.js" type="text/javascript"></script>
 		<script src="js/base.class.js" type="text/javascript"></script>
 		<script src="js/installer.js" type="text/javascript"></script>
 		<script src="js/jquery.cookie.js" type="text/javascript"></script>
 		<script src="js/invite.js" type="text/javascript"></script>
-		<script src="js/canvas.js?x=<?php echo rand() ?>" type="text/javascript"></script>
+		<script src="js/canvas.js" type="text/javascript"></script>
     </head>
     <body>
+
+					<div class="image_carousel">
+	<div id="foo2">
+		<img src="/examples/images/small/basketball.jpg" alt="basketball" width="140" height="140" />
+		<img src="/examples/images/small/beachtree.jpg" alt="beachtree" width="140" height="140" />
+		<img src="/examples/images/small/cupcackes.jpg" alt="cupcackes" width="140" height="140" />
+		<img src="/examples/images/small/hangmat.jpg" alt="hangmat" width="140" height="140" />
+		<img src="/examples/images/small/new_york.jpg" alt="new york" width="140" height="140" />
+		<img src="/examples/images/small/laundry.jpg" alt="laundry" width="140" height="140" />
+		<img src="/examples/images/small/mom_son.jpg" alt="mom son" width="140" height="140" />
+		<img src="/examples/images/small/picknick.jpg" alt="picknick" width="140" height="140" />
+		<img src="/examples/images/small/shoes.jpg" alt="shoes" width="140" height="140" />
+		<img src="/examples/images/small/paris.jpg" alt="paris" width="140" height="140" />
+		<img src="/examples/images/small/sunbading.jpg" alt="sunbading" width="140" height="140" />
+		<img src="/examples/images/small/yellow_couple.jpg" alt="yellow couple" width="140" height="140" />
+	</div>
+	<div class="clearfix"></div>
+	<a class="prev" id="foo2_prev" href="#"><span>prev</span></a>
+	<a class="next" id="foo2_next" href="#"><span>next</span></a>
+	<div class="pagination" id="foo2_pag"></div>
+</div>
+
 		<div id="preview" class="preview loader">		
 			<!-- go to app box message - START -->
 			<div class="approve-app-text hidden">
@@ -50,6 +73,9 @@ $crossriderAppId = '16998';
 				<div class="text-bar">Loading Friends... (<span class="percent-loaded">0</span>%)</div>
 				<div class="loading-bar"></div>
 			</div>
+
+
+
 
 			<div class="extension-option option-1"></div>
 			<div class="extension-option option-2"></div>
