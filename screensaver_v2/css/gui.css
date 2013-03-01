@@ -452,7 +452,8 @@ body.fixed #header {
 
 /* C O N T E N T */
 #placeholder {
-	background: url(http://caroufredsel.dev7studios.com/images/bg_bokeh.jpg) center top no-repeat transparent;
+	xbackground: url(http://caroufredsel.dev7studios.com/images/bg_bokeh.jpg) center top no-repeat transparent;
+	background: #E2EFCD;
 	min-width: 990px;
 }
 
@@ -563,9 +564,15 @@ body.fixed .addthis_toolbox.atfixed {
 
 
 
-/* CODE */
+
+
 .logo {
-	width:75px;
-	height:63px;
-	background:url('images/logo.png');
+	width:124px;
+	height:101px;
+	background:url('images/logo_large.png');
+}
+
+#preview iframe {
+	width:920px;
+	height:600px;
 }

@@ -5,7 +5,7 @@ html, body {
 body {
 	font-family:"Helvetica Neue",arial,sans-serif;
 	overflow:hidden;
-	background:url(images/bg_bokeh.jpg) no-repeat center center;
+	background:#E2EFCD;
 }
 
 .loader {

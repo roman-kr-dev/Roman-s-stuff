@@ -795,7 +795,8 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function initCarusel() {
-		$("#foo2").carouFredSel({
+		$("#foo2").remove();
+/*		$("#foo2").carouFredSel({
 	circular: false,
 	infinite: false,
 	auto 	: false,
@@ -808,7 +809,7 @@ var FriendsScreenSaver = (function () {
 		key		: "right"
 	},
 	pagination	: "#foo2_pag"
-});
+});*/
 
 	}
 

@@ -31,26 +31,24 @@ $crossriderAppId = '16998';
     </head>
     <body>
 
-					<div class="image_carousel">
-	<div id="foo2">
-		<img src="/examples/images/small/basketball.jpg" alt="basketball" width="140" height="140" />
-		<img src="/examples/images/small/beachtree.jpg" alt="beachtree" width="140" height="140" />
-		<img src="/examples/images/small/cupcackes.jpg" alt="cupcackes" width="140" height="140" />
-		<img src="/examples/images/small/hangmat.jpg" alt="hangmat" width="140" height="140" />
-		<img src="/examples/images/small/new_york.jpg" alt="new york" width="140" height="140" />
-		<img src="/examples/images/small/laundry.jpg" alt="laundry" width="140" height="140" />
-		<img src="/examples/images/small/mom_son.jpg" alt="mom son" width="140" height="140" />
-		<img src="/examples/images/small/picknick.jpg" alt="picknick" width="140" height="140" />
-		<img src="/examples/images/small/shoes.jpg" alt="shoes" width="140" height="140" />
-		<img src="/examples/images/small/paris.jpg" alt="paris" width="140" height="140" />
-		<img src="/examples/images/small/sunbading.jpg" alt="sunbading" width="140" height="140" />
-		<img src="/examples/images/small/yellow_couple.jpg" alt="yellow couple" width="140" height="140" />
-	</div>
-	<div class="clearfix"></div>
-	<a class="prev" id="foo2_prev" href="#"><span>prev</span></a>
-	<a class="next" id="foo2_next" href="#"><span>next</span></a>
-	<div class="pagination" id="foo2_pag"></div>
-</div>
+	<header>
+		<nav>
+			<img id="logo" src="img/pixel.png" alt="Color my Facebook" title="Thanks to Color My Facebook, my Facebook's pages are customized!" itemprop="image"/>
+			<div id="buttons">			
+				<iframe src="http://iwebya.fr/test/fb.html" style="width: 650px;height: 37px;border: none;overflow: hidden;position: absolute;top: -8px;left: 0px;z-index: 1;"></iframe>
+				<div id="otherButtons" style="margin-left: 150px;width: 880px;z-index: 2;">
+					<a href="https://twitter.com/share" class="twitter-share-button" data-text="Goodbye blue! I changed my Facebook color! #goodbyeBlue" data-url="http://colormyfacebook.com/">Tweet</a>				
+					<div class="g-plusone" data-size="medium" data-href="http://colormyfacebook.com/"></div>
+					<div style="display: inline-block;">
+						<div style="position: absolute;top: -20px;">
+							<a target=_blank href="http://pinterest.com/pin/create/button/?url=http%3A%2F%2Fiwebya.fr%2Fcolor-my-fb%2F&media=http%3A%2F%2Fiwebya.fr%2Fcolor-my-fb%2Fimg%2Fslide4.png&description=No%20more%20blue%20on%20Facebook%2C%20thanks%20to%20Color%20My%20Facebook!" class="pin-it-button" count-layout="horizontal"><img border="0" src="http://assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>
+						</div>
+					</div>
+				</div>
+				<div id="fb-root"></div>
+			</div>
+		</nav>
+	</header>
 
 		<div id="preview" class="preview loader">		
 			<!-- go to app box message - START -->
