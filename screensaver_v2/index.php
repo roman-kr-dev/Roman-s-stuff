@@ -4,6 +4,7 @@ $auth_token = '';
 $user_id = '';
 $photos = '';
 $crossriderAppId = '16998';
+$url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -12,16 +13,17 @@ $crossriderAppId = '16998';
         <title>facebook invite</title>
 
 		<meta property="og:title" content="My Friends ScreenSaver" />
-		<meta property="og:description" content="See the latest photos of your friends and family on this first ever social screensaver"/>
-		<meta property="og:url" content="http://apps.facebook.com/topfriendscreensaver/"/>
+		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
+		<meta property="og:url" content="http://www.myscreensaver.co/"/>
 		<meta property="og:image" content="http://www.nikitastudios.com/images/logo128x128.png"/>
 
 		<link href="css/reset.css" rel="stylesheet" type="text/css" />
 		<link href="css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
 
-		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
-		<script src="js/jquery.carouFredSel-6.2.0-packed.js" type="text/javascript"></script>
+		<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
+		<script src="js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+		<script src="js/jquery.slimscroll.min.js" type="text/javascript"></script>
 		<script src="js/jquery.client.js" type="text/javascript"></script>
 		<script src="js/base.class.js" type="text/javascript"></script>
 		<script src="js/installer.js" type="text/javascript"></script>
@@ -33,30 +35,77 @@ $crossriderAppId = '16998';
 
 	<header>
 		<nav>
-			<img id="logo" src="img/pixel.png" alt="Color my Facebook" title="Thanks to Color My Facebook, my Facebook's pages are customized!" itemprop="image"/>
-			<div id="buttons">			
-				<iframe src="http://iwebya.fr/test/fb.html" style="width: 650px;height: 37px;border: none;overflow: hidden;position: absolute;top: -8px;left: 0px;z-index: 1;"></iframe>
-				<div id="otherButtons" style="margin-left: 150px;width: 880px;z-index: 2;">
-					<a href="https://twitter.com/share" class="twitter-share-button" data-text="Goodbye blue! I changed my Facebook color! #goodbyeBlue" data-url="http://colormyfacebook.com/">Tweet</a>				
-					<div class="g-plusone" data-size="medium" data-href="http://colormyfacebook.com/"></div>
-					<div style="display: inline-block;">
-						<div style="position: absolute;top: -20px;">
-							<a target=_blank href="http://pinterest.com/pin/create/button/?url=http%3A%2F%2Fiwebya.fr%2Fcolor-my-fb%2F&media=http%3A%2F%2Fiwebya.fr%2Fcolor-my-fb%2Fimg%2Fslide4.png&description=No%20more%20blue%20on%20Facebook%2C%20thanks%20to%20Color%20My%20Facebook!" class="pin-it-button" count-layout="horizontal"><img border="0" src="http://assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>
-						</div>
-					</div>
-				</div>
-				<div id="fb-root"></div>
+			<div id="logo"></div>
+			
+			<!-- share start -->
+			<div class="share">
+				<div class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+
+				<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
+			
+				<div class="g-plusone" data-href="<?php echo $url ?>"></div>
 			</div>
+			<!-- share end -->	
+
 		</nav>
 	</header>
+
+	<div class="what-to-do">
+		<img src="images/arrow.png" />
+		<div>
+			<strong>Welcome to my screen saver</strong><br />
+			Select an image and build your own screen saver..
+		</div>
+	</div>
+
+	<?php 
+	if (isset($_GET["thankyou"])) {
+	?>
+	<div id="thankyou-overlay" class="hidden"></div>
+
+	<div id="thankyou" class="hidden">
+		<div class="ty-content">
+			<h1>Thank you for installing My Screen Saver!</h1>
+
+			<ul>
+				<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>
+				<li>Change the display settings by clicking <strong>Alt + 1</strong> when screen saver is running</li>
+				<li>
+					You like it? Share to your friends to make their screen saver! 
+
+					<div style="margin-top:10px;" class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+				</li>
+			</ul>
+			
+			<div id="click-to-close" class="click-to-close">Click to close</div>
+		</div>
+	</div>
+	<?php
+	}
+	?>
+
+	<div style="clear:both;"></div>
+
+	<div id="image_carousel" class="image_carousel">
+		<div class="image-container" data-name="Bar Refaeli"><img src="css/images/thumbs/bar.jpg" data-id="bar" class="selected" alt="Bar Refaeli" width="140" height="140" /></div>
+		<div class="image-container" data-name="Leo Messi"><img src="css/images/thumbs/messi.jpg" data-id="messi" width="140" height="140" /></div>
+		<div class="image-container" data-name="Justin Bieber"><img src="css/images/thumbs/justin.jpg" data-id="justin" width="140" height="140" /></div>
+		<div class="image-container" data-name="Lady Gaga"><img src="css/images/thumbs/gaga.jpg" data-id="gaga" width="140" height="140" /></div>
+		<div class="image-container" data-name="Sports Illustrated"><img src="css/images/thumbs/sportsillustrated.jpg" data-id="sportsillustrated" width="140" height="140" /></div>
+		<div class="image-container" data-name="Cristiano Ronaldo"><img src="css/images/thumbs/ronaldo.jpg" data-id="ronaldo" width="140" height="140" /></div>
+		<div class="image-container" data-name="Real Madrid"><img src="css/images/thumbs/realmadrid.jpg" data-id="realmadrid" width="140" height="140" /></div>
+		<div class="image-container" data-name="FC Barcelona"><img src="css/images/thumbs/barca.jpg" data-id="barcelona" width="140" height="140" /></div>
+		<div class="image-container" data-name="Adele"><img src="css/images/thumbs/adele.jpg" data-id="adele" width="140" height="140" /></div>
+		<div class="image-container" data-name="Manchester United"><img src="css/images/thumbs/manchester.jpg" data-id="manchester" width="140" height="140" /></div>
+	</div>
+
 
 		<div id="preview" class="preview loader">		
 			<!-- go to app box message - START -->
 			<div class="approve-app-text hidden">
 				<div class="box-logo"></div>
 				<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fapps.facebook.com%2Ftopfriendscreensaver%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
-				<div class="box-message">It takes only one minute</div>
-				<div id="request-app-confirm" class="box-button hidden">Next Step</div>
+				<div id="request-app-confirm" class="box-button hidden">Download</div>
 				<div id="choose-app-friends" class="box-button hidden">Next Step</div>
 				<div id="crossriderInstallButton" class="install"></div>
 			</div>
@@ -72,10 +121,14 @@ $crossriderAppId = '16998';
 				<div class="loading-bar"></div>
 			</div>
 
+			<div class="preview-label"></div>
+
+			<div id="current-name" class="name-label">Bar Refaeli</div>
 
 
 
-			<div class="extension-option option-1"></div>
+
+			<!--<div class="extension-option option-1"></div>
 			<div class="extension-option option-2"></div>
 			<div class="extension-option option-3"></div>
 			<div class="extension-option option-4"></div>
@@ -85,6 +138,7 @@ $crossriderAppId = '16998';
 			<div class="extension-option option-8"></div>
 			<div class="extension-option option-9"></div>
 			<div class="extension-option option-10"></div>
+			-->
 		</div>
 
 		<!-- go to app box message - START -->
@@ -140,15 +194,7 @@ $crossriderAppId = '16998';
 		</div>
 		<!-- settings dialog - end -->
 
-		<div id="fb-root"></div>
-		<script src="https://connect.facebook.net/en_US/all.js"></script>
-
 		<script type="text/javascript">
-		FB.init({
-			appId:<?php echo $fb_app_id ?>,
-			frictionlessRequests:true
-		});
-
 		var friendsScreenSaver = new FriendsScreenSaver({
 			accessToken:'<?php echo $auth_token ?>',
 			userId:'<?php echo $user_id ?>',
@@ -158,17 +204,44 @@ $crossriderAppId = '16998';
 		});
 		</script>
 
-		<script type="text/javascript">
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-35381638-1']);
-		_gaq.push(['_trackPageview']);
+		<!-- facebook like start -->
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=322445997783469";
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
+		<!-- facebook like end -->
 
-		(function() {
+		<!-- +1 start -->
+		<script type="text/javascript">
+		  (function() {
+			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+			po.src = 'https://apis.google.com/js/plusone.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+		  })();
+		</script>
+		<!-- +1 end -->
+
+		<!-- twitter start -->
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+		<!-- twitter end -->
+
+		<!-- google analytics start -->
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-27657635-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
 			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
+		  })();
 		</script>
+		<!-- google analytics end -->
 
 		<style type="text/css">
 		.hidden {

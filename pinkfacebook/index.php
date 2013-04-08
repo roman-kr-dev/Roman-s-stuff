@@ -13,13 +13,13 @@ $messages = Array(
 );
 
 $description = "It will make your facebook to become pink with lots of hearts";
-$image = "http://cadoogi.com/pinkfacebook/images/hearts.png";
+$image = "/roman/pinkfacebook/images/hearts.png";
 $message = "";
 $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 
 if (isset($_GET['message'])) {
 	$message = $messages[ $_GET['message'] ];
-	$image = "http://cadoogi.com/pinkfacebook/images/piggm.png";
+	$image = "/roman/pinkfacebook/images/piggm.png";
 	$description = "See Mr. Piggm's daily wisdom, Its smart and funny :) | Also make your facebook to become pink with lots of hearts";
 }
 ?>
@@ -35,15 +35,15 @@ if (isset($_GET['message'])) {
 		<meta property="og:url" content="<?php echo $url ?>"/>
 		<meta property="og:image" content="<?php echo $image ?>"/>
 
-		<link rel="stylesheet" href="http://cadoogi.com/pinkfacebook/css/reset.css" />
-		<link rel="stylesheet" href="http://cadoogi.com/pinkfacebook/css/styles.css?ver=1" />
+		<link rel="stylesheet" href="/roman/pinkfacebook/css/reset.css" />
+		<link rel="stylesheet" href="/roman/pinkfacebook/css/styles.css?ver=1" />
 		
 		<script type="text/javascript" src="https://crossrider.cotssl.net/javascripts/installer/installer.js"></script>
 
-		<script type="text/javascript" src="http://cadoogi.com/pinkfacebook/javascript/jquery-1.7.min.js"></script>
-		<script type="text/javascript" src="http://cadoogi.com/pinkfacebook/javascript/jquery.tools.tooltip.js"></script>
-		<script type="text/javascript" src="http://cadoogi.com/pinkfacebook/javascript/jquery.sexyslider.min.js"></script>
-		<script type="text/javascript" src="http://cadoogi.com/pinkfacebook/javascript/scripts.js"></script>
+		<script type="text/javascript" src="/roman/pinkfacebook/javascript/jquery-1.7.min.js"></script>
+		<script type="text/javascript" src="/roman/pinkfacebook/javascript/jquery.tools.tooltip.js"></script>
+		<script type="text/javascript" src="/roman/pinkfacebook/javascript/jquery.sexyslider.min.js"></script>
+		<script type="text/javascript" src="/roman/pinkfacebook/javascript/scripts.js"></script>
 	</head>
 
 	<body>
@@ -79,7 +79,7 @@ if (isset($_GET['message'])) {
 						<h1 class="logo">Pink Facebook</h1>
 						<div class="about">
 							<ul>
-								<li><h2>Make your facebook to become pink with lots of hearts <img src="http://cadoogi.com/pinkfacebook/images/tinyheart.gif" /></h2></li>
+								<li><h2>Make your facebook to become pink with lots of hearts <img src="/roman/pinkfacebook/images/tinyheart.gif" /></h2></li>
 								<li><h2>Add Mr. Piggm to be your friend</h2></li>
 								<li><h2>Tell all your friends about your new cute facebook look</h2></li>
 							</ul>
@@ -101,9 +101,9 @@ if (isset($_GET['message'])) {
 
 						<div class="box-content">
 							<div id="slider">
-								<img src="http://cadoogi.com/pinkfacebook/images/screen/screen1.png" />
-								<img src="http://cadoogi.com/pinkfacebook/images/screen/screen2.png" />
-								<img src="http://cadoogi.com/pinkfacebook/images/screen/screen3.png" />
+								<img src="/roman/pinkfacebook/images/screen/screen1.png" />
+								<img src="/roman/pinkfacebook/images/screen/screen2.png" />
+								<img src="/roman/pinkfacebook/images/screen/screen3.png" />
 							</div>
 
 							<div id="control"></div>
@@ -116,7 +116,7 @@ if (isset($_GET['message'])) {
 				<!-- comments - start -->
 				<div class="comments">
 					<a name="comments"></a>
-					<div class="fb-comments" data-href="http://cadoogi.com/pinkfacebook" data-num-posts="5" data-width="559"></div>
+					<div class="fb-comments" data-href="/roman/pinkfacebook" data-num-posts="5" data-width="559"></div>
 				</div>
 				<!-- comments - end -->
 

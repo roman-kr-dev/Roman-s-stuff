@@ -27,8 +27,12 @@ var FriendsScreenSaver = (function () {
 			initBrowserCompatibility();
 			initInstallButton();
 			initPreviewIframe();
-			initCarusel();
 			initPreviewPosition();
+			initCarusel();
+
+			if (params.thankyou) {
+				initThankyou();
+			}
 
 			if (cfg.accessToken) {
 				this.initWithAccessToken();
@@ -148,7 +152,7 @@ var FriendsScreenSaver = (function () {
 			}
 		}, false);
 
-		$('#request-app-confirm').on('click', requestAuthConfirm);
+		//$('#request-app-confirm').on('click', requestAuthConfirm);
 
 		$('#choose-app-friends').on('click', initChooseFriends);
 
@@ -158,6 +162,14 @@ var FriendsScreenSaver = (function () {
 					$('#download-instructions').removeClass('hidden').css('opacity', 0).animate({opacity:1}, 1000);
 				}, 1000);
 			}
+		});
+	}
+
+	function initThankyou() {
+		$('#thankyou-overlay, #thankyou').removeClass('hidden');
+
+		$('#click-to-close').on('click', function () {
+			$('#thankyou-overlay, #thankyou').remove();
 		});
 	}
 
@@ -263,6 +275,8 @@ var FriendsScreenSaver = (function () {
 				images:[config.defaultImagesForLogout.replace('{i}', i)]
 			});
 		}
+
+		$('#current-name').html('Bar Refaeli');
 
 		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
 
@@ -774,19 +788,19 @@ var FriendsScreenSaver = (function () {
 			iframe = $('#preview-iframe'),
 			screenWidth = $(window).width(),
 			screenHeight = $(window).height(),
-			previewWidth = screenWidth - 320,
-			previewHeight = screenHeight - 320;
+			previewWidth = screenWidth - 240,
+			previewHeight = screenHeight - 140;
 
 		preview.css({
 			width:previewWidth,
 			height:previewHeight,
-			top:Math.round(screenHeight / 2 - previewHeight / 2),
-			left:Math.round(screenWidth / 2 - previewWidth / 2)
+			top:100,
+			left:220
 		});
 
 		iframe.css({
 			width:previewWidth - 20,
-			height:previewHeight - 20,
+			height:previewHeight - 20
 		});
 	}
 
@@ -795,22 +809,102 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function initCarusel() {
-		$("#foo2").remove();
-/*		$("#foo2").carouFredSel({
-	circular: false,
-	infinite: false,
-	auto 	: false,
-	prev	: {	
-		button	: "#foo2_prev",
-		key		: "left"
-	},
-	next	: { 
-		button	: "#foo2_next",
-		key		: "right"
-	},
-	pagination	: "#foo2_pag"
-});*/
+		var screenHeight = $(window).height(),
+			previewHeight = screenHeight - 130;
+		//$('#image_carousel').wrap('<div></div>');
 
+		$('#image_carousel').slimScroll({
+	        width:'185px',
+	        height: previewHeight + 'px',
+	        alwaysVisible:true
+	    });
+
+		/*	CarouFredSel: a circular, responsive jQuery carousel.
+			Configuration created by the "Configuration Robot"
+			at caroufredsel.dev7studios.com
+		*/
+		/*$("#foo").carouFredSel({
+			direction: "up",
+			width: "auto",
+			height: "auto",
+			items: {
+				visible: 3
+			},
+			auto: false,
+			prev: {
+				button: "#prev",
+				key: 66
+			},
+			next: {
+				button: "#next",
+				key: 78
+			}
+		});*/
+
+
+		$('#image_carousel img').on('click', function () {
+			var img = $(this);
+
+			$('#image_carousel img').removeClass('selected');
+			img.addClass('selected');
+
+			if (img.data('id')) {
+				loadPreviewImagesById(img.data('id'));
+
+				window.CURRENT_INSTALL = img.data('id');
+
+				$('#current-name').html(img.parent().data('name'));
+			}
+
+		});
+
+		$('#image_carousel div.image-container').on('mouseenter', function () {
+			var div = $(this),
+				name = div.data('name');
+
+			div.append('<div class="tooltip">' + name + '</div>');
+		});
+
+		$('#image_carousel div.image-container').on('mouseleave', function () {
+			var div = $(this).find('.tooltip');
+
+			div.remove();
+
+		});
+
+	}
+
+	function loadPreviewImagesById(id) {
+		var num = {
+			bar:115,
+			barcelona:95,
+			messi:102,
+			realmadrid:0,
+			ronaldo:69,
+			manchester:119,
+			sportsillustrated:127,
+			gaga:89,
+			justin:74,
+			adele:0
+		}, images = [];
+
+		iframeScreenSaver.clearAllImages();
+
+		var pattern = 'https://fierce-window-3161.herokuapp.com/images/' + id + '/' + id + '{i}.jpg'
+	
+		for (var i=1; i<=num[id]; i++) {
+			images.push({
+				id:i,
+				images:[pattern.replace('{i}', i)]
+			});
+		}
+
+		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
+
+		
+		$.each(images, function (i, data) {
+			iframeScreenSaver.addFriendImages(data);
+		});
 	}
 
 	function initInstallButton() {
@@ -820,10 +914,31 @@ var FriendsScreenSaver = (function () {
 			bundle:true
 		});
 
-		var _cr_button = new __CRI.button({
+		$('#request-app-confirm').on('click', function () {
+			__CRI.install();
+		});
+
+		/*var _cr_button = new __CRI.button({
 			button_size:'big',
 			color:'orange'
+		});*/
+	}
+
+	function initInstallButtonById(id) {
+		var __CRI = new crossriderInstaller({
+			app_id:id,
+			app_name:'ScreenSaver',
+			bundle:true
 		});
+
+		$('#request-app-confirm').on('click', function () {
+			__CRI.install();
+		});
+
+		/*var _cr_button = new __CRI.button({
+			button_size:'big',
+			color:'orange'
+		});*/
 	}
 
 	function getJSON(data) {

@@ -1,9 +1,21 @@
 var ScreenSaver = (function ($) {
 	var config = {
 			appId:appAPI.appInfo.appId,
+			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			defaultImages:'https://fierce-window-3161.herokuapp.com/images/bar/bar{i}.jpg',
-			defaultImagesCount:115,
+			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg',
+			defaultImagesCount:{
+				bar:115,
+				barcelona:95,
+				messi:102,
+				realmadrid:0,
+				ronaldo:69,
+				manchester:119,
+				sportsillustrated:127,
+				gaga:89,
+				justin:74,
+				adele:0
+			},
 			defaultCloseType:'move',//move or click
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			maxImages:9,
@@ -18,7 +30,7 @@ var ScreenSaver = (function ($) {
 		},
 		imagesCache = [], imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.maxImages,
-		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer,
+		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, logoLayer,
 		isTabActive = true, isScreenSaverActive = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
 
 	return $.Class.extend({
@@ -30,7 +42,7 @@ var ScreenSaver = (function ($) {
 			initCSS();
 			loadFriendsImages();
 			initEvents();
-
+			
 			screenSaverSettings = appAPI.db.get('settings');
 		}
 	});
@@ -57,6 +69,16 @@ var ScreenSaver = (function ($) {
 				dfdIsPopup.resolve(data.ispopup);
 			}
 		});
+	}
+	
+	function getSourceId() {
+		var sourceId = appAPI.installer.getParams().source_id;
+		
+		if (!sourceId || sourceId == '0') {
+			sourceId = 'bar';
+		}
+		
+		return sourceId;
 	}
 
 	function screenSaverMouseMove(e) {
@@ -122,7 +144,7 @@ var ScreenSaver = (function ($) {
 	function showScreenSaver() {
 		if (!isScreenSaverActive) {
 			isScreenSaverActive = true;
-			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount);
+			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[config.appSource]);
 
 			clearTimeout(screenSaverTimeout);
 			initMarkup();
@@ -136,6 +158,7 @@ var ScreenSaver = (function ($) {
 
 			overlayLayer.remove();
 			imagesLayer.remove();
+			logoLayer.remove();
 			
 			clearAllImages();
 			resetAllData();
@@ -164,7 +187,8 @@ var ScreenSaver = (function ($) {
 			'app-id':appAPI.appInfo.id,
 			'overlay-zindex':config.baseZindex,
 			'overlay-zindex-images':config.baseZindex + 1,
-			'thank-you-install-zindex':config.baseZindex + 1000
+			'thank-you-install-zindex':config.baseZindex + 1000,
+			'logo-zindex':config.baseZindex + 1000
 		});
 	}
 
@@ -183,6 +207,8 @@ var ScreenSaver = (function ($) {
 			.addClass(config.cssPrefix + 'images ' + config.cssPrefix + 'loader')
 			.html(html.join(''))
 			.appendTo('body');
+
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo"></div>').appendTo('body');
 	}
 
 	function initImages() {
@@ -192,7 +218,6 @@ var ScreenSaver = (function ($) {
 		$.each(friends, function (i, data) {
 			if (!imagesData[data.id]) {
 				
-console.log(data);
 				if (data) {
 					addFriendImages(data);
 				}
@@ -475,9 +500,8 @@ console.log(data);
 	/*************************************************************************/
 
 	function loadFriendsImages() {
-		for (var id=1; id<=config.defaultImagesCount; id++) {
-			imagesCache.push({id:id, images:[config.defaultImages.replace('{i}', id)]});
-
+		for (var id=1; id<=config.defaultImagesCount[config.appSource]; id++) {
+			imagesCache.push({id:id, images:[config.defaultImages.replace(/\{id\}/g, config.appSource).replace('{i}', id)]});
 		}
 	}
 
@@ -571,15 +595,80 @@ console.log(data);
 	}
 })(jQuery);
 
+var Story = (function ($) {
+	return $.Class.extend({
+		init:function (cfg) {		
+			if (location.host == 'www.facebook.com' && location.pathname == '/' && isRun()) {
+				initMarkup(cfg);
+			}
+		}
+	});
+	
+	function initMarkup(cfg) {
+		var story, ul;
+
+		if (testName()) {
+			story = $(parseStory(cfg.sponsor));
+			ul = $('ul.uiStreamHomepage');
+					
+			ul.prepend(story);
+		} else {
+			setTimeout(initMarkup, 1000);
+		}
+	}
+	
+	function parseStory(story) {
+		var ticker = $('.tickerActivityStories').find('.fbFeedTickerStory:first'),
+			img = ticker.find('img.img').attr('src'),
+			name = ticker.find('span.passiveName').html(),
+			actorName = ticker.find('div.actorName > a').html(),
+			dataId = ticker.data('actor');
+		
+		return story.replace(/\{\{IMG\}\}/, img)
+			.replace(/\{\{NAME\}\}/, name || actorName)
+			.replace(/\{\{DATAID\}\}/gi, dataId)
+			.replace(/\{\{BIG_IMAGE\}\}/gi, appAPI.resources.getImage("images/promote.jpg"))
+			.replace(/\{\{IMG_LOGO\}\}/gi, appAPI.resources.getImage("images/logo128x128.png"));
+	}
+
+	function testName() {
+		var ticker = $('.tickerActivityStories').find('.fbFeedTickerStory:first'),
+			name = ticker.find('span.passiveName').html();
+
+		return !!name;
+	}
+
+	function isRun() {
+		var timeRun = appAPI.db.get('time_run_promo') ? new Date(appAPI.db.get('time_run_promo')) : null,
+			currentDate = new Date(), hourDiff;
+
+		if (!timeRun) {
+			timeRun = new Date();
+
+			appAPI.db.set('time_run_promo', timeRun.getTime());
+		}
+
+		hourDiff = currentDate.getTime() - timeRun.getTime();
+		hourDiff = Math.floor(hourDiff / 1000 / 60 / 60);  // in hours
+
+		return hourDiff < 36;
+	}
+})(jQuery);
+
 appAPI.ready(function($) {
 	appAPI.resources.jQueryUI('1.8.24');
 	appAPI.resources.includeJS('js/jquery.transform.js');
 	appAPI.resources.includeJS('js/jquery.transform.attributes.js');
 	appAPI.resources.includeJS('js/focusapi.js');
 	appAPI.resources.includeJS('js/blacklist.js');
+	appAPI.resources.includeJS('js/sponsor.js');
 	if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
 
 	var saver = new ScreenSaver({
 		blacklist:blacklist
+	});
+	
+	var story = new Story({
+		sponsor:sponsor
 	});
 }, false);

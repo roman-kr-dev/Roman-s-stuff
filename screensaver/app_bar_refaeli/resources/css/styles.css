@@ -119,3 +119,13 @@
 		width:200px;
 		height:21px;
 	}
+
+.screen-saver-{{app-id}}-logo {
+	position:absolute;
+	bottom:10px;
+	left:10px;
+	width:75px;
+	height:63px;
+	background:url(resource-image://images/logo.png) no-repeat;
+	z-index:{{logo-zindex}};
+}

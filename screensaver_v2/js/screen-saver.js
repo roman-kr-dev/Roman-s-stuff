@@ -17,7 +17,7 @@ var ScreenSaver = (function ($) {
 		}, mainApp, thi$,
 		imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.minImages,
-		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, zIndex = 100;
+		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, logoLayer, zIndex = 100;
 	
 	return Class.extend({
 		init:function () {
@@ -79,10 +79,11 @@ var ScreenSaver = (function ($) {
 			.appendTo('body');
 
 		imagesLayer = $('<div />')
-			.html('<div class="' + config.cssPrefix + 'logo"></div>')
 			.addClass(config.cssPrefix + 'images ' + config.cssPrefix + 'loader')
 			.hide()
 			.appendTo('body');
+
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo"></div>').appendTo('body');
 
 		viewportWidth = imagesLayer.width();
 		viewportHeight = imagesLayer.height();
@@ -145,6 +146,18 @@ var ScreenSaver = (function ($) {
 						.css('max-height', slotHeight)
 						.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
 					image.on('load', function () { 
+						var image = $(this);
+
+						if (currentImagesDisplay[data.id]) {	
+							data.width = image.width();
+							data.height = image.height();
+
+							initPictureDefaultPosition(data);
+
+							imagesLayer.removeClass(config.cssPrefix + 'loader');
+						}
+					});
+					image.on('error', function () { 
 						var image = $(this);
 
 						if (currentImagesDisplay[data.id]) {	
