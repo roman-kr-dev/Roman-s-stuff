@@ -5,7 +5,7 @@
         <title>facebook invite</title>
 	
 		<link href="css/reset.css" rel="stylesheet" type="text/css" />
-		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/jjfkdjjlfdelgelpbcjbignpcbckhcab" />
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lhclpmafpcjcpjclbngfhpblnhdfihch" />
 
 		<style type="text/css">
 		body {
