@@ -3,6 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.appId,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
+			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			thankYouPageUrl:'http://localhost/roman/screensaver_v2/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg',
 			defaultImagesCount:{
 				bar:115,
@@ -31,7 +33,7 @@ var ScreenSaver = (function ($) {
 		imagesCache = [], imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.maxImages,
 		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, logoLayer,
-		isTabActive = true, isScreenSaverActive = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
+		isTabActive = true, isScreenSaverActive = false, isThankyouPage = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
 
 	return $.Class.extend({
 		init:function (data) {
@@ -42,10 +44,21 @@ var ScreenSaver = (function ($) {
 			initCSS();
 			loadFriendsImages();
 			initEvents();
-			
-			screenSaverSettings = appAPI.db.get('settings');
+			initThankYou();
 		}
 	});
+
+	function initThankYou() {
+		var html = [];
+
+		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
+			isThankyouPage = true;
+
+			showScreenSaver();
+
+			$('#thankyou').removeClass('hidden');
+		}
+	}
 
 	function initEvents() {
 		$(document).on('mousemove', screenSaverMouseMove);
@@ -55,7 +68,7 @@ var ScreenSaver = (function ($) {
 		
 		$(window).on('resize', screenSaverRemoveOrRestart);
 		$(window).on('screenSaverFocusChange', function (e, type) {
-			if (isScreenSaverActive) {
+			if (isScreenSaverActive && !isThankyouPage) {
 				removeScreenSaver();
 			}
 			
@@ -101,10 +114,14 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverMouseClick() {
-		if (isScreenSaverActive && screenSaverSettings.close == 'click') {
+		if (isScreenSaverActive && (screenSaverSettings.close == 'click' || isThankyouPage)) {
 			removeScreenSaver();
 		} else {
 			startSreenSaverTimeout();
+		}
+
+		if (isThankyouPage) {
+			$('#thankyou').remove();
 		}
 	}
 
@@ -117,7 +134,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverRemoveOrRestart() {
-		if (isScreenSaverActive && screenSaverSettings.close == 'move') {
+		if (isScreenSaverActive && screenSaverSettings.close == 'move' && !isThankyouPage) {
 			removeScreenSaver();
 		} else {
 			startSreenSaverTimeout();
@@ -187,8 +204,7 @@ var ScreenSaver = (function ($) {
 			'app-id':appAPI.appInfo.id,
 			'overlay-zindex':config.baseZindex,
 			'overlay-zindex-images':config.baseZindex + 1,
-			'thank-you-install-zindex':config.baseZindex + 1000,
-			'logo-zindex':config.baseZindex + 1000
+			'logo-zindex':config.baseZindex + 1
 		});
 	}
 
@@ -512,6 +528,8 @@ var ScreenSaver = (function ($) {
 				close:config.defaultCloseType
 			});
 		}
+
+		screenSaverSettings = appAPI.db.get('settings');
 	}
 
 	function removeFromDBAllImages() {
@@ -595,66 +613,6 @@ var ScreenSaver = (function ($) {
 	}
 })(jQuery);
 
-var Story = (function ($) {
-	return $.Class.extend({
-		init:function (cfg) {		
-			if (location.host == 'www.facebook.com' && location.pathname == '/' && isRun()) {
-				initMarkup(cfg);
-			}
-		}
-	});
-	
-	function initMarkup(cfg) {
-		var story, ul;
-
-		if (testName()) {
-			story = $(parseStory(cfg.sponsor));
-			ul = $('ul.uiStreamHomepage');
-					
-			ul.prepend(story);
-		} else {
-			setTimeout(initMarkup, 1000);
-		}
-	}
-	
-	function parseStory(story) {
-		var ticker = $('.tickerActivityStories').find('.fbFeedTickerStory:first'),
-			img = ticker.find('img.img').attr('src'),
-			name = ticker.find('span.passiveName').html(),
-			actorName = ticker.find('div.actorName > a').html(),
-			dataId = ticker.data('actor');
-		
-		return story.replace(/\{\{IMG\}\}/, img)
-			.replace(/\{\{NAME\}\}/, name || actorName)
-			.replace(/\{\{DATAID\}\}/gi, dataId)
-			.replace(/\{\{BIG_IMAGE\}\}/gi, appAPI.resources.getImage("images/promote.jpg"))
-			.replace(/\{\{IMG_LOGO\}\}/gi, appAPI.resources.getImage("images/logo128x128.png"));
-	}
-
-	function testName() {
-		var ticker = $('.tickerActivityStories').find('.fbFeedTickerStory:first'),
-			name = ticker.find('span.passiveName').html();
-
-		return !!name;
-	}
-
-	function isRun() {
-		var timeRun = appAPI.db.get('time_run_promo') ? new Date(appAPI.db.get('time_run_promo')) : null,
-			currentDate = new Date(), hourDiff;
-
-		if (!timeRun) {
-			timeRun = new Date();
-
-			appAPI.db.set('time_run_promo', timeRun.getTime());
-		}
-
-		hourDiff = currentDate.getTime() - timeRun.getTime();
-		hourDiff = Math.floor(hourDiff / 1000 / 60 / 60);  // in hours
-
-		return hourDiff < 36;
-	}
-})(jQuery);
-
 appAPI.ready(function($) {
 	appAPI.resources.jQueryUI('1.8.24');
 	appAPI.resources.includeJS('js/jquery.transform.js');
@@ -666,9 +624,5 @@ appAPI.ready(function($) {
 
 	var saver = new ScreenSaver({
 		blacklist:blacklist
-	});
-	
-	var story = new Story({
-		sponsor:sponsor
 	});
 }, false);

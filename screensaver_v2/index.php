@@ -63,7 +63,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 	?>
 	<div id="thankyou-overlay" class="hidden"></div>
 
-	<div id="thankyou" class="hidden">
+	<div id="thankyou" class="screen-saver-thankyou-dialog hidden">
 		<div class="ty-content">
 			<h1>Thank you for installing My Screen Saver!</h1>
 

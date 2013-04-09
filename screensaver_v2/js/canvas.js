@@ -166,11 +166,11 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function initThankyou() {
-		$('#thankyou-overlay, #thankyou').removeClass('hidden');
+		/*$('#thankyou-overlay, #thankyou').removeClass('hidden');
 
 		$('#click-to-close').on('click', function () {
 			$('#thankyou-overlay, #thankyou').remove();
-		});
+		});*/
 	}
 
 	function initChooseFriends() {
