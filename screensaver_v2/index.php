@@ -16,6 +16,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
 		<meta property="og:url" content="http://www.myscreensaver.co/"/>
 		<meta property="og:image" content="http://www.nikitastudios.com/images/logo128x128.png"/>
+		<meta property="og:type" content="website"/>
 
 		<link href="css/reset.css" rel="stylesheet" type="text/css" />
 		<link href="css/styles.css" rel="stylesheet" type="text/css" />

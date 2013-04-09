@@ -3,8 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.appId,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
-			thankYouPageUrl:'http://localhost/roman/screensaver_v2/?thankyou=true',
+			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			//thankYouPageUrl:'http://localhost/roman/screensaver_v2/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg',
 			defaultImagesCount:{
 				bar:115,
@@ -224,7 +224,7 @@ var ScreenSaver = (function ($) {
 			.html(html.join(''))
 			.appendTo('body');
 
-		logoLayer = $('<div class="' + config.cssPrefix + 'logo"></div>').appendTo('body');
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo">Click Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
 	}
 
 	function initImages() {

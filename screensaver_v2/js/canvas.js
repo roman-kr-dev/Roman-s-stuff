@@ -24,6 +24,8 @@ var FriendsScreenSaver = (function () {
 			cfg = $.extend({}, config, params);
 			thi$ = this;
 
+			window.CURRENT_INSTALL = 'bar';
+
 			initBrowserCompatibility();
 			initInstallButton();
 			initPreviewIframe();
