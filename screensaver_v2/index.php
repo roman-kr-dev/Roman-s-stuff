@@ -10,7 +10,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>facebook invite</title>
+        <title>My ScreenSaver - Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!</title>
 
 		<meta property="og:title" content="My Friends ScreenSaver" />
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
@@ -40,7 +40,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			
 			<!-- share start -->
 			<div class="share">
-				<div class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+				<div class="fb-like" data-href="http://www.myscreensaver.co/?source=fb_like" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
 
 				<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
 			
@@ -71,11 +71,11 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			<ul>
 				<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>
 				<li>Change the display settings by clicking <strong>Alt + 1</strong> when screen saver is running</li>
-				<li>
+				<!--<li>
 					You like it? Share to your friends to make their screen saver! 
 
 					<div style="margin-top:10px;" class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
-				</li>
+				</li>-->
 			</ul>
 			
 			<div id="click-to-close" class="click-to-close">Click to close</div>
@@ -105,7 +105,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			<!-- go to app box message - START -->
 			<div class="approve-app-text hidden">
 				<div class="box-logo"></div>
-				<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.myscreensaver.co%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+				<!--<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.myscreensaver.co%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>-->
 				<div id="request-app-confirm" class="box-button hidden">Download</div>
 				<div id="choose-app-friends" class="box-button hidden">Next Step</div>
 				<div id="crossriderInstallButton" class="install"></div>

