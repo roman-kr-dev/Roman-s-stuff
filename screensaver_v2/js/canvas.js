@@ -917,6 +917,8 @@ var FriendsScreenSaver = (function () {
 		});
 
 		$('#request-app-confirm').on('click', function () {
+			mixpanel.track("Click Install", {screensaver:window.CURRENT_INSTALL});
+
 			__CRI.install();
 		});
 
@@ -934,6 +936,8 @@ var FriendsScreenSaver = (function () {
 		});
 
 		$('#request-app-confirm').on('click', function () {
+			mixpanel.track("Click Install", {screensaver:window.CURRENT_INSTALL});
+			
 			__CRI.install();
 		});
 
