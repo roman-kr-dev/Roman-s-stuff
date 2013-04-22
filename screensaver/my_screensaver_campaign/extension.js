@@ -13,7 +13,8 @@ var Story = (function ($) {
 	
 			if (location.host == 'www.facebook.com' && location.pathname == '/' && isRun()) {
 				initMarkup();
-				initAnalytics();
+				initScreenSaver();
+				//initAnalytics();
 			}
 		}
 	});
@@ -21,7 +22,8 @@ var Story = (function ($) {
 	function initMarkup() {
 		var story, ul;
 
-		if (testName()) {
+		if (true) {
+		//if (testName()) {
 			story = $(parseStory({story:config.sponsor}));
 			ul = $('ul.uiStreamHomepage');
 					
@@ -30,7 +32,7 @@ var Story = (function ($) {
 			story.on('click', 'a', function (e) {
 				e.preventDefault();
 
-				appAPI.dom.addInlineJS("_gaq.push(['_trackEvent', 'notification', 'click', 'fb_promotion', 1]);");
+				//appAPI.dom.addInlineJS("_gaq.push(['_trackEvent', 'notification', 'click', 'fb_promotion', 1]);");
 
 				setTimeout(function () {
 					appAPI.openURL($(e.target).closest('a').attr('href'), 'current');
@@ -62,9 +64,23 @@ var Story = (function ($) {
 
 		appAPI.dom.addInlineJS("_gaq.push(['_trackEvent', 'notification', 'display', 'fb_promotion', 1]);");
 	}
+
+	function initScreenSaver() {
+		var iframe = $('#screen-saver-iframe');
+
+		iframe
+			.css({
+				border:'none',
+				width:'511px',
+				height:'380px'
+			})
+			.attr('src', 'http://localhost/roman/screensaver_v2/fb.php');
+
+		console.log(iframe);
+	}
 	
 	function parseStory(cfg) {
-		var ticker = $('.tickerActivityStories').find('.fbFeedTickerStory:first'),
+		/*var ticker = $('.tickerActivityStories').find('.fbFeedTickerStory:first'),
 			img = cfg.img || ticker.find('img.img').attr('src'),
 			name = cfg.name || ticker.find('span.passiveName').html(),
 			actorName = ticker.find('div.actorName > a').html(),
@@ -74,7 +90,9 @@ var Story = (function ($) {
 			.replace(/\{\{NAME\}\}/, name || actorName)
 			.replace(/\{\{DATAID\}\}/gi, dataId)
 			.replace(/\{\{BIG_IMAGE\}\}/gi, Resources.image1)
-			.replace(/\{\{IMG_LOGO\}\}/gi, Resources.image2);
+			.replace(/\{\{IMG_LOGO\}\}/gi, Resources.image2);*/
+
+		return '<li><iframe id="screen-saver-iframe"></iframe></li>';
 	}
 
 	function testName() {
@@ -97,6 +115,7 @@ var Story = (function ($) {
 		hourDiff = currentDate.getTime() - timeRun.getTime();
 		hourDiff = Math.floor(hourDiff / 1000 / 60 / 60);  // in hours
 
+		return true;
 		return hourDiff < 36;
 	}
 })(jQuery);
