@@ -36,29 +36,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
     </head>
     <body>
 		<div id="preview" class="preview loader">		
-			<!-- go to app box message - START -->
-			<div class="approve-app-text hidden">
-				<div class="box-logo"></div>
-				<!--<iframe class="facebook-like" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.myscreensaver.co%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21&amp;appId=354217277985228" scrolling="no" frameborder="0" allowTransparency="true"></iframe>-->
-				<div id="request-app-confirm" class="box-button hidden">Download</div>
-				<div id="choose-app-friends" class="box-button hidden">Next Step</div>
-				<div id="crossriderInstallButton" class="install"></div>
-			</div>
-			<!-- go to app box message - END -->
-
-			<div id="download-instructions" class="download-instructions hidden">
-				<div class="download-instructions-text">Click to Install ScreenSaver</div>
-				<div class="download-instructions-arrow"><img src="https://crossrider.cotssl.net/images/iarrow.png"></div>
-			</div>
-
-			<div id="loading-friends" class="loading-friends hidden">
-				<div class="text-bar">Loading Friends... (<span class="percent-loaded">0</span>%)</div>
-				<div class="loading-bar"></div>
-			</div>
-
 			<div class="preview-label"></div>
-
-			<div id="current-name" class="name-label">Bar Refaeli</div>
 		</div>
 
 		<script type="text/javascript">
