@@ -12,7 +12,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>My ScreenSaver - Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!</title>
 
-		<meta property="og:title" content="My Friends ScreenSaver" />
+		<meta property="og:title" content="My ScreenSaver" />
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
 		<meta property="og:url" content="http://www.myscreensaver.co/"/>
 		<meta property="og:image" content="http://www.nikitastudios.com/images/logo128x128.png"/>
@@ -21,6 +21,27 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 		<link href="css/reset.css" rel="stylesheet" type="text/css" />
 		<link href="css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
+
+		<!-- start Mixpanel -->
+		<script type="text/javascript">
+		(function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===e.location.protocol?"https:":"http:")+'//cdn.mxpnl.com/libs/mixpanel-2.2.min.js';f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f);b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==
+		typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");for(g=0;g<i.length;g++)f(c,i[g]);
+		b._i.push([a,e,d])};b.__SV=1.2}})(document,window.mixpanel||[]);
+		mixpanel.init("9bb659cc32b218551604f53a2f32b0f2");
+
+		<?php 
+		if (isset($_GET["thankyou"])) {
+		?>
+		mixpanel.track("Enter Thankyou");
+		<?php
+		} else {
+		?>
+		mixpanel.track("Enter Index");
+		<?php
+		}
+		?>
+		</script>
+		<!-- end Mixpanel -->
 
 		<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
 		<script src="js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
@@ -40,7 +61,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			
 			<!-- share start -->
 			<div class="share">
-				<div class="fb-like" data-href="http://www.myscreensaver.co/?source=fb_like" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+				<div class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
 
 				<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
 			
@@ -248,7 +269,16 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 		.hidden {
 			display:none;
 		}
+
+		.badge-mixin {
+			position: absolute;
+			bottom:0px;
+			right:0px;
+		}
 		</style>
 
+		<div class="badge-mixin">
+			<a href="http://mixpanel.com/f/partner"><img src="http://mixpanel.com/site_media/images/partner/badge_blue.png" alt="Mobile Analytics" /></a>
+		</div>
     </body>
 </html>

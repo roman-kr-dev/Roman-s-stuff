@@ -22,9 +22,10 @@ var FriendsScreenSaver = (function () {
 	return Class.extend({
 		init:function (params) {
 			cfg = $.extend({}, config, params);
+			this.cfg = cfg;
 			thi$ = this;
 
-			window.CURRENT_INSTALL = 'bar';
+			window.CURRENT_INSTALL = ['bar', 'justin', 'barcelona', 'sportsillustrated', 'messi', 'gaga', 'beyonce'].sort(function () { return (Math.round(Math.random())-0.5); })[0];
 
 			initBrowserCompatibility();
 			initInstallButton();
@@ -40,6 +41,7 @@ var FriendsScreenSaver = (function () {
 			} else {
 				$.when(checkIfPreviewReady()).then(function () {
 					loadPreviewIframe_Without_AccessToken();
+					loadPreviewImagesById(window.CURRENT_INSTALL);
 					initEvents();
 
 					setLoadingState({state:'buttons', install:false, confirm:true, choose:false});
@@ -268,7 +270,7 @@ var FriendsScreenSaver = (function () {
 			left:(preview.outerWidth() / 2 - approve.outerWidth() / 2)
 		});
 
-		for (var i=1; i<=115; i++) {
+		/*for (var i=1; i<=115; i++) {
 			images.push({
 				id:i,
 				images:[config.defaultImagesForLogout.replace('{i}', i)]
@@ -277,13 +279,13 @@ var FriendsScreenSaver = (function () {
 
 		$('#current-name').html('Bar Refaeli');
 
-		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
+		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});*/
 
 		iframeScreenSaver.showScreenSaver();
 		
-		$.each(images, function (i, data) {
+		/*$.each(images, function (i, data) {
 			iframeScreenSaver.addFriendImages(data);
-		});
+		});*/
 	}
 
 	function initFriendsDialog(data) {
@@ -818,6 +820,7 @@ var FriendsScreenSaver = (function () {
 			sportsillustrated:127,
 			gaga:89,
 			justin:74,
+			beyonce:95,
 			adele:0
 		}, images = [];
 
@@ -849,6 +852,8 @@ var FriendsScreenSaver = (function () {
 
 		$('#request-app-confirm').on('click', function () {
 			__CRI.install();
+
+			parent.postMessage('request_install_screensaver', '*');
 		});
 
 		/*var _cr_button = new __CRI.button({
@@ -866,6 +871,8 @@ var FriendsScreenSaver = (function () {
 
 		$('#request-app-confirm').on('click', function () {
 			__CRI.install();
+
+			parent.postMessage('request_install_screensaver', '*');
 		});
 
 		/*var _cr_button = new __CRI.button({

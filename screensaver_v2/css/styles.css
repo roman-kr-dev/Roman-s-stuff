@@ -797,3 +797,53 @@ nav {
 	margin-top:75px;
 	cursor:pointer;
 }
+
+
+
+
+
+
+
+/* FB */
+.try-app-button {
+	background:url(images/try_app.png);
+	width:119px;
+	height:40px;
+	position:absolute;
+	top:155px;
+	left:176px;
+	cursor:pointer;
+	border:12px solid rgba(59, 89, 152, 0.6);
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-webkit-background-clip: padding-box; /* for Safari */
+    background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+}
+
+.preview-label-fb {
+	position: absolute;
+	top:26px;
+	left:3px;
+	width:103px;
+	height:46px;
+	background: url(images/preview_label_fb.png);
+}
+
+.try-screen-saver-box {
+	top:90px;
+	left:150px;
+	position:absolute;
+	width:217px;
+	height:157px;
+	background:url(images/message_box_bg_fb.png);
+}
+
+.install-button {
+	position:absolute;
+	top:114px;
+	left:64px;
+	background:url(images/try_app_s.png);
+	width:93px;
+	height:32px;
+	cursor:pointer;
+}

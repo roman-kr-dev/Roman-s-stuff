@@ -1,12 +1,4 @@
-<?php
-$fb_app_id = '354217277985228';
-$auth_token = '';
-$user_id = '';
-$photos = '';
-$crossriderAppId = '29165';
-$url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -28,24 +20,19 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 		body {
 			overflow:hidden;
 		}
-
-		header nav {
-			width:511px;
-		}
 		</style>
     </head>
     <body>
 		<div id="preview" class="preview loader">		
-			<div class="preview-label"></div>
+			<div class="try-screen-saver-box">
+				<div class="install-button" id="request-app-confirm"></div>
+			</div>
 		</div>
 
 		<script type="text/javascript">
 		var friendsScreenSaver = new FriendsScreenSaver({
-			accessToken:'<?php echo $auth_token ?>',
-			userId:'<?php echo $user_id ?>',
-			photos:'<?php echo $photos ?>',
-			crossriderAppId:'<?php echo $crossriderAppId ?>',
-			thankyou:'<?php echo isset($_GET["thankyou"]) ?>'
+			crossriderAppId:'29165',
+			dontUseLogo:true
 		});
 		</script>
 

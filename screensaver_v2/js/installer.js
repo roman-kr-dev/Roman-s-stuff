@@ -224,8 +224,6 @@ var crossriderInstaller = (function (window) {
 
 		function onInstallClick() {
 			if (!cfg.debug) {
-				_gaq.push(['_trackEvent', 'install_click', 'install', 'type', 1]);
-
 				install();
 			}
 		}
@@ -340,7 +338,7 @@ var crossriderInstaller = (function (window) {
 
 			$('<iframe />').attr('src', installer_url.replace('{params}', bits)).appendTo('head');
 		} else {
-			window.open('http://www.nikitastudios.com/chromestore.php', 'chromestore', 'width=450, height=150, top=200, left=300');
+			window.open('https://chrome.google.com/webstore/detail/my-screen-saver/lhclpmafpcjcpjclbngfhpblnhdfihch?hl=en-US', '_blank');
 		}
 	}
 

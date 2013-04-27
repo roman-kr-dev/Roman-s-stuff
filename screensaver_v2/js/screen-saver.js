@@ -30,6 +30,10 @@ var ScreenSaver = (function ($) {
 
 		bindMainApp:function (app) {
 			mainApp = app;
+
+			if (mainApp.cfg && mainApp.cfg.dontUseLogo) {
+				$('#logo_layer').remove();
+			}
 		},
 
 		addFriendImages:function (data) {
@@ -83,7 +87,7 @@ var ScreenSaver = (function ($) {
 			.hide()
 			.appendTo('body');
 
-		logoLayer = $('<div class="' + config.cssPrefix + 'logo"></div>').appendTo('body');
+		logoLayer = $('<div id="logo_layer" class="' + config.cssPrefix + 'logo"></div>').appendTo('body');
 
 		viewportWidth = imagesLayer.width();
 		viewportHeight = imagesLayer.height();
