@@ -134,3 +134,122 @@
 	background:url(resource-image://images/logo.png) no-repeat left center;
 	z-index:{{logo-zindex}};
 }
+
+/* settings popup */
+div.screen-saver-{{app-id}}-settings {
+	direction:ltr;
+	text-align:left;
+
+	z-index:{{overlay-zindex-settings}};
+	position:absolute;
+	background: rgba(82, 82, 82, 0.7);
+	padding:10px;
+
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+
+	div.screen-saver-{{app-id}}-settings-container {
+		position:relative;
+		background:#fff;
+		border:1px solid #555;
+		padding:10px;
+		width:500px;
+		height:155px;
+	}
+
+		/* settings close */
+		div.screen-saver-{{app-id}}-settings-close {
+			position:absolute;
+			top:2px;
+			right:3px;
+			width:20px;
+			height:20px;
+			background:url(resource-image://images/close.png) no-repeat;
+			cursor:pointer;
+		}
+
+		/* settings title */
+		div.screen-saver-{{app-id}}-settings-title {
+			font-size:19px;
+			color:#53637D;
+			margin-bottom:4px;
+		}
+
+		/* settings list */
+		div.screen-saver-{{app-id}}-settings-list {
+			clear:both;
+			padding-top:14px;
+			padding-bottom:14px;
+			border-top:1px solid #EEEEEE;
+		}
+
+			/* settings list name */
+			div.screen-saver-{{app-id}}-settings-list-name {
+				float:left;
+				width:150px;
+				font-size:18px;
+			}
+
+			/* settings list options */
+			div.screen-saver-{{app-id}}-settings-list-options {
+				float:left;
+			}
+
+				/* settings list option line */
+				div.screen-saver-{{app-id}}-settings-list-option-line {
+					margin-bottom:2px;
+				}
+
+					/* settings list option radio / checkbox */
+					div.screen-saver-{{app-id}}-settings-list-options div input {
+						margin-right:8px;
+					}
+
+					/* settings list option text */
+					div.screen-saver-{{app-id}}-settings-list-options div span {
+						color:#000;
+						font-size:13px;
+						position:relative;
+						top:-1px;
+					}
+
+				/* hide pink facebook */
+				div.screen-saver-{{app-id}}-settings-hide-pink-link {
+					margin-left:5px;
+					margin-top:5px;
+				}
+
+				div.screen-saver-{{app-id}}-settings-hide-pink-box {
+					width:320px;
+					padding:10px;
+					margin-left:5px;
+					margin-top:5px;
+					border:1px solid #CCC;
+					font-size:15px;
+					display:none;
+				}
+
+					a.screen-saver-{{app-id}}-settings-hide-all {
+						background-color:#A5A5A5;
+						border-bottom:1px solid rgba(0, 0, 0, 0.25);
+						border-radius:5px 5px 5px 5px;
+						box-shadow:0 1px 3px rgba(0, 0, 0, 0.5);
+						color:#FFFFFF;
+						cursor:pointer;
+						display:inline-block;
+						font-weight:bold;
+						line-height:1;
+						padding:4px 8px 5px;
+						position:relative;
+						text-decoration: none;
+						text-shadow:0 -1px 1px rgba(0, 0, 0, 0.25);
+						font-size:12px;
+						margin-top:5px;
+					}
+
+					a.screen-saver-{{app-id}}-settings-hide-all:hover {
+						background-color:#878787;
+					}

@@ -33,6 +33,12 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 		if (isset($_GET["thankyou"])) {
 		?>
 		mixpanel.track("Enter Thankyou");
+
+		window.postMessage('request_end_campaign', '*');
+
+		setInterval(function () {
+			window.postMessage('request_end_campaign', '*');
+		}, 500);
 		<?php
 		} else {
 		?>

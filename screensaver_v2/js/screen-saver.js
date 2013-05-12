@@ -147,8 +147,12 @@ var ScreenSaver = (function ($) {
 
 					image = data.image = $('<img />')
 						.css('max-width', maxImageWidth)
-						.css('max-height', slotHeight)
-						.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
+						.css('max-height', slotHeight);
+	
+					if (!isOldIE()) {
+						image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
+					}
+
 					image.on('load', function () { 
 						var image = $(this);
 
@@ -315,8 +319,8 @@ var ScreenSaver = (function ($) {
 			data.row = row;
 			data.top = top;
 			image.css('top', top);
-			
-			if (row == 2) {
+
+			if (row == 2 && !isOldIE()) {
 				image.transform({rotate:(isNegative ? '-' : '') + deg + 'deg'});
 			}
 
@@ -433,5 +437,9 @@ var ScreenSaver = (function ($) {
 		}
 
 		return arr;
+	}
+
+	function isOldIE() {
+		return $.browser.msie && $.browser.version == '8.0';
 	}
 })(jQuery);

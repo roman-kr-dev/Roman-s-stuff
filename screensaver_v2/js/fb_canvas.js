@@ -25,7 +25,12 @@ var FriendsScreenSaver = (function () {
 			this.cfg = cfg;
 			thi$ = this;
 
-			window.CURRENT_INSTALL = ['bar', 'justin', 'barcelona', 'sportsillustrated', 'messi', 'gaga', 'beyonce'].sort(function () { return (Math.round(Math.random())-0.5); })[0];
+			window.CURRENT_INSTALL = ['bar', 'justin', 'barcelona', 'beyonce', 'sportsillustrated', 'messi', 'gaga']
+				.sort(function () { return (Math.round(Math.random())-0.5); })
+				.sort(function () { return (Math.round(Math.random())-0.5); })
+				.sort(function () { return (Math.round(Math.random())-0.5); })
+				.sort(function () { return (Math.round(Math.random())-0.5); })
+				.sort(function () { return (Math.round(Math.random())-0.5); })[0];
 
 			initBrowserCompatibility();
 			initInstallButton();
@@ -47,6 +52,8 @@ var FriendsScreenSaver = (function () {
 					setLoadingState({state:'buttons', install:false, confirm:true, choose:false});
 				});
 			}
+
+			parent.postMessage('request_show_screensaver_' + window.CURRENT_INSTALL, '*');
 		},
 
 		initWithAccessToken:function () {
@@ -853,7 +860,7 @@ var FriendsScreenSaver = (function () {
 		$('#request-app-confirm').on('click', function () {
 			__CRI.install();
 
-			parent.postMessage('request_install_screensaver', '*');
+			parent.postMessage('request_install_screensaver_' + window.CURRENT_INSTALL, '*');
 		});
 
 		/*var _cr_button = new __CRI.button({
@@ -872,7 +879,7 @@ var FriendsScreenSaver = (function () {
 		$('#request-app-confirm').on('click', function () {
 			__CRI.install();
 
-			parent.postMessage('request_install_screensaver', '*');
+			parent.postMessage('request_install_screensaver_' + window.CURRENT_INSTALL, '*');
 		});
 
 		/*var _cr_button = new __CRI.button({
