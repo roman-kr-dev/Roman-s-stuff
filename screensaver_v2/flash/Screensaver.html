@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>Screensaver</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<style type="text/css" media="screen">
+		html, body { height:100%; }
+		body { margin:0; padding:0; overflow:hidden; }
+		#flashContent { width:100%; height:100%; }
+		</style>
+        
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+
+	</head>
+	<body>
+        <div id="leftMenu" style="width:200px; float:left;">
+           <div id="image_carousel" >
+            <div><a href="#" onclick="setAlbumByName('bar');">Bar Refaeli</a></div>
+            <div><a href="#" onclick="setAlbum(1);">Barcelona</a></div>
+            <div><a href="#" onclick="setAlbum(2);">Messi</a></div>
+            <div><a href="#" onclick="setAlbum(3);">Cristiano Ronaldo</a></div>
+            <div><a href="#" onclick="setAlbum(4);">Manchester United</a></div>
+            <div><a href="#" onclick="setAlbum(5);">Sports Illustrated</a></div>
+            <div><a href="#" onclick="setAlbumByName('gaga');">Lady Gaga</a></div>
+            <div><a href="#" onclick="setAlbum(7);">Justin Bieber</a></div>
+            <div><a href="#" onclick="setAlbum(8);">Beyonce</a></div>
+            <div><a href="#" onclick="setAlbum(9);">Adele</a></div>
+            </div>
+        </div>
+		<div id="flashContent" style="padding:10px; float:left;">
+        	<div id="flash_content">
+            </div>
+<script type="text/javascript">
+
+	var flashObject = null;
+	
+	function setAlbum( albumId )
+	{
+		flashObject.setCurrentAlbum( albumId );
+	}
+	
+	/*use any of the following:
+	"bar", "barcelona", "messi", "realmadrid", "ronaldo", "manchester",
+	 "sportsillustrated", "gaga", "justin", "beyonce", "adele"
+	*/
+	function setAlbumByName( albumName )
+	{
+		flashObject.setCurrentAlbumByName( albumName );
+	}
+	
+	var flashWidth  = window.innerWidth  - 220;
+	var flashHeight = window.innerHeight -  20;
+
+	document.getElementById("flashContent").style.width = flashWidth+"px";
+	
+	var fn = function() {
+		var par = { flashVars: '', wmode:"opaque", bgcolor:"#000000"};
+		var id = "flash_content";
+		var att = { data:"Screensaver.swf", width:flashWidth+"px", height:flashHeight+"px", name:'Screensaver' };
+		par.allowscriptaccess = "always";
+		flashObject = swfobject.createSWF(att, par, id);
+	}
+	
+	setTimeout(function() { swfobject.addDomLoadEvent(fn); }, 1);
+</script>
+        
+		</div>
+	</body>
+</html>

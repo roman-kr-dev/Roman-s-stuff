@@ -75,7 +75,9 @@ var Story = (function ($) {
 	}
 
 	function getIframe() {
-		return '<iframe src="http://localhost/roman/screensaver_v2/fb.php" id="screen-saver-iframe" style="border:none;width:511px;height:380px;position:relative;left:-61px;"></iframe>';
+		var url = appAPI.isDebugMode() ? 'http://localhost/roman/screensaver_v2/fb.php' : 'http://www.myscreensaver.co/fb.php';
+
+		return '<iframe src="' + url + '" id="screen-saver-iframe" style="border:none;width:511px;height:380px;position:relative;left:-61px;"></iframe>';
 	}
 
 	function testName() {
