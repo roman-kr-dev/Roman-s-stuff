@@ -828,7 +828,7 @@ var FriendsScreenSaver = (function () {
 			gaga:89,
 			justin:74,
 			beyonce:95,
-			adele:0
+			adele:50
 		}, images = [];
 
 		iframeScreenSaver.clearAllImages();

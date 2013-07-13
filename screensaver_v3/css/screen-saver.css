@@ -1,0 +1,49 @@
+body {
+	xbackground:url(images/background-pattern.jpg);
+}
+
+.screen-saver-loader {
+	background:url(images/ajax-loader.gif) no-repeat center center;
+}
+
+.screen-saver-overlay {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background:#000;
+	opacity:0.8;
+}
+
+.screen-saver-images {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	overflow:hidden;
+}
+
+	.screen-saver-images img {
+		position:absolute;
+		display:none;
+
+		border:10px solid #FFF;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+
+		transform: rotate3d(20deg, 0deg, 10deg);
+		-webkit-transform: rotate3d(20, 0, 10); /* Safari and Chrome */
+		-moz-transform: rotate3d(20deg, 0deg, 10deg); /* Firefox */
+	}
+
+.screen-saver-logo {
+	position:absolute;
+	bottom:10px;
+	left:10px;
+	width:75px;
+	height:63px;
+	background:url(images/logo.png) no-repeat;
+	z-index:10000;
+}

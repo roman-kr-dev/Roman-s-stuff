@@ -4,7 +4,31 @@ $auth_token = '';
 $user_id = '';
 $photos = '';
 $crossriderAppId = '29165';
+$screen = isset($_GET["screen"]) ? $_GET["screen"] : '';
 $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+$thumb = "http://www.nikitastudios.com/images/logo128x128.png";
+
+$array = Array(
+    "bar" => "http://www.nikitastudios.com/images/css/images/thumbs/bar.jpg",
+    "messi" => "http://www.nikitastudios.com/images/css/images/thumbs/messi.jpg",
+    "justin" => "http://www.nikitastudios.com/images/css/images/thumbs/justin.jpg",
+    "gaga" => "http://www.nikitastudios.com/images/css/images/thumbs/gaga.jpg",
+    "sportsillustrated" => "http://www.nikitastudios.com/images/css/images/thumbs/sportsillustrated.jpg",
+    "ronaldo" => "http://www.nikitastudios.com/images/css/images/thumbs/ronaldo.jpg",
+    "realmadrid" => "http://www.nikitastudios.com/images/css/images/thumbs/realmadrid.jpg",
+    "barcelona" => "http://www.nikitastudios.com/images/css/images/thumbs/barca.jpg",
+    "adele" => "http://www.nikitastudios.com/images/css/images/thumbs/adele.jpg",
+    "manchester" => "http://www.nikitastudios.com/images/css/images/thumbs/manchester.jpg",
+    "byonce" => "http://www.nikitastudios.com/images/css/images/thumbs/beyonce.jpg",
+    "greenday" => "http://www.nikitastudios.com/images/css/images/thumbs/greenday.jpg"
+);
+
+if ($screen && !isset($array[$screen])) {
+	header("Location:/");
+} else if ($screen && isset($array[$screen])) {
+	$thumb = $array[$screen];
+}
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,50 +38,23 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 
 		<meta property="og:title" content="My ScreenSaver" />
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
-		<meta property="og:url" content="http://www.myscreensaver.co/"/>
-		<meta property="og:image" content="http://www.nikitastudios.com/images/logo128x128.png"/>
+		<meta property="og:url" content="<?php echo $url ?>"/>
+		<meta property="og:image" content="<?php echo $thumb ?>"/>
 		<meta property="og:type" content="website"/>
 
-		<link href="css/reset.css" rel="stylesheet" type="text/css" />
-		<link href="css/styles.css" rel="stylesheet" type="text/css" />
-		<link href="css/invite.css" rel="stylesheet" type="text/css" />
+		<link href="/css/reset.css" rel="stylesheet" type="text/css" />
+		<link href="/css/styles.css" rel="stylesheet" type="text/css" />
+		<link href="/css/invite.css" rel="stylesheet" type="text/css" />
 
-		<!-- start Mixpanel -->
-		<script type="text/javascript">
-		(function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===e.location.protocol?"https:":"http:")+'//cdn.mxpnl.com/libs/mixpanel-2.2.min.js';f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f);b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==
-		typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");for(g=0;g<i.length;g++)f(c,i[g]);
-		b._i.push([a,e,d])};b.__SV=1.2}})(document,window.mixpanel||[]);
-		mixpanel.init("9bb659cc32b218551604f53a2f32b0f2");
-
-		<?php 
-		if (isset($_GET["thankyou"])) {
-		?>
-		mixpanel.track("Enter Thankyou");
-
-		window.postMessage('request_end_campaign', '*');
-
-		setInterval(function () {
-			window.postMessage('request_end_campaign', '*');
-		}, 500);
-		<?php
-		} else {
-		?>
-		mixpanel.track("Enter Index");
-		<?php
-		}
-		?>
-		</script>
-		<!-- end Mixpanel -->
-
-		<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
-		<script src="js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
-		<script src="js/jquery.slimscroll.min.js" type="text/javascript"></script>
-		<script src="js/jquery.client.js" type="text/javascript"></script>
-		<script src="js/base.class.js" type="text/javascript"></script>
-		<script src="js/installer.js" type="text/javascript"></script>
-		<script src="js/jquery.cookie.js" type="text/javascript"></script>
-		<script src="js/invite.js" type="text/javascript"></script>
-		<script src="js/canvas.js" type="text/javascript"></script>
+		<script src="/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+		<script src="/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+		<script src="/js/jquery.slimscroll.min.js" type="text/javascript"></script>
+		<script src="/js/jquery.client.js" type="text/javascript"></script>
+		<script src="/js/base.class.js" type="text/javascript"></script>
+		<script src="/js/installer.js" type="text/javascript"></script>
+		<script src="/js/jquery.cookie.js" type="text/javascript"></script>
+		<script src="/js/invite.js" type="text/javascript"></script>
+		<script src="/js/canvas.js" type="text/javascript"></script>
     </head>
     <body>
 
@@ -67,7 +64,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			
 			<!-- share start -->
 			<div class="share">
-				<div class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+				<div class="fb-like" data-href="<?php echo $url ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
 
 				<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
 			
@@ -79,7 +76,7 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 	</header>
 
 	<div class="what-to-do">
-		<img src="images/arrow.png" />
+		<img src="/images/arrow.png" />
 		<div>
 			<strong>Welcome to my screen saver</strong><br />
 			Select an image and build your own screen saver..
@@ -115,16 +112,16 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 	<div style="clear:both;"></div>
 
 	<div id="image_carousel" class="image_carousel">
-		<div class="image-container" data-name="Bar Refaeli"><img src="css/images/thumbs/bar.jpg" data-id="bar" class="selected" alt="Bar Refaeli" width="140" height="140" /></div>
-		<div class="image-container" data-name="Leo Messi"><img src="css/images/thumbs/messi.jpg" data-id="messi" width="140" height="140" /></div>
-		<div class="image-container" data-name="Justin Bieber"><img src="css/images/thumbs/justin.jpg" data-id="justin" width="140" height="140" /></div>
-		<div class="image-container" data-name="Lady Gaga"><img src="css/images/thumbs/gaga.jpg" data-id="gaga" width="140" height="140" /></div>
-		<div class="image-container" data-name="Sports Illustrated"><img src="css/images/thumbs/sportsillustrated.jpg" data-id="sportsillustrated" width="140" height="140" /></div>
-		<div class="image-container" data-name="Cristiano Ronaldo"><img src="css/images/thumbs/ronaldo.jpg" data-id="ronaldo" width="140" height="140" /></div>
-		<div class="image-container" data-name="Real Madrid"><img src="css/images/thumbs/realmadrid.jpg" data-id="realmadrid" width="140" height="140" /></div>
-		<div class="image-container" data-name="FC Barcelona"><img src="css/images/thumbs/barca.jpg" data-id="barcelona" width="140" height="140" /></div>
-		<div class="image-container" data-name="Adele"><img src="css/images/thumbs/adele.jpg" data-id="adele" width="140" height="140" /></div>
-		<div class="image-container" data-name="Manchester United"><img src="css/images/thumbs/manchester.jpg" data-id="manchester" width="140" height="140" /></div>
+		<div class="image-container" data-name="Bar Refaeli"><img src="/css/images/thumbs/bar.jpg" data-id="bar" class="selected" alt="Bar Refaeli" width="140" height="140" /></div>
+		<div class="image-container" data-name="Leo Messi"><img src="/css/images/thumbs/messi.jpg" data-id="messi" width="140" height="140" /></div>
+		<div class="image-container" data-name="Justin Bieber"><img src="/css/images/thumbs/justin.jpg" data-id="justin" width="140" height="140" /></div>
+		<div class="image-container" data-name="Lady Gaga"><img src="/css/images/thumbs/gaga.jpg" data-id="gaga" width="140" height="140" /></div>
+		<div class="image-container" data-name="Sports Illustrated"><img src="/css/images/thumbs/sportsillustrated.jpg" data-id="sportsillustrated" width="140" height="140" /></div>
+		<div class="image-container" data-name="Cristiano Ronaldo"><img src="/css/images/thumbs/ronaldo.jpg" data-id="ronaldo" width="140" height="140" /></div>
+		<div class="image-container" data-name="Real Madrid"><img src="/css/images/thumbs/realmadrid.jpg" data-id="realmadrid" width="140" height="140" /></div>
+		<div class="image-container" data-name="FC Barcelona"><img src="/css/images/thumbs/barca.jpg" data-id="barcelona" width="140" height="140" /></div>
+		<div class="image-container" data-name="Adele"><img src="/css/images/thumbs/adele.jpg" data-id="adele" width="140" height="140" /></div>
+		<div class="image-container" data-name="Manchester United"><img src="/css/images/thumbs/manchester.jpg" data-id="manchester" width="140" height="140" /></div>
 	</div>
 
 
@@ -228,7 +225,8 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			userId:'<?php echo $user_id ?>',
 			photos:'<?php echo $photos ?>',
 			crossriderAppId:'<?php echo $crossriderAppId ?>',
-			thankyou:'<?php echo isset($_GET["thankyou"]) ?>'
+			thankyou:'<?php echo isset($_GET["thankyou"]) ?>',
+			screensaver:'<?php echo $screen ?>'
 		});
 		</script>
 
@@ -282,9 +280,5 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 			right:0px;
 		}
 		</style>
-
-		<div class="badge-mixin">
-			<a href="http://mixpanel.com/f/partner"><img src="http://mixpanel.com/site_media/images/partner/badge_blue.png" alt="Mobile Analytics" /></a>
-		</div>
     </body>
 </html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>facebook invite</title>
+	
+		<link href="css/reset.css" rel="stylesheet" type="text/css" />
+		<link href="css/styles.css" rel="stylesheet" type="text/css" />
+		<link href="css/invite.css" rel="stylesheet" type="text/css" />
+
+		<style>
+		body {
+			font-family:"lucida grande", tahoma, verdana, arial, sans-serif;
+			margin:20px;
+		}
+
+		.hidden {
+			display:none;
+		}
+
+		h1.header-title {
+			
+		}
+
+		div.header-sub-title {
+			font-size:12px;
+			margin-top:4px;
+			margin-bottom:10px;
+		}
+
+		div.friends {
+			margin-top:10px;
+			height:300px;
+		}
+
+		div.install {
+			margin-top:10px;
+			height:130px;
+			text-align:center;
+		}
+
+			div.install a {
+				margin-top:40px;
+			}
+		
+		div.preview {
+			width:758px;
+			height:400px;
+			border:1px solid #CCC;
+		}
+
+			div.preview iframe {
+				width:758px;
+				height:400px;
+			}
+		</style>
+
+		<script type="text/javascript" src="https://crossrider.cotssl.net/javascripts/installer/installer.js"></script>
+		<script src="js/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<script src="js/jquery.cookie.js" type="text/javascript"></script>
+		<script src="js/base.class.js" type="text/javascript"></script>
+		<script src="js/invite.js" type="text/javascript"></script>
+		<script src="js/canvas.js" type="text/javascript"></script>
+    </head>
+    <body>
+		<div style="width:760px;background:#fafafa;">
+			<h1 class="header-title">Choose Your Friends!</h1>
+			<div class="header-sub-title">This is a short description about the app and on what you need to do</div>
+
+			<div id="crossriderInstallButton" class="install hidden"></div>
+			<div id="friends" class="friends"></div>
+			<div id="preview" class="preview"></div>
+		</div>
+
+		<div id="fb-root"></div>
+		<script src="https://connect.facebook.net/en_US/all.js"></script>
+
+		<script type="text/javascript">
+		FB.init({
+			appId:103821159765711,
+			frictionlessRequests:false //true
+		});
+
+		var friendsScreenSaver = new FriendsScreenSaver({
+			accessToken:'AAABebL9ZAFs8BAJ1yFpn89kcGBp3CTldaRLX1fBZBvhg4ldPzvZBOFmkZBcpRWCjVXwfoCc6AQAmxBYIvKy6oV82535nNal01IRH5rQZACAZDZD',
+			userId:'775015138'
+		});
+		</script>
+    </body>
+</html>

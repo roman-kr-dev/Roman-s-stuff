@@ -1,0 +1,50 @@
+html, body {
+	height:100%;
+}
+
+body {
+	font-family:"Helvetica Neue",arial,sans-serif;
+}
+
+.loader {
+	background-image:url(images/ajax-loader.gif);
+	background-repeat:no-repeat;
+	background-position:center center;
+}
+
+.hidden {
+	display:none;
+}
+
+/* site background - start */
+div.site-background {
+	position: absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+	z-index: -1;
+	background: #F5F5F5 url(images/bg_clouds.png) no-repeat center 80px;
+}
+
+	div.header {
+		height:88px;
+		background: url(images/bg_header.png) repeat-x center;
+	}
+	
+
+/* site background - end */
+
+div.site-content {
+	width:90%;
+	margin-left:auto;
+	margin-right:auto;
+	position: relative;
+	height:500px;
+}
+
+	div.header a.logo {
+		position: absolute;
+		top:0px;
+		left:0px;
+	}

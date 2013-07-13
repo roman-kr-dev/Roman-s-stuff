@@ -52,9 +52,9 @@
 	.screen-saver-{{app-id}}-click-to-close-screen {
 		position:absolute;
 		bottom:10px;
-		left:10px;
+		left:50px;
 		color:#fff;
-		font-size:26px;
+		font-size:22px;
 	}
 
 
@@ -121,7 +121,7 @@
 	}
 
 .screen-saver-{{app-id}}-logo {
-	position:absolute;
+	position:fixed;
 	bottom:10px;
 	left:10px;
 	width:400px;

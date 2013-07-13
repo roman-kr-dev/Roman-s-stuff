@@ -24,8 +24,8 @@ var FriendsScreenSaver = (function () {
 			cfg = $.extend({}, config, params);
 			thi$ = this;
 
-			window.CURRENT_INSTALL = 'bar';
-
+			window.CURRENT_INSTALL = cfg.screensaver || 'bar';
+console.log(window.CURRENT_INSTALL);
 			initBrowserCompatibility();
 			initInstallButton();
 			initPreviewIframe();
@@ -259,6 +259,41 @@ var FriendsScreenSaver = (function () {
 		populateScreenSaverIframe();
 	}
 
+	function loadPreviewImagesById(id) {
+		var num = {
+			bar:[115, 'Bar Refaeli'],
+			barcelona:[95, 'FC Barcelona'],
+			messi:[102, 'Leo Messi'],
+			realmadrid:[0, 'Real Madrid'],
+			ronaldo:[69, 'Cristiano Ronaldo'],
+			manchester:[119, 'Manchester United'],
+			sportsillustrated:[127, 'Sports Illustrated'],
+			gaga:[89, 'Lady Gaga'],
+			justin:[74, 'Justin Bieber'],
+			adele:[50, 'Adele']
+		}, images = [],
+		currentName = $('#current-name');
+
+		iframeScreenSaver.clearAllImages();
+
+		var pattern = 'https://fierce-window-3161.herokuapp.com/images/' + id + '/' + id + '{i}.jpg'
+	
+		for (var i=1; i<=num[id][0]; i++) {
+			images.push({
+				id:i,
+				images:[pattern.replace('{i}', i)]
+			});
+		}
+
+		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
+
+		currentName.html(num[id][1]);
+		
+		$.each(images, function (i, data) {
+			iframeScreenSaver.addFriendImages(data);
+		});
+	}
+
 	function loadPreviewIframe_Without_AccessToken() {
 		var preview = $('#preview'),
 			approve = preview.find('.approve-app-text'),
@@ -271,7 +306,11 @@ var FriendsScreenSaver = (function () {
 			left:(preview.outerWidth() / 2 - approve.outerWidth() / 2)
 		});
 
-		for (var i=1; i<=115; i++) {
+		iframeScreenSaver.showScreenSaver();
+
+		loadPreviewImagesById(window.CURRENT_INSTALL);
+
+		/*for (var i=1; i<=115; i++) {
 			images.push({
 				id:i,
 				images:[config.defaultImagesForLogout.replace('{i}', i)]
@@ -286,7 +325,7 @@ var FriendsScreenSaver = (function () {
 		
 		$.each(images, function (i, data) {
 			iframeScreenSaver.addFriendImages(data);
-		});
+		});*/
 	}
 
 	function initFriendsDialog(data) {
@@ -807,7 +846,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function initPreviewIframe() {
-		$('<iframe id="preview-iframe" src="preview.php" frameborder="0" scrolling="no"></iframe>').appendTo('#preview');
+		$('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>').appendTo('#preview');
 	}
 
 	function initCarusel() {
@@ -854,8 +893,6 @@ var FriendsScreenSaver = (function () {
 				loadPreviewImagesById(img.data('id'));
 
 				window.CURRENT_INSTALL = img.data('id');
-
-				$('#current-name').html(img.parent().data('name'));
 			}
 
 		});
@@ -874,39 +911,6 @@ var FriendsScreenSaver = (function () {
 
 		});
 
-	}
-
-	function loadPreviewImagesById(id) {
-		var num = {
-			bar:115,
-			barcelona:95,
-			messi:102,
-			realmadrid:0,
-			ronaldo:69,
-			manchester:119,
-			sportsillustrated:127,
-			gaga:89,
-			justin:74,
-			adele:0
-		}, images = [];
-
-		iframeScreenSaver.clearAllImages();
-
-		var pattern = 'https://fierce-window-3161.herokuapp.com/images/' + id + '/' + id + '{i}.jpg'
-	
-		for (var i=1; i<=num[id]; i++) {
-			images.push({
-				id:i,
-				images:[pattern.replace('{i}', i)]
-			});
-		}
-
-		images = images.sort(function() {return 0.5 - Math.random()}).sort(function() {return 0.5 - Math.random()});
-
-		
-		$.each(images, function (i, data) {
-			iframeScreenSaver.addFriendImages(data);
-		});
 	}
 
 	function initInstallButton() {

@@ -5,8 +5,8 @@ var ScreenSaver = (function ($) {
 			screenSaverStartAfter:10,//minutes
 			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
 			//thankYouPageUrl:'http://localhost/roman/screensaver_v2/?thankyou=true',
-			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg',
-			defaultImagesCount:{
+			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
+			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
 				barcelona:95,
 				messi:102,
@@ -17,19 +17,19 @@ var ScreenSaver = (function ($) {
 				gaga:89,
 				justin:74,
 				beyonce:95,
-				adele:0
+				adele:50
 			},
 			defaultCloseType:'move',//move or click
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			maxImages:9,
 			baseZindex:2147482000,
-			speedFor100PX:1500,
+			speedFor100PX:1500,//@@@ Move 100 pixels in the pace of 1500 millisconds (MS)
 			//speedFor100PX:100,
-			imageDisplayTimeout:500,
+			imageDisplayTimeout:500,//@@@ Display a new image every 500 MS
 			//imageDisplayTimeout:10,
-			imageHideTimeout:400,
-			shuffleTime:3000,
-			waitToShuffle:1200
+			imageHideTimeout:400, //@@@ Hide image every 400 MS
+			shuffleTime:3000,//@@@ Time to complete the Shuffle effect
+			waitToShuffle:1200 //@@@ The to wait until shuffle effect after images has finished the movement animation
 		},
 		imagesCache = [], imagesData = {}, currentImagesDisplay = {}, currentSlotsTaken = {}, displayQueue = [], animationQueue = [], screenSlots = [],
 		screenWidth = $(window).width(), screenHeight = $(window).height(), maxImageWidth, slotWidth, slotHeight, animationSpeed, imagesCountForAnimnation = config.maxImages,
@@ -117,8 +117,6 @@ var ScreenSaver = (function ($) {
 
 		closeDropdown.val(screenSaverSettings.close).on('click', function () {
 			var close = $(this).val();
-
-			console.log('dddd');
 
 			if (screenSaverSettings.close != close) {
 				screenSaverSettings.close = close;
@@ -314,9 +312,9 @@ var ScreenSaver = (function ($) {
 	function initMarkup(isSync) {
 		var html = [], thankyou, syncMessage;
 
-		if (screenSaverSettings.close == 'click') {
+		/*if (screenSaverSettings.close == 'click') {
 			html.push('<div class="' + config.cssPrefix + 'click-to-close-screen">Click to close</div>');
-		}
+		}*/
 		
 		overlayLayer = $('<div />')
 			.addClass(config.cssPrefix + 'overlay')
@@ -327,7 +325,7 @@ var ScreenSaver = (function ($) {
 			.html(html.join(''))
 			.appendTo('body');
 
-		logoLayer = $('<div class="' + config.cssPrefix + 'logo">Click Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo">Click to close | Press Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
 	}
 
 	function initImages() {
@@ -350,6 +348,7 @@ var ScreenSaver = (function ($) {
 		runImages();
 	}
 
+	//@@@ THIS IS THE SCREEN SAVER CODE
 	/*************************************************************************/
 	/******************* Screen saver functions - start **********************/
 	/*************************************************************************/
