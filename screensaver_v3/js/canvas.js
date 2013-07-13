@@ -26,11 +26,11 @@ var FriendsScreenSaver = (function () {
 
 			window.CURRENT_INSTALL = cfg.screensaver || 'bar';
 console.log(window.CURRENT_INSTALL);
-			initBrowserCompatibility();
+			/*initBrowserCompatibility();
 			initInstallButton();
 			initPreviewIframe();
 			initPreviewPosition();
-			initCarusel();
+			initCarusel();*/
 
 			if (params.thankyou) {
 				initThankyou();

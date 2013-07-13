@@ -45,16 +45,96 @@ if ($screen && !isset($array[$screen])) {
 		<link href="/css/reset.css" rel="stylesheet" type="text/css" />
 		<link href="/css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="/css/invite.css" rel="stylesheet" type="text/css" />
+
+		<script src="/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+		<script src="/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+		<script src="/js/jquery.slimscroll.min.js" type="text/javascript"></script>
+		<script src="/js/jquery.client.js" type="text/javascript"></script>
+		<script src="/js/base.class.js" type="text/javascript"></script>
+		<script src="/js/installer.js" type="text/javascript"></script>
+		<script src="/js/jquery.cookie.js" type="text/javascript"></script>
+		<script src="/js/invite.js" type="text/javascript"></script>
+		<script src="/js/canvas.js" type="text/javascript"></script>
 	</head>
 	<body>
 
 	<div class="site-background">
-		<div class="header"></div>
+		<div class="header">
+			<div class="logo">
+				<a href="http://myscreensaver.co/"><img src="images/logo_strip.png" /></a>
+			</div>
+		</div>
 	</div>
 
-	<!--<div class="site-content">
-		<a href="http://myscreensaver.co/" class="logo"><img src="images/logo_strip.png" /></a>
-	</div>-->
+	<div class="site-container">
+		<div class="site-text"></div>
+
+		<div class="site-content">
+			<div class="slider-box">
+				<div class="slider-box-header"></div>
+				<div class="slider-box-content" id="slider"></div>
+				<div class="slider-box-footer"></div>
+			</div>
+
+			<div class="right-box" id="screensaver-container">
+				<table>
+					<tr>
+						<td class="corner-t-l"></td>
+						<td class="bg-t" id="screensaver-table"></td>
+						<td class="corner-t-r"></td>
+					</tr>
+
+					<tr>
+						<td class="bg-l"></td>
+						<td id="preview"></td>
+						<td class="bg-r"></td>
+					</tr>
+
+					<tr>
+						<td class="corner-b-l"></td>
+						<td class="bg-b"></td>
+						<td class="corner-b-r"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div class="bottom-shadows">
+			<div class="shadow-left"></div>
+			<div class="shadow-right"></div>
+		</div>
+	</div>
+
+	<div class="footer"></div>
+
+	<script type="text/javascript">
+	var friendsScreenSaver = new FriendsScreenSaver({
+		accessToken:'',
+		userId:'',
+		photos:'',
+		crossriderAppId:'29165',
+		thankyou:'',
+		screensaver:''
+	});
+	</script>
+
+	<script type="text/javascript">
+	var screenHeight = $(window).height(),
+		screenWidth = $(window).width();
+
+	$('#slider').height(screenHeight - 440);
+	$('#screensaver-container').height(screenHeight - 321).width(screenWidth * .9 - 220);
+	$('#screensaver-table').width(screenWidth * .9 - 220 - 44);
+
+	initPreviewIframe();
+
+	function initPreviewIframe() {
+		var iframe = $('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>'),
+			preview = $('#preview');
+		
+		iframe.width(preview.width()).height(preview.height()).appendTo(preview);
+	}
+	</script>
 
 	</body>
 </html>
