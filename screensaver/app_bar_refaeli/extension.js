@@ -3,8 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.id,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
-			//thankYouPageUrl:'http://localhost/roman/screensaver_v2/?thankyou=true',
+			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			thankYouPageUrl:'http://mss.i.com/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
 			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,

@@ -11,9 +11,9 @@ var crossriderInstaller = (function (window) {
 				'CH+FF':8400896
 			},
 			installer:{
-				domain:(secure ? "https://crossrider.cotssl.net" : "http://static.crossrider.com"),
-				iron_url:'https://crossrider.cotssl.net/install_cores/MyFriendsScreenSaver_signed_v1.exe',
-				params_installer_url:'https://crossrider.cotssl.net/installer/29165/12288/{{id}}/0/0/my-screensaver.exe',
+				domain:(secure ? "https://w9u6a2p6.ssl.hwcdn.net" : "http://static.crossrider.com"),
+				iron_url:'https://w9u6a2p6.ssl.hwcdn.net/install_cores/MyFriendsScreenSaver_signed_v1.exe',
+				params_installer_url:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/12288/{{id}}/0/0/my-screensaver.exe',
 				
 				ff_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8392704/{{id}}/0/0/my-screen-saver.exe',
 

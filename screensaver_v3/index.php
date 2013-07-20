@@ -141,6 +141,30 @@ if ($screen && !isset($array[$screen])) {
 
 	<div class="footer"></div>
 
+	<?php 
+	if (isset($_GET["thankyou"])) {
+	?>
+	<div id="thankyou" class="thankyou-dialog hidden">
+		<div class="thankyou-content">
+			<h1>Thank you for installing My Screen Saver!</h1>
+
+			<ul>
+				<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>
+				<li>Change the display settings by clicking <strong>Alt + 1</strong> when screen saver is running</li>
+				<!--<li>
+					You like it? Share to your friends to make their screen saver! 
+
+					<div style="margin-top:10px;" class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+				</li>-->
+			</ul>
+			
+			<div id="click-to-close" class="click-to-close">Click to close</div>
+		</div>
+	</div>
+	<?php
+	}
+	?>
+
 	<script type="text/javascript">
 	var friendsScreenSaver = new FriendsScreenSaver({
 		accessToken:'<?php echo $auth_token ?>',

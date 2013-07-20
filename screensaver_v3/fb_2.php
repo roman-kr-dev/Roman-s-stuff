@@ -5,7 +5,7 @@
         <title>My ScreenSaver - Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!</title>
 
 		<link href="css/reset.css" rel="stylesheet" type="text/css" />
-		<link href="css/styles.css" rel="stylesheet" type="text/css" />
+		<link href="css/styles_fb.css" rel="stylesheet" type="text/css" />
 		<link href="css/invite.css" rel="stylesheet" type="text/css" />
 
 		<script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>

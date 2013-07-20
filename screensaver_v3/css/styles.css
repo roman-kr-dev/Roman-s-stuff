@@ -327,3 +327,52 @@ div.footer {
 	background: #21366C;
 }
 /* footer - end */
+
+/* thankyou page - start */
+div.thankyou-dialog {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100% !important;
+	height:100% !important;
+	z-index:2147482100;
+	color:#fff;
+}
+
+	div.thankyou-dialog div.thankyou-content {
+		margin-left:auto;
+		margin-right:auto;
+		margin-top: 150px;
+		width:600px;
+		text-align: center;
+		background:#3E3E3E;
+		padding:20px;
+		border:5px solid #fff;
+		-webkit-border-radius: 20px;
+		border-radius: 20px;
+	}
+
+	div.thankyou-dialog div.thankyou-content h1 {
+		font-size:30px;
+	}
+
+	div.thankyou-dialog div.thankyou-content  ul {
+		margin-top:33px;
+		list-style-type:circle;
+		text-align: left;
+	}
+
+		div.thankyou-dialog div.thankyou-content ul li {
+			margin-left:50px;
+			font-size:16px;
+			margin-bottom:15px;
+			line-height:20px;
+		}
+
+		div.thankyou-dialog div.thankyou-content div.click-to-close {
+			clear:both;
+			margin-top:75px;
+			cursor:pointer;
+		}
+
+/*thankyou page - end*/
