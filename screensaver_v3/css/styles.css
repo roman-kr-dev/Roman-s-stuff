@@ -32,17 +32,50 @@ div.site-background {
 		background: url(images/bg_header.png) repeat-x center;
 	}
 
-		div.site-background div.header div.logo {
+		div.site-background div.header div.header-content {
+			position: relative;
 			width:90%;
 			margin-left: auto;
 			margin-right: auto;
 		}
 
-			div.site-background div.header div.logo a {
-				position: relative;
+			div.site-background div.header div.header-content div.logo a {
+				position: absolute;
+				top:0px;
 				left:20px;
 			}
 	
+
+/* share - start */
+div.share {
+	position: absolute;
+	top:30px;
+	left:225px;
+	height:25px;
+}
+
+	div.share div.fb-like {
+		position:absolute;
+		top:0px;
+		left:0px;
+	}
+
+	div.share a.twitter-share-button {
+		font-size:0px;
+	}
+
+	div.share iframe.twitter-share-button {
+		position:absolute;
+		top:0px;
+		left:150px;
+	}
+
+	div.share div#___plusone_0 {
+		position:absolute;
+		top:-2px;
+		left:247px;
+	}
+	/* share - end */
 
 /* site background - end */
 
@@ -61,6 +94,7 @@ div.site-container {
 
 	/* slider box - start */
 	div.slider-box {
+		position: relative;
 		width:170px;
 		float: left;
 	}
@@ -71,7 +105,7 @@ div.site-container {
 			background: url(images/slider_top.png) no-repeat;
 		}
 
-		div.slider-box-content {
+		div.slider-box-middle {
 			width:170px;
 			background: url(images/slider_bg.png) repeat-y;
 		}
@@ -81,6 +115,65 @@ div.site-container {
 			height:55px;
 			background: url(images/slider_bottom.png) no-repeat;
 		}
+
+		div.slider-box-content {
+			position: absolute;
+			top: 21px;
+			left: 22px;
+			width: 127px;
+		}
+
+			div.slider-box-content div.image-container {
+				width:125px;
+				height:125px;
+				margin-bottom:6px;
+				position: relative;
+			}
+
+			div.slider-box-content div.image-container.selected {
+				width: 123px;
+				height:123px;
+				border:1px solid #9B9B9B;
+				cursor: default;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				overflow: hidden;
+			}
+
+				div.slider-box-content div.image-container.selected * {
+					cursor: default !important;
+				}
+
+				div.slider-box-content div.image-container div.tooltip {
+					width:125px;
+					height:22px;
+					position: absolute;
+					bottom: 0px;
+					left: 0px;
+					background: rgba(0, 0, 0, 0.7);
+					color:#fff;
+					padding-top:8px;
+					text-align: center;
+					font-size: 14px;
+					font-weight: bold;
+					cursor: pointer;
+					-webkit-border-bottom-right-radius: 5px;
+					-webkit-border-bottom-left-radius: 5px;
+					-moz-border-radius-bottomright: 5px;
+					-moz-border-radius-bottomleft: 5px;
+					border-bottom-right-radius: 5px;
+					border-bottom-left-radius: 5px;
+				}
+			
+				div.slider-box-content div.image-container img {
+					width:125px;
+					height:125px;
+					-webkit-border-radius: 5px;
+					-moz-border-radius: 5px;
+					border-radius: 5px;
+					cursor: pointer;
+				}
 	/* slider box - end */
 
 	/* screensaver box - start */
@@ -88,8 +181,61 @@ div.site-container {
 		float:left;
 		margin-left:20px;
 		width:500px;
+		position: relative;
 	}
 
+		div.right-box div.preview-label {
+			position: absolute;
+			top:-7px;
+			left:-7px;
+			width:144px;
+			height:145px;
+			background: url(images/preview_strip.png) no-repeat;
+		}
+
+		/* download box */
+		div.download-box {
+			position:absolute;
+			width:336px;
+			height:200px;
+			top:0px;
+			left:0px;
+			background:url(images/message_box_bg.png) no-repeat;
+		}
+
+			div.download-box div.box-logo {
+				position:absolute;
+				top:-44px;
+				left:106px;
+				width:124px;
+				height:101px;
+				background:url(images/logo_large.png) no-repeat;
+			}
+
+			div.download-box div.box-button {
+				margin-left:auto;
+				margin-right:auto;
+				margin-top:141px;
+				width:154px;
+				height:37px;
+				background-image:url(images/generic_buttons.png);
+				background-position:0 0;
+				cursor:pointer;
+				text-align:center;
+				font-family:"Myriad Pro",arial,sans-serif;
+				color:#545454;
+				line-height:32px;
+			}
+
+			div.download-box div.box-button:hover {
+				background-position:0 -94px;
+			}
+
+			div.download-box div.box-button:active {
+				background-position:0 -47px;
+			}
+
+		/* preview table */
 		div.right-box table {
 			width:100%;
 			height:100%;
@@ -154,14 +300,20 @@ div.site-container {
 
 		div.bottom-shadows div.shadow-left {
 			position: absolute;
-			top:0px;
-			left:0px;
+			top:8px;
+			left:-34px;
+			width:245px;
+			height:62px;
+			background: url(images/shadow_left.png) no-repeat;
+		}
+
+		div.bottom-shadows div.shadow-right {
+			position: absolute;
+			top:8px;
+			right:0px;
 			width:893px;
 			height:62px;
 			background: url(images/shadow_right.png) no-repeat;
-		}
-
-		div.bottom-shadows {
 		}
 	/* shadows - end */
 

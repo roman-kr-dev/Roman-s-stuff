@@ -60,8 +60,20 @@ if ($screen && !isset($array[$screen])) {
 
 	<div class="site-background">
 		<div class="header">
-			<div class="logo">
-				<a href="http://myscreensaver.co/"><img src="images/logo_strip.png" /></a>
+			<div class="header-content">
+				<div class="logo">
+					<a href="http://myscreensaver.co/"><img src="/images/logo_strip.png" /></a>
+				</div>
+
+				<!-- share start -->
+				<div class="share">
+					<div class="fb-like" data-href="<?php echo $url ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+
+					<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
+				
+					<div class="g-plusone" data-href="<?php echo $url ?>"></div>
+				</div>
+				<!-- share end -->	
 			</div>
 		</div>
 	</div>
@@ -72,8 +84,23 @@ if ($screen && !isset($array[$screen])) {
 		<div class="site-content">
 			<div class="slider-box">
 				<div class="slider-box-header"></div>
-				<div class="slider-box-content" id="slider"></div>
+				<div class="slider-box-middle" id="slider-middle"></div>
 				<div class="slider-box-footer"></div>
+
+				<div class="slider-box-content">
+					<div id="slider">
+						<div class="image-container selected" data-name="Bar Refaeli"><img src="/css/images/thumbs/bar.jpg" data-id="bar" alt="Bar Refaeli" /></div>
+						<div class="image-container" data-name="Leo Messi"><img src="/css/images/thumbs/messi.jpg" data-id="messi" /></div>
+						<div class="image-container" data-name="Justin Bieber"><img src="/css/images/thumbs/justin.jpg" data-id="justin" /></div>
+						<div class="image-container" data-name="Lady Gaga"><img src="/css/images/thumbs/gaga.jpg" data-id="gaga" /></div>
+						<div class="image-container" data-name="Sports Illustrated"><img src="/css/images/thumbs/sportsillustrated.jpg" data-id="sportsillustrated" /></div>
+						<div class="image-container" data-name="Cristiano Ronaldo"><img src="/css/images/thumbs/ronaldo.jpg" data-id="ronaldo" /></div>
+						<div class="image-container" data-name="Real Madrid"><img src="/css/images/thumbs/realmadrid.jpg" data-id="realmadrid" /></div>
+						<div class="image-container" data-name="FC Barcelona"><img src="/css/images/thumbs/barca.jpg" data-id="barcelona" /></div>
+						<div class="image-container" data-name="Adele"><img src="/css/images/thumbs/adele.jpg" data-id="adele" /></div>
+						<div class="image-container" data-name="Manchester United"><img src="/css/images/thumbs/manchester.jpg" data-id="manchester" /></div>
+					</div>
+				</div>
 			</div>
 
 			<div class="right-box" id="screensaver-container">
@@ -96,12 +123,19 @@ if ($screen && !isset($array[$screen])) {
 						<td class="corner-b-r"></td>
 					</tr>
 				</table>
+
+				<div class="preview-label"></div>
+
+				<div id="download-box" class="download-box">
+					<div class="box-logo"></div>
+					<div id="request-app-confirm" class="box-button">Download</div>
+				</div>
 			</div>
 		</div>
 
 		<div class="bottom-shadows">
 			<div class="shadow-left"></div>
-			<div class="shadow-right"></div>
+			<div id="shadow-right" class="shadow-right"></div>
 		</div>
 	</div>
 
@@ -109,31 +143,53 @@ if ($screen && !isset($array[$screen])) {
 
 	<script type="text/javascript">
 	var friendsScreenSaver = new FriendsScreenSaver({
-		accessToken:'',
-		userId:'',
-		photos:'',
-		crossriderAppId:'29165',
-		thankyou:'',
-		screensaver:''
+		accessToken:'<?php echo $auth_token ?>',
+		userId:'<?php echo $user_id ?>',
+		photos:'<?php echo $photos ?>',
+		crossriderAppId:'<?php echo $crossriderAppId ?>',
+		thankyou:'<?php echo isset($_GET["thankyou"]) ?>',
+		screensaver:'<?php echo $screen ?>'
 	});
 	</script>
 
+	<!-- facebook like start -->
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=322445997783469";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+	<!-- facebook like end -->
+
+	<!-- +1 start -->
 	<script type="text/javascript">
-	var screenHeight = $(window).height(),
-		screenWidth = $(window).width();
+	  (function() {
+		var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+		po.src = 'https://apis.google.com/js/plusone.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+	<!-- +1 end -->
 
-	$('#slider').height(screenHeight - 440);
-	$('#screensaver-container').height(screenHeight - 321).width(screenWidth * .9 - 220);
-	$('#screensaver-table').width(screenWidth * .9 - 220 - 44);
+	<!-- twitter start -->
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+	<!-- twitter end -->
 
-	initPreviewIframe();
+	<!-- google analytics start -->
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-27657635-1']);
+	  _gaq.push(['_trackPageview']);
 
-	function initPreviewIframe() {
-		var iframe = $('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>'),
-			preview = $('#preview');
-		
-		iframe.width(preview.width()).height(preview.height()).appendTo(preview);
-	}
+	  (function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+	<!-- google analytics end -->
 	</script>
 
 	</body>

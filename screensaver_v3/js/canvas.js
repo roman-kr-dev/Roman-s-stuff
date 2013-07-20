@@ -25,9 +25,16 @@ var FriendsScreenSaver = (function () {
 			thi$ = this;
 
 			window.CURRENT_INSTALL = cfg.screensaver || 'bar';
-console.log(window.CURRENT_INSTALL);
-			/*initBrowserCompatibility();
+
+			initBrowserCompatibility();
+			initDimensions();
+			initPreviewIframe();
+			initDownloadBox();
+			initScroll();
+			initImagesLabel();
 			initInstallButton();
+
+			/*initInstallButton();
 			initPreviewIframe();
 			initPreviewPosition();
 			initCarusel();*/
@@ -166,6 +173,82 @@ console.log(window.CURRENT_INSTALL);
 			}
 		});
 	}
+
+
+
+
+	//new functions start
+	function initDimensions() {
+		$('#slider-middle').height(screenHeight - 440);
+		$('#slider').height(screenHeight - 362);
+		$('#screensaver-container').height(screenHeight - 321).width(screenWidth * .9 - 220);
+		$('#screensaver-table').width(screenWidth * .9 - 220 - 44);
+	}
+
+	function initPreviewIframe() {
+		var screensaver = $('#screensaver-container'),
+			iframe = $('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>'),
+			preview = $('#preview'),
+			shadow = $('#shadow-right');
+		
+		iframe.width(preview.width()).height(preview.height()).appendTo(preview);
+		shadow.css('right', screensaver.outerWidth() / 2 - shadow.width() / 2);
+	}
+
+	function initDownloadBox() {
+		var box = $('#download-box'),
+			preview = $('#preview');
+
+		box.css('top', preview.height() / 2 - box.height() / 2);
+		box.css('left', preview.width() / 2 - box.width() / 2);
+	}
+
+	function initScroll() {
+		var slider = $('#slider');
+
+		slider.slimScroll({
+			width:'140px',
+			height:slider.height() + 'px',
+			alwaysVisible:true
+		});
+	}
+
+	function initImagesLabel() {
+		var images = $('#slider .image-container');
+
+		images.on('mouseenter', function () {
+			var div = $(this),
+				name = div.data('name');
+
+			div.append('<div class="tooltip">' + name + '</div>');
+		});
+
+		images.on('mouseleave', function () {
+			var	div = $(this),
+			 	tooltip = div.find('.tooltip');
+
+			tooltip.remove();
+		});
+
+		images.on('click', function () {
+			var el = $(this),
+				id = el.find('img').data('id');
+
+			if (id && window.CURRENT_INSTALL != id) {
+				images.removeClass('selected');
+				el.addClass('selected');
+
+				loadPreviewImagesById(id);
+				window.CURRENT_INSTALL = id;
+			}
+
+		});
+	}
+	/* new functions end */
+
+
+
+
 
 	function initThankyou() {
 		/*$('#thankyou-overlay, #thankyou').removeClass('hidden');
@@ -843,10 +926,6 @@ console.log(window.CURRENT_INSTALL);
 			width:previewWidth - 20,
 			height:previewHeight - 20
 		});
-	}
-
-	function initPreviewIframe() {
-		$('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>').appendTo('#preview');
 	}
 
 	function initCarusel() {
