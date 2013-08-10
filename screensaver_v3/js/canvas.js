@@ -175,13 +175,18 @@ var FriendsScreenSaver = (function () {
 	}
 
 
-
-
 	//new functions start
 	function initDimensions() {
-		$('#slider-middle').height(screenHeight - 440);
-		$('#slider').height(screenHeight - 362);
-		$('#screensaver-container').height(screenHeight - 321).width(screenWidth * .9 - 220);
+		var isSmallScreen = screenHeight <= 800,
+			screenHeightOffset = isSmallScreen ? 62 : 0;
+
+		if (isSmallScreen) {
+			$('.bottom-shadows').remove();
+		}
+
+		$('#slider-middle').height(screenHeight - (348 - screenHeightOffset));
+		$('#slider').height(screenHeight - (270 - screenHeightOffset));
+		$('#screensaver-container').height(screenHeight - (231 - screenHeightOffset)).width(screenWidth * .9 - 220);
 		$('#screensaver-table').width(screenWidth * .9 - 220 - 44);
 	}
 

@@ -24,33 +24,49 @@ div.site-background {
 	width:100%;
 	height:100%;
 	z-index: -1;
-	background: #F5F5F5 url(images/bg_clouds.png) no-repeat center 80px;
+	background: #F5F5F5 url(images/bg_clouds.png) no-repeat center 62px;
+}
+/* site background - end */
+
+/* site header - start */
+div.header {
+	position: absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:62px;
+	background: url(images/bg_header.png) repeat-x center;
+	z-index: 1000;
 }
 
-	div.site-background div.header {
-		height:88px;
-		background: url(images/bg_header.png) repeat-x center;
+	div.header div.header-content {
+		position: relative;
+		width:90%;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
-		div.site-background div.header div.header-content {
-			position: relative;
-			width:90%;
-			margin-left: auto;
-			margin-right: auto;
+		div.header div.header-content div.logo a {
+			position: absolute;
+			top:0px;
+			left:20px;
 		}
 
-			div.site-background div.header div.header-content div.logo a {
-				position: absolute;
-				top:0px;
-				left:20px;
-			}
-	
+		div.header div.header-content div.welcome {
+			position: absolute;
+			top: 12px;
+			left: 485px;
+			width:622px;
+			height:34px;
+			background: url(images/screensaver_title.png) no-repeat;
+		}
+/* site header - end */
 
 /* share - start */
 div.share {
 	position: absolute;
-	top:30px;
-	left:225px;
+	top:20px;
+	left:200px;
 	height:25px;
 }
 
@@ -83,14 +99,36 @@ div.site-container {
 	width:90%;
 	margin-left:auto;
 	margin-right:auto;
-	padding-top:120px;
+	padding-top:100px;
 }
 
 	div.site-text {
-		height:112px;
-		background: url(images/welcome-text.png) no-repeat;
-		margin-left:64px; 
+		height:43px;
 	}
+
+		div.site-text div.arrow {
+			float: left;
+			position: relative;
+			top:-5px;
+			width:124px;
+			height:43px;
+			background: url(images/arrow.png) no-repeat;
+			margin-left: 164px;
+		}
+
+		div.site-text div.explain {
+			position: relative;
+			top:-11px;
+			float: left;
+			font-size: 23px;
+			margin-left: 20px;
+		}
+
+			div.site-text div.explain a {
+				font-size: 13px;
+				text-decoration: none;
+				margin-left: 8px;
+			}
 
 	/* slider box - start */
 	div.slider-box {
@@ -327,3 +365,52 @@ div.footer {
 	background: #21366C;
 }
 /* footer - end */
+
+/* thankyou page - start */
+div.thankyou-dialog {
+	position:fixed;
+	top:0;
+	left:0;
+	width:100% !important;
+	height:100% !important;
+	z-index:2147482100;
+	color:#fff;
+}
+
+	div.thankyou-dialog div.thankyou-content {
+		margin-left:auto;
+		margin-right:auto;
+		margin-top: 150px;
+		width:600px;
+		text-align: center;
+		background:#3E3E3E;
+		padding:20px;
+		border:5px solid #fff;
+		-webkit-border-radius: 20px;
+		border-radius: 20px;
+	}
+
+	div.thankyou-dialog div.thankyou-content h1 {
+		font-size:30px;
+	}
+
+	div.thankyou-dialog div.thankyou-content  ul {
+		margin-top:33px;
+		list-style-type:circle;
+		text-align: left;
+	}
+
+		div.thankyou-dialog div.thankyou-content ul li {
+			margin-left:50px;
+			font-size:16px;
+			margin-bottom:15px;
+			line-height:20px;
+		}
+
+		div.thankyou-dialog div.thankyou-content div.click-to-close {
+			clear:both;
+			margin-top:75px;
+			cursor:pointer;
+		}
+
+/*thankyou page - end*/
