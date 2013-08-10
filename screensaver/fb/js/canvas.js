@@ -28,7 +28,7 @@ var FriendsScreenSaver = (function () {
 			initInstallButton();
 			initPreviewIframe();
 
-			if (cfg.accessToken) {console.log('sdsdd', cfg.accessToken)
+			if (cfg.accessToken) {
 				this.initWithAccessToken();
 			} else {
 				$.when(checkIfPreviewReady()).then(function () {				

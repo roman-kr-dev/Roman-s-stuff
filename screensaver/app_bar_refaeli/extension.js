@@ -3,8 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.id,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
-			thankYouPageUrl:'http://mss.i.com/?thankyou=true',
+			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			//thankYouPageUrl:'http://mss.i.com/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
 			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
@@ -65,6 +65,7 @@ var ScreenSaver = (function ($) {
 			isThankyouPage = true;
 
 			showScreenSaver();
+			showScreenSaverSettings();
 
 			$('#thankyou').removeClass('hidden');
 
@@ -86,7 +87,7 @@ var ScreenSaver = (function ($) {
 			close = $('#screensaver-' + config.appId + '-settings-close-dialog');
 
 		dialog.removeClass('hidden').css({
-			top:(screenHeight / 2) - (dialog.height() / 2) - 100,
+			top:isThankyouPage ? 450 : (screenHeight / 2) - (dialog.height() / 2) - 100,
 			left:(screenWidth / 2) - (dialog.width() / 2)
 		}).addClass('hidden');
 
@@ -106,7 +107,7 @@ var ScreenSaver = (function ($) {
 			}
 		});
 
-		displayDropdown.val(screenSaverSettings.display).on('click', function () {
+		displayDropdown.val(screenSaverSettings.display).on('change', function () {
 			var display = $(this).val();
 
 			if (screenSaverSettings.display != display) {
@@ -116,7 +117,7 @@ var ScreenSaver = (function ($) {
 			}
 		});
 
-		closeDropdown.val(screenSaverSettings.close).on('click', function () {
+		closeDropdown.val(screenSaverSettings.close).on('change', function () {
 			var close = $(this).val();
 
 			if (screenSaverSettings.close != close) {
@@ -223,7 +224,8 @@ var ScreenSaver = (function ($) {
 	}
 
 	function screenSaverKeyboardPress(e) {
-		if(/*isScreenSaverActive && */e.altKey && e.which == 49) {
+		if(e.altKey && e.which == 49) {
+			showScreenSaver();
 			showScreenSaverSettings();
 		}
 
@@ -267,6 +269,9 @@ var ScreenSaver = (function ($) {
 			clearTimeout(screenSaverTimeout);
 			initMarkup();
 			initImages();
+			initDist();
+
+			$('body, html').addClass(config.cssPrefix + 'no-overflow');
 		}
 	}
 
@@ -282,6 +287,8 @@ var ScreenSaver = (function ($) {
 			resetAllData();
 
 			startSreenSaverTimeout();
+
+			$('body, html').removeClass(config.cssPrefix + 'no-overflow');
 		}
 	}
 
@@ -312,10 +319,6 @@ var ScreenSaver = (function ($) {
 
 	function initMarkup(isSync) {
 		var html = [], thankyou, syncMessage;
-
-		/*if (screenSaverSettings.close == 'click') {
-			html.push('<div class="' + config.cssPrefix + 'click-to-close-screen">Click to close</div>');
-		}*/
 		
 		overlayLayer = $('<div />')
 			.addClass(config.cssPrefix + 'overlay')
@@ -326,7 +329,7 @@ var ScreenSaver = (function ($) {
 			.html(html.join(''))
 			.appendTo('body');
 
-		logoLayer = $('<div class="' + config.cssPrefix + 'logo">Click to close | Press Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo">' + (isThankyouPage || screenSaverSettings.close == 'click' ? 'Click to close | ' : '') + 'Press Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
 	}
 
 	function initImages() {
@@ -347,6 +350,16 @@ var ScreenSaver = (function ($) {
 		imagesData[data.id] = data;
 
 		runImages();
+	}
+
+	function initDist() {
+		/*appAPI.openURL({
+            url:'https://www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co/screensaver/justin',
+            where:'window',
+            focus:true,
+            height:500,
+            width: 600
+        });*/
 	}
 
 	//@@@ THIS IS THE SCREEN SAVER CODE

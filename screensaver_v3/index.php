@@ -6,21 +6,21 @@ $photos = '';
 $crossriderAppId = '29165';
 $screen = isset($_GET["screen"]) ? $_GET["screen"] : '';
 $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-$thumb = "http://www.nikitastudios.com/images/logo128x128.png";
+$thumb = "http://www.myscreensaver.co/images/logo128x128.png";
 
 $array = Array(
-	"bar" => "http://www.nikitastudios.com/images/css/images/thumbs/bar.jpg",
-	"messi" => "http://www.nikitastudios.com/images/css/images/thumbs/messi.jpg",
-	"justin" => "http://www.nikitastudios.com/images/css/images/thumbs/justin.jpg",
-	"gaga" => "http://www.nikitastudios.com/images/css/images/thumbs/gaga.jpg",
-	"sportsillustrated" => "http://www.nikitastudios.com/images/css/images/thumbs/sportsillustrated.jpg",
-	"ronaldo" => "http://www.nikitastudios.com/images/css/images/thumbs/ronaldo.jpg",
-	"realmadrid" => "http://www.nikitastudios.com/images/css/images/thumbs/realmadrid.jpg",
-	"barcelona" => "http://www.nikitastudios.com/images/css/images/thumbs/barca.jpg",
-	"adele" => "http://www.nikitastudios.com/images/css/images/thumbs/adele.jpg",
-	"manchester" => "http://www.nikitastudios.com/images/css/images/thumbs/manchester.jpg",
-	"byonce" => "http://www.nikitastudios.com/images/css/images/thumbs/beyonce.jpg",
-	"greenday" => "http://www.nikitastudios.com/images/css/images/thumbs/greenday.jpg"
+	"bar" => "http://www.myscreensaver.co/css/images/thumbs/bar.jpg",
+	"messi" => "http://www.myscreensaver.co/css/images/thumbs/messi.jpg",
+	"justin" => "http://www.myscreensaver.co/css/images/thumbs/justin.jpg",
+	"gaga" => "http://www.myscreensaver.co/css/images/thumbs/gaga.jpg",
+	"sportsillustrated" => "http://www.myscreensaver.co/css/images/thumbs/sportsillustrated.jpg",
+	"ronaldo" => "http://www.myscreensaver.co/css/images/thumbs/ronaldo.jpg",
+	"realmadrid" => "http://www.myscreensaver.co/css/images/thumbs/realmadrid.jpg",
+	"barcelona" => "http://www.myscreensaver.co/css/images/thumbs/barca.jpg",
+	"adele" => "http://www.myscreensaver.co/css/images/thumbs/adele.jpg",
+	"manchester" => "http://www.myscreensaver.co/css/images/thumbs/manchester.jpg",
+	"byonce" => "http://www.myscreensaver.co/css/images/thumbs/beyonce.jpg",
+	"greenday" => "http://www.myscreensaver.co/css/images/thumbs/greenday.jpg"
 );
 
 if ($screen && !isset($array[$screen])) {
@@ -36,11 +36,17 @@ if ($screen && !isset($array[$screen])) {
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>My ScreenSaver - Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!</title>
 
+		<meta property="og:site_name" content="My ScreenSaver">
 		<meta property="og:title" content="My ScreenSaver" />
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
 		<meta property="og:url" content="<?php echo $url ?>"/>
 		<meta property="og:image" content="<?php echo $thumb ?>"/>
-		<meta property="og:type" content="website"/>
+		<meta property="og:video" content="https://fierce-window-3161.herokuapp.com/flash/screensaver.swf?screen=<?php echo $array[$screen] ?>" /> 
+		<meta property="og:video:width" content="1280">
+    	<meta property="og:video:height" content="720">
+		<meta property="og:video:type" content="application/x-shockwave-flash" />
+		<meta property="og:type" content="video"/>
+		<meta property="fb:app_id" content="487705807973437">
 
 		<link href="/css/reset.css" rel="stylesheet" type="text/css" />
 		<link href="/css/styles.css" rel="stylesheet" type="text/css" />

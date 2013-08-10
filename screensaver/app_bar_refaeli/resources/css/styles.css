@@ -7,6 +7,11 @@
 	background:url(resource-image://images/ajax-loader.gif) no-repeat center center;
 }
 
+html.screen-saver-{{app-id}}-no-overflow,
+body.screen-saver-{{app-id}}-no-overflow {
+	overflow: hidden;
+}
+
 .screen-saver-{{app-id}}-overlay {
 	position:fixed;
 	top:0;
@@ -141,7 +146,7 @@ div.screen-saver-{{app-id}}-settings {
 	text-align:left;
 
 	z-index:{{overlay-zindex-settings}};
-	position:absolute;
+	position:fixed;
 	background: rgba(82, 82, 82, 0.7);
 	padding:10px;
 
