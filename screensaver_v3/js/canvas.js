@@ -33,6 +33,7 @@ var FriendsScreenSaver = (function () {
 			initScroll();
 			initImagesLabel();
 			initInstallButton();
+			initLearnMore();
 
 			/*initInstallButton();
 			initPreviewIframe();
@@ -1029,6 +1030,19 @@ var FriendsScreenSaver = (function () {
 			button_size:'big',
 			color:'orange'
 		});*/
+	}
+
+	function initLearnMore() {
+		$('#learn-more').on('click', function () {
+			$('#overlay').removeClass('hidden');
+			$('#how-to-use').removeClass('hidden').hide().fadeIn(500);
+		});
+
+		$('#how-to-use-close').on('click', function () {
+			$('#how-to-use').fadeOut(500, function () {
+				$('#overlay').addClass('hidden');
+			});
+		});
 	}
 
 	function getJSON(data) {

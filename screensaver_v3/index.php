@@ -5,6 +5,7 @@ $user_id = '';
 $photos = '';
 $crossriderAppId = '29165';
 $screen = isset($_GET["screen"]) ? $_GET["screen"] : '';
+$flash_name = isset($screen) ? $screen : 'bar';
 $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 $thumb = "http://www.myscreensaver.co/images/logo128x128.png";
 
@@ -41,7 +42,7 @@ if ($screen && !isset($array[$screen])) {
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
 		<meta property="og:url" content="<?php echo $url ?>"/>
 		<meta property="og:image" content="<?php echo $thumb ?>"/>
-		<meta property="og:video" content="https://fierce-window-3161.herokuapp.com/flash/screensaver.swf?screen=<?php echo $array[$screen] ?>" /> 
+		<meta property="og:video" content="https://fierce-window-3161.herokuapp.com/flash/screensaver.swf?screen=<?php echo $flash_name ?>" /> 
 		<meta property="og:video:width" content="1280">
     	<meta property="og:video:height" content="720">
 		<meta property="og:video:type" content="application/x-shockwave-flash" />
@@ -89,7 +90,7 @@ if ($screen && !isset($array[$screen])) {
 	<div class="site-container">
 		<div class="site-text">
 			<div class="arrow"></div>
-			<div class="explain">Select an image and build your own screen saver... <a href="javascript://">How it works?</a></div>
+			<div class="explain">Select an image and build your own ScreenSaver... <a id="learn-more" href="javascript://">How it works?</a></div>
 		</div>
 
 		<div class="site-content">
@@ -152,24 +153,47 @@ if ($screen && !isset($array[$screen])) {
 
 	<div class="footer"></div>
 
-	<?php 
-	if (isset($_GET["thankyou"])) {
-	?>
-	<div id="thankyou" class="thankyou-dialog hidden">
-		<div class="thankyou-content">
-			<h1>Thank you for installing My Screen Saver!</h1>
+	<div id="overlay" class="overlay hidden"></div>
+
+	<div id="how-to-use" class="generic-dialog hidden">
+		<div class="dialog-content">
+			<div id="how-to-use-close" class="dialog-close"></div>
+
+			<h1>How to use ScreenSaver</h1>
 
 			<ul>
-				<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>
-				<li>Change the display settings by clicking <strong>Alt + 1</strong> when screen saver is running</li>
+				<li>1. Download and Install The ScreenSaver.</li>
+				<li>2. After installation A settings page will appear.</li>
+				<li>3. You can change the ScreenSaver in the settings page.</li>
+				<li>4. The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>
+				<li>5. Change the settings at any time by clicking <strong>Alt + 1</strong></li>
 				<!--<li>
 					You like it? Share to your friends to make their screen saver! 
 
 					<div style="margin-top:10px;" class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
 				</li>-->
 			</ul>
-			
-			<div id="click-to-close" class="click-to-close">Click to close</div>
+		</div>
+	</div>
+
+	<?php 
+	if (isset($_GET["thankyou"])) {
+	?>
+	<div id="thankyou" class="generic-dialog hidden">
+		<div class="dialog-content">
+			<div id="click-to-close" class="dialog-close"></div>
+
+			<h1>Thank you for installing My Screen Saver!</h1>
+
+			<ul>
+				<li>The ScreenSaver will run after 10 minutes of idle time.<br />Click <strong>Alt+R</strong> to view the ScreenSaver at any time</li>
+				<li>Change the display settings by clicking <strong>Alt + 1</strong></li>
+				<!--<li>
+					You like it? Share to your friends to make their screen saver! 
+
+					<div style="margin-top:10px;" class="fb-like" data-href="http://www.myscreensaver.co/" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+				</li>-->
+			</ul>
 		</div>
 	</div>
 	<?php

@@ -133,12 +133,21 @@ body.screen-saver-{{app-id}}-no-overflow {
 	height:63px;
 	padding-left: 80px;
 	line-height:70px;
-	color:#fff;
+	color:#000;
 	font-size:14px;
 	font-weight: bold;
+	text-align: left;
 	background:url(resource-image://images/logo.png) no-repeat left center;
 	z-index:{{logo-zindex}};
 }
+
+	.screen-saver-{{app-id}}-logo span {
+		background:rgba(255, 255, 255, 0.9);
+		padding:5px;
+		-webkit-border-radius: 8px;
+		-moz-border-radius: 8px;
+		border-radius: 8px;
+	}
 
 /* settings popup */
 div.screen-saver-{{app-id}}-settings {
@@ -147,7 +156,7 @@ div.screen-saver-{{app-id}}-settings {
 
 	z-index:{{overlay-zindex-settings}};
 	position:fixed;
-	background: rgba(82, 82, 82, 0.7);
+	background: rgba(115, 141, 206, 0.7);
 	padding:10px;
 
 	-webkit-border-radius: 8px;
