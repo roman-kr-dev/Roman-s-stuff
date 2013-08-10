@@ -64,28 +64,33 @@ if ($screen && !isset($array[$screen])) {
 	</head>
 	<body>
 
-	<div class="site-background">
-		<div class="header">
-			<div class="header-content">
-				<div class="logo">
-					<a href="http://myscreensaver.co/"><img src="/images/logo_strip.png" /></a>
-				</div>
+	<div class="site-background"></div>
 
-				<!-- share start -->
-				<div class="share">
-					<div class="fb-like" data-href="<?php echo $url ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
-
-					<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
-				
-					<div class="g-plusone" data-href="<?php echo $url ?>"></div>
-				</div>
-				<!-- share end -->	
+	<div class="header">
+		<div class="header-content">
+			<div class="logo">
+				<a href="http://myscreensaver.co/"><img src="/images/logo_strip.png" /></a>
 			</div>
+
+			<div class="welcome"></div>
+
+			<!-- share start -->
+			<div class="share">
+				<div class="fb-like" data-href="<?php echo $url ?>" data-send="true" data-layout="button_count" data-width="450" data-show-faces="false"></div>
+
+				<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo $url ?>" data-text="A cool browser extension that will make your facebook to become pink with lots of hearts" data-lang="en">Tweet</a>
+			
+				<!--<div class="g-plusone" data-href="<?php echo $url ?>"></div>-->
+			</div>
+			<!-- share end -->
 		</div>
 	</div>
 
 	<div class="site-container">
-		<div class="site-text"></div>
+		<div class="site-text">
+			<div class="arrow"></div>
+			<div class="explain">Select an image and build your own screen saver... <a href="javascript://">How it works?</a></div>
+		</div>
 
 		<div class="site-content">
 			<div class="slider-box">
@@ -194,13 +199,13 @@ if ($screen && !isset($array[$screen])) {
 	<!-- facebook like end -->
 
 	<!-- +1 start -->
-	<script type="text/javascript">
+	<!--<script type="text/javascript">
 	  (function() {
 		var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
 		po.src = 'https://apis.google.com/js/plusone.js';
 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 	  })();
-	</script>
+	</script>-->
 	<!-- +1 end -->
 
 	<!-- twitter start -->
