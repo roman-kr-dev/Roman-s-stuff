@@ -57,35 +57,34 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		if (!appAPI.db.get('thank_you_show')) {
-			appAPI.message.addListener(function(msg) {
-				if (msg.action == 'open-thankyou') {
-					appAPI.openURL(config.thankYouPageUrl, 'tab');
+		
+		/*if (appAPI.browser.name == 'chrome') {
+			if (!appAPI.db.get('thank_you_show')) {
+				appAPI.message.addListener(function(msg) {
+					if (msg.action == 'open-thankyou') {
+						appAPI.openURL(config.thankYouPageUrl, 'tab');
 
-					appAPI.db.set('thank_you_show', true);
-				}
-			});
+						appAPI.db.set('thank_you_show', true);
+					}
+				});
 
-			appAPI.message.toBackground({
-				action: 'is-thankyou'
-			});
-		}
+				appAPI.message.toBackground({
+					action: 'is-thankyou'
+				});
+			}
+		} else {
+			if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
+				appAPI.openURL(config.thankYouPageUrl, 'tab');
 
+				appAPI.db.set('thank_you_show', true);
+			}
+		}*/
 
-		/*if (true || !appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
-			appAPI.tabs.getActive(function(tabInfo) {
-				console.log(
-					'tabId: ' + tabInfo.tabId +
-					' tabUrl: ' + tabInfo.tabUrl
-				);
-
-				console.log(tabInfo);
-			});
+		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1 && isTabActive) {
 			appAPI.openURL(config.thankYouPageUrl, 'tab');
 
 			appAPI.db.set('thank_you_show', true);
-		}*/
-		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
+		} else if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
 			showScreenSaver();
