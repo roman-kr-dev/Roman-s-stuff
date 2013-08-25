@@ -10,18 +10,18 @@ $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
 $thumb = "http://www.myscreensaver.co/images/logo128x128.png";
 
 $array = Array(
-	"bar" => "http://www.myscreensaver.co/css/images/thumbs/bar.jpg",
-	"messi" => "http://www.myscreensaver.co/css/images/thumbs/messi.jpg",
-	"justin" => "http://www.myscreensaver.co/css/images/thumbs/justin.jpg",
-	"gaga" => "http://www.myscreensaver.co/css/images/thumbs/gaga.jpg",
-	"sportsillustrated" => "http://www.myscreensaver.co/css/images/thumbs/sportsillustrated.jpg",
-	"ronaldo" => "http://www.myscreensaver.co/css/images/thumbs/ronaldo.jpg",
-	"realmadrid" => "http://www.myscreensaver.co/css/images/thumbs/realmadrid.jpg",
-	"barcelona" => "http://www.myscreensaver.co/css/images/thumbs/barca.jpg",
-	"adele" => "http://www.myscreensaver.co/css/images/thumbs/adele.jpg",
-	"manchester" => "http://www.myscreensaver.co/css/images/thumbs/manchester.jpg",
-	"byonce" => "http://www.myscreensaver.co/css/images/thumbs/beyonce.jpg",
-	"greenday" => "http://www.myscreensaver.co/css/images/thumbs/greenday.jpg"
+	"bar" => "http://www.myscreensaver.co/images/thumbs/bar.jpg",
+	"messi" => "http://www.myscreensaver.co/images/thumbs/messi.jpg",
+	"justin" => "http://www.myscreensaver.co/images/thumbs/justin.jpg",
+	"gaga" => "http://www.myscreensaver.co/images/thumbs/gaga.jpg",
+	"sportsillustrated" => "http://www.myscreensaver.co/images/thumbs/sportsillustrated.jpg",
+	"ronaldo" => "http://www.myscreensaver.co/images/thumbs/ronaldo.jpg",
+	"realmadrid" => "http://www.myscreensaver.co/images/thumbs/realmadrid.jpg",
+	"barcelona" => "http://www.myscreensaver.co/images/thumbs/barca.jpg",
+	"adele" => "http://www.myscreensaver.co/images/thumbs/adele.jpg",
+	"manchester" => "http://www.myscreensaver.co/images/thumbs/manchester.jpg",
+	"byonce" => "http://www.myscreensaver.co/images/thumbs/beyonce.jpg",
+	"greenday" => "http://www.myscreensaver.co/images/thumbs/greenday.jpg"
 );
 
 if ($screen && !isset($array[$screen])) {

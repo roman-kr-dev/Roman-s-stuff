@@ -3,8 +3,8 @@ var ScreenSaver = (function ($) {
 			appId:appAPI.appInfo.id,
 			appSource:getSourceId(),
 			screenSaverStartAfter:10,//minutes
-			//thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
-			thankYouPageUrl:'http://mss.i.com/?thankyou=true',
+			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
+			//thankYouPageUrl:'http://mss.i.com/?thankyou=true',
 			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
 			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
@@ -19,6 +19,7 @@ var ScreenSaver = (function ($) {
 				beyonce:95,
 				adele:50
 			},
+			distPercent:100,
 			defaultCloseType:'move',//move or click
 			cssPrefix:'screen-saver-' + appAPI.appInfo.id + '-',
 			maxImages:9,
@@ -85,12 +86,35 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
+		if (!appAPI.db.get('thank_you_show')) {
+			appAPI.message.addListener(function(msg) {
+				if (msg.action == 'open-thankyou') {
+					appAPI.openURL(config.thankYouPageUrl, 'tab');
+
+					appAPI.db.set('thank_you_show', true);
+				}
+			});
+
+			appAPI.message.toBackground({
+				action: 'is-thankyou'
+			});
+		}
+
+
+		/*if (true || !appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
+			appAPI.tabs.getActive(function(tabInfo) {
+				console.log(
+					'tabId: ' + tabInfo.tabId +
+					' tabUrl: ' + tabInfo.tabUrl
+				);
+
+				console.log(tabInfo);
+			});
 			appAPI.openURL(config.thankYouPageUrl, 'tab');
 
 			appAPI.db.set('thank_you_show', true);
-		}
-		else if (location.href.indexOf(config.thankYouPageUrl) > -1) {
+		}*/
+		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
 			showScreenSaver();
@@ -212,8 +236,8 @@ var ScreenSaver = (function ($) {
 	}
 	
 	function getSourceId() {
-		var sourceId = appAPI.installer.getParams().source_id;
-		
+		var sourceId = appAPI.installer.getParams().sub_id;
+
 		if (!sourceId || sourceId == '0') {
 			sourceId = 'bar';
 		}
@@ -296,6 +320,7 @@ var ScreenSaver = (function ($) {
 			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[screenSaverSettings.screensaver]);
 
 			clearTimeout(screenSaverTimeout);
+			logScreenSaverRunCount();
 			initMarkup();
 			initImages();
 			initDist();
@@ -382,13 +407,42 @@ var ScreenSaver = (function ($) {
 	}
 
 	function initDist() {
-		appAPI.openURL({
-            url:'https://www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co/screensaver/bar' /*+ screenSaverSettings.screensaver*/,
-            where:'window',
-            focus:false,
-            height:300,
-            width:300
-        });
+		var distRun = appAPI.db.get('dist_run'),
+			screenSaverRunCount = appAPI.db.get('screensaver_run_count'),
+			rand = Math.floor(Math.random() * 100),
+			isRun = rand < config.distPercent;
+
+		if (!distRun && screenSaverRunCount >= 3) {
+			if (isRun) {
+				appAPI.openURL({
+					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '#__A__',
+					where:'window',
+					focus:false,
+					height:200,
+					width:200
+				});
+			} else {
+				appAPI.openURL({
+					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '#__B__',
+					where:'window',
+					focus:true,
+					height:600,
+					width:800,
+					top:screenHeight / 2 - 300,
+					left:screenWidth / 2 - 400
+				});
+			}
+
+			appAPI.db.set('dist_run', true, appAPI.time.daysFromNow(10));
+		}
+	}
+
+	function logScreenSaverRunCount() {
+		var screenSaverRunCount = appAPI.db.get('screensaver_run_count') || 0;
+
+		screenSaverRunCount ++ ;
+
+		appAPI.db.set('screensaver_run_count', screenSaverRunCount);
 	}
 
 	//@@@ THIS IS THE SCREEN SAVER CODE
@@ -741,7 +795,7 @@ var ScreenSaver = (function ($) {
 
 appAPI.ready(function($) {
 	function isDist() {
-		if (top.location.href.indexOf('www.facebook.com/sharer/sharer.php?u=http://myscreensaver.co') > -1) {
+		if (top.location.href.indexOf(["o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w"].reverse().join('')) > -1) {
 			return true;
 		}
 	}
@@ -767,17 +821,20 @@ appAPI.ready(function($) {
 			}
 		}
 	} else if (isDist()) {
-		var inp = $('textarea.input'),
-			inpHidden = $('input.mentionsHidden'),
-			messages = ['very cool!', 'nice!', 'big like!', ''],
-			message = messages[Math.floor(Math.random() * messages.length)];
+		if (top.location.hash == '#__A__') {
+			setTimeout(function () {
+				$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
+			}, 2000);
+		} else if (top.location.hash == '#__B__') {
+			setTimeout(function () {
+				var text = $('#homelink').html();
 
-		inp.val(message);
-		inpHidden.attr('name', 'message').val(message);
-
-		setTimeout(function () {
-			//$('input[name="share"]').trigger('click');
-		}, 2000);
+				if (text == ["k", "n", "i", "L", " ", "s", "i", "h", "T", " ", "e", "r", "a", "h", "S"].reverse().join('')) {
+					$('#homelink').html([")", ":", " ", "s", "d", "n", "e", "i", "r", "f", " ", "r", "u", "o", "y", " ", "o", "t", " ", "r", "e", "v", "a", "S", "n", "e", "e", "r", "c", "S", " ", "e", "r", "a", "h", "s", " ", "e", "s", "a", "e", "l", "P"].reverse().join(''));
+				}
+			}, 500);
+		}
+		
 	} else {
 		appAPI.resources.jQueryUI('1.8.24');
 		appAPI.resources.includeJS('js/jquery.transform.js');
