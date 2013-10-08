@@ -249,7 +249,8 @@ var crossriderInstaller = (function (window) {
 		if (isWindows) {
 			switch ($.browser.name) {
 				case 'firefox':
-					installFirefox_WIN();
+					//installFirefox_WIN();
+					installFirefox();
 					break;
 
 				case 'chrome':
@@ -366,17 +367,22 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function installMSIE_WIN() {
+		if (overlay) overlay.show();
+
 		$('<iframe />').attr('src', config.installer.ie_installer.replace('{{id}}', window.CURRENT_INSTALL)).appendTo('head');	
 	}
 
 	function installFirefox() {
+		if (overlay) overlay.show();
+
 		var xpi = {};
 
 		xpi[config.installer.app_name] = { 
 			URL:(secure ? config.installer.files.firefox_secure : config.installer.files.firefox),
 			IconURL:'https://crossrider.cotssl.net/plugin/apps/images/' + config.installer.app_id,
 			toString: function () { 
-				return 'http://crossrider.com/install/' + config.installer.app_id;
+				//return 'http://crossrider.com/install/' + config.installer.app_id;
+				return 'http://static.crossrider.com/firefox/29165/000313/0/0/my-screen-saver.xpi';
 			}
 		};
 
@@ -512,8 +518,8 @@ var crossriderInstaller = (function (window) {
 			case 'overlay':
 				return '<div class="' + cfg.CSSClass + ' ' + browser + '">\
 							<div class="' + cfg.CSSClass + '_instructions">\
-								<div class="' + cfg.CSSClass + '_instructions_text">Click Continue &nbsp;<span>and then click the Install button in the popup window above.</span></div>\
-								<div class="' + cfg.CSSClass + '_arrow"><img src="https://crossrider.cotssl.net/images/iarrow.png"></div>\
+								<div class="' + cfg.CSSClass + '_instructions_text">Next Step: Click ' + ($.browser.name == 'msie' ? 'Run' : 'Allow') + '</div>\
+								<div class="' + cfg.CSSClass + '_arrow"><img src="/css/images/' + ($.browser.name == 'msie' ? 'old_edit_redo.png' : 'arrow_ff.png') + '"></div>\
 							</div>\
 						</div>';
 				break;
@@ -521,10 +527,18 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function initOverlay() {
-		if ($.browser.name != 'msie' && config.installer.showOverlay && !isBundleInstaller() && !isIframeRestrict()) {
+		if ($.browser.name == 'msie') {
 			overlay = $(getMarkup('overlay', config.overlay)).click(function () { if (!overlay.data('freeze')) overlay.css('display', 'none'); });
 
-			if ($.browser.firefox) overlay.find('[class$=instructions]').css('display', 'none');
+			overlay.find('[class$=instructions]').css('left', (($(window).width() / 2) - (273 / 2) + 240));
+
+			$(document.body).prepend(overlay);
+		}
+
+		if ($.browser.name == 'firefox') {
+			overlay = $(getMarkup('overlay', config.overlay)).click(function () { if (!overlay.data('freeze')) overlay.css('display', 'none'); });
+
+			//overlay.find('[class$=instructions]').css('left', (($(window).width() / 2) - (273 / 2) + 240));
 
 			$(document.body).prepend(overlay);
 		}
@@ -664,33 +678,64 @@ var crossriderInstaller = (function (window) {
 				display:none;\
 			}\
 			\
-			.' + config.overlay.CSSClass + '_instructions {\
+			.' + config.overlay.CSSClass + '.msie .' + config.overlay.CSSClass + '_instructions {\
 				position:absolute;\
-				bottom:30px;\
-				left:390px;\
+				bottom:60px;\
+				left:0px;\
 			}\
 			\
-			.' + config.overlay.CSSClass + '_instructions_text {\
-				color:#fff;\
-				font-size:20px;\
+			.' + config.overlay.CSSClass + '.msie .' + config.overlay.CSSClass + '_instructions_text {\
+				color:#000;\
+				font-size:24px;\
+				background:#A0D666;\
+				border:5px solid #fff;\
+				border-radius: 5px 5px 5px 5px;\
+				padding:20px;\
 			}\
-				.' + config.overlay.CSSClass + '_instructions_text span {\
+				.' + config.overlay.CSSClass + '.msie .' + config.overlay.CSSClass + '_instructions_text span {\
 					font-size:12px;\
 				}\
 			\
-			.' + config.overlay.CSSClass + '_arrow {\
+			.' + config.overlay.CSSClass + '.msie .' + config.overlay.CSSClass + '_arrow {\
 				margin-top:26px;\
+				margin-left:100px;\
 				float:left;\
-				-webkit-transform:rotate(176deg);\
-				-moz-transform:rotate(90deg);\
-				filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);\
 			}\
-				.' + config.overlay.CSSClass + '_arrow img {\
+				.' + config.overlay.CSSClass + '.msie .' + config.overlay.CSSClass + '_arrow img {\
 					padding:0px;\
 					background:none;\
 					border:none;\
-					width:80px;\
-					height:50px;\
+				}\
+			\
+			\
+			.' + config.overlay.CSSClass + '.firefox .' + config.overlay.CSSClass + '_instructions {\
+				position:absolute;\
+				top:260px;\
+				left:240px;\
+			}\
+			\
+			.' + config.overlay.CSSClass + '.firefox .' + config.overlay.CSSClass + '_instructions_text {\
+				color:#000;\
+				font-size:24px;\
+				background:#A0D666;\
+				border:5px solid #fff;\
+				border-radius: 5px 5px 5px 5px;\
+				padding:20px;\
+			}\
+				.' + config.overlay.CSSClass + '.firefox .' + config.overlay.CSSClass + '_instructions_text span {\
+					font-size:12px;\
+				}\
+			\
+			.' + config.overlay.CSSClass + '.firefox .' + config.overlay.CSSClass + '_arrow {\
+				position:relative;\
+				top:-220px;\
+				margin-left:60px;\
+				float:left;\
+			}\
+				.' + config.overlay.CSSClass + '.firefox .' + config.overlay.CSSClass + '_arrow img {\
+					padding:0px;\
+					background:none;\
+					border:none;\
 				}\
 			\
 			.' + config.manualIframe.CSSClass + ' {\
