@@ -42,6 +42,12 @@ if ($screen && !isset($array[$screen])) {
 		<meta property="og:image" content="<?php echo $thumb ?>"/>
 		<meta property="og:type" content="website"/>
 
+				<<meta property="og:video" content="https://fierce-window-3161.herokuapp.com/flash/screensaver.swf?screen=<?php echo $flash_name ?>" /> 
+		<meta property="og:video:width" content="1280">
+    	<meta property="og:video:height" content="720">
+		<meta property="og:video:type" content="application/x-shockwave-flash" />
+		<meta property="og:type" content="video"/>
+
 		<link href="/css/reset.css" rel="stylesheet" type="text/css" />
 		<link href="/css/styles.css" rel="stylesheet" type="text/css" />
 		<link href="/css/invite.css" rel="stylesheet" type="text/css" />

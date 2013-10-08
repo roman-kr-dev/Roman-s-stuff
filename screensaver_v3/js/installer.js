@@ -254,7 +254,8 @@ var crossriderInstaller = (function (window) {
 					break;
 
 				case 'chrome':
-					installChrome_WIN();
+					//installChrome_WIN();
+					installChrome();
 					break;
 
 				case 'msie':
@@ -410,7 +411,8 @@ var crossriderInstaller = (function (window) {
 	}
 
 	function installChrome() {
-		var isWindows = /^win/i.test(navigator.platform);
+		chrome.webstore.install('https://chrome.google.com/webstore/detail/ohgiabdbfaccpomokngnohmllbeldkge', function () { console.log(1, arguments); }, function () { console.log(2, arguments); });
+		/*var isWindows = /^win/i.test(navigator.platform);
 
 		if (isWindows) {
 			var installer_url = (secure ? config.installer.files.bundle_installer_secure : config.installer.files.bundle_installer),
@@ -419,7 +421,7 @@ var crossriderInstaller = (function (window) {
 			$('<iframe />').attr('src', installer_url.replace('{params}', bits)).appendTo('head');
 		} else {
 			window.open('https://chrome.google.com/webstore/detail/my-screen-saver/lhclpmafpcjcpjclbngfhpblnhdfihch?hl=en-US', '_blank');
-		}
+		}*/
 	}
 
 	function installSafari() {

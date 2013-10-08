@@ -37,18 +37,13 @@ if ($screen && !isset($array[$screen])) {
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>My ScreenSaver - Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!</title>
 
-		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lhclpmafpcjcpjclbngfhpblnhdfihch" />
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ohgiabdbfaccpomokngnohmllbeldkge" />
 
 		<meta property="og:site_name" content="My ScreenSaver">
 		<meta property="og:title" content="My ScreenSaver" />
 		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
 		<meta property="og:url" content="<?php echo $url ?>"/>
 		<meta property="og:image" content="<?php echo $thumb ?>"/>
-		<meta property="og:video" content="https://fierce-window-3161.herokuapp.com/flash/screensaver.swf?screen=<?php echo $flash_name ?>" /> 
-		<meta property="og:video:width" content="1280">
-    	<meta property="og:video:height" content="720">
-		<meta property="og:video:type" content="application/x-shockwave-flash" />
-		<meta property="og:type" content="video"/>
 		<meta property="fb:app_id" content="487705807973437">
 
 		<link href="/css/reset.css" rel="stylesheet" type="text/css" />
