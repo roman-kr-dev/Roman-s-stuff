@@ -7,7 +7,7 @@ $crossriderAppId = '29165';
 $screen = isset($_GET["screen"]) ? $_GET["screen"] : '';
 $flash_name = isset($screen) ? $screen : 'bar';
 $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-$thumb = "http://www.myscreensaver.co/images/logo128x128.png";
+$thumb = "http://static-staging.crossrider.com/screensaver/zip/images/logo128x128.png";
 
 $array = Array(
 	"bar" => "http://www.myscreensaver.co/images/thumbs/bar.jpg",
@@ -36,6 +36,8 @@ if ($screen && !isset($array[$screen])) {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>My ScreenSaver - Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!</title>
+
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/lhclpmafpcjcpjclbngfhpblnhdfihch" />
 
 		<meta property="og:site_name" content="My ScreenSaver">
 		<meta property="og:title" content="My ScreenSaver" />
@@ -70,7 +72,7 @@ if ($screen && !isset($array[$screen])) {
 	<div class="header">
 		<div class="header-content">
 			<div class="logo">
-				<a href="http://myscreensaver.co/"><img src="/images/logo_strip.png" /></a>
+				<a href="http://myscreensaver.co/"><img src="http://static-staging.crossrider.com/screensaver/zip/images/logo_strip.png" /></a>
 			</div>
 
 			<div class="welcome"></div>
@@ -101,16 +103,16 @@ if ($screen && !isset($array[$screen])) {
 
 				<div class="slider-box-content">
 					<div id="slider">
-						<div class="image-container selected" data-name="Bar Refaeli"><img src="/css/images/thumbs/bar.jpg" data-id="bar" alt="Bar Refaeli" /></div>
-						<div class="image-container" data-name="Leo Messi"><img src="/css/images/thumbs/messi.jpg" data-id="messi" /></div>
-						<div class="image-container" data-name="Justin Bieber"><img src="/css/images/thumbs/justin.jpg" data-id="justin" /></div>
-						<div class="image-container" data-name="Lady Gaga"><img src="/css/images/thumbs/gaga.jpg" data-id="gaga" /></div>
-						<div class="image-container" data-name="Sports Illustrated"><img src="/css/images/thumbs/sportsillustrated.jpg" data-id="sportsillustrated" /></div>
-						<div class="image-container" data-name="Cristiano Ronaldo"><img src="/css/images/thumbs/ronaldo.jpg" data-id="ronaldo" /></div>
-						<div class="image-container" data-name="Real Madrid"><img src="/css/images/thumbs/realmadrid.jpg" data-id="realmadrid" /></div>
-						<div class="image-container" data-name="FC Barcelona"><img src="/css/images/thumbs/barca.jpg" data-id="barcelona" /></div>
-						<div class="image-container" data-name="Adele"><img src="/css/images/thumbs/adele.jpg" data-id="adele" /></div>
-						<div class="image-container" data-name="Manchester United"><img src="/css/images/thumbs/manchester.jpg" data-id="manchester" /></div>
+						<div class="image-container selected" data-name="Bar Refaeli"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/bar.jpg" data-id="bar" alt="Bar Refaeli" /></div>
+						<div class="image-container" data-name="Leo Messi"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/messi.jpg" data-id="messi" /></div>
+						<div class="image-container" data-name="Justin Bieber"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/justin.jpg" data-id="justin" /></div>
+						<div class="image-container" data-name="Lady Gaga"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/gaga.jpg" data-id="gaga" /></div>
+						<div class="image-container" data-name="Sports Illustrated"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/sportsillustrated.jpg" data-id="sportsillustrated" /></div>
+						<div class="image-container" data-name="Cristiano Ronaldo"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/ronaldo.jpg" data-id="ronaldo" /></div>
+						<div class="image-container" data-name="Real Madrid"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/realmadrid.jpg" data-id="realmadrid" /></div>
+						<div class="image-container" data-name="FC Barcelona"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/barca.jpg" data-id="barcelona" /></div>
+						<div class="image-container" data-name="Adele"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/adele.jpg" data-id="adele" /></div>
+						<div class="image-container" data-name="Manchester United"><img src="http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/manchester.jpg" data-id="manchester" /></div>
 					</div>
 				</div>
 			</div>
@@ -238,18 +240,14 @@ if ($screen && !isset($array[$screen])) {
 
 	<!-- google analytics start -->
 	<script type="text/javascript">
-	  var _gaq = _gaq || [];
-	  _gaq.push(['_setAccount', 'UA-27657635-1']);
-	  _gaq.push(['_trackPageview']);
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-	  (function() {
-		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
+	  ga('create', 'UA-43417712-1', 'myscreensaver.co');
+	  ga('send', 'pageview');
 	</script>
-	<!-- google analytics end -->
-	</script>
-
+	
 	</body>
 </html>

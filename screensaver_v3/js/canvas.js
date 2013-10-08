@@ -1,7 +1,7 @@
 var FriendsScreenSaver = (function () {
 	var config = {
 			fbAddActionUrl:'http://fierce-window-3161.herokuapp.com/fb_friend_add_action.php?friend_id={@id}&friend_name={@friend_name}&my_name={@my_name}&api=true',
-			defaultImagesForLogout:'https://fierce-window-3161.herokuapp.com/images/bar/bar{i}.jpg',
+			defaultImagesForLogout:'http://static-staging.crossrider.com/screensaver/zip/images/bar/bar{i}.jpg',
 			initialFriends:40,
 			maxFriendsDisplay:10,
 			checkExtensionInstall:true,
@@ -26,36 +26,51 @@ var FriendsScreenSaver = (function () {
 
 			window.CURRENT_INSTALL = cfg.screensaver || 'bar';
 
-			initBrowserCompatibility();
-			initDimensions();
-			initPreviewIframe();
-			initDownloadBox();
-			initScroll();
-			initImagesLabel();
-			initInstallButton();
-			initLearnMore();
+			$(function () {
 
-			/*initInstallButton();
-			initPreviewIframe();
-			initPreviewPosition();
-			initCarusel();*/
+				initBrowserCompatibility();
+				initDimensions();
+				initPreviewIframe();
+				initDownloadBox();
+				initScroll();
+				initImagesLabel();
+				initInstallButton();
+				initLearnMore();
 
-			if (params.thankyou) {
-				initThankyou();
-			}
+				/*initInstallButton();
+				initPreviewIframe();
+				initPreviewPosition();
+				initCarusel();*/
 
-			if (cfg.accessToken) {
-				this.initWithAccessToken();
-			} else {
-				$.when(checkIfPreviewReady()).then(function () {
-					loadPreviewIframe_Without_AccessToken();
-					initEvents();
+				if (params.thankyou) {
+					initThankyou();
+				}
 
-					setLoadingState({state:'buttons', install:false, confirm:true, choose:false});
+				if (cfg.accessToken) {
+					this.initWithAccessToken();
+				} else {
+					$.when(checkIfPreviewReady()).then(function () {
+						loadPreviewIframe_Without_AccessToken();
+						initEvents();
 
-					_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_1', 1]);
-				});
-			}
+						setLoadingState({state:'buttons', install:false, confirm:true, choose:false});
+
+						//_gaq.push(['_trackEvent', 'new_user', 'display_message', 'message_type_1', 1]);
+					});
+				}
+
+			});
+
+			var resizeTimeout;
+
+			$(window).on('resize', function () {
+				if (resizeTimeout) clearTimeout(resizeTimeout);
+
+				resizeTimeout = setTimeout(function () {
+					initDimensions();
+					initIframeDimentions();
+				}, 100);
+			});
 		},
 
 		initWithAccessToken:function () {
@@ -178,26 +193,54 @@ var FriendsScreenSaver = (function () {
 
 	//new functions start
 	function initDimensions() {
-		var isSmallScreen = screenHeight <= 800,
-			screenHeightOffset = isSmallScreen ? 62 : 0;
+		var screenWidth = $(window).width(),
+			screenHeight = $(window).height(),
+			isSmallScreen = screenHeight <= 800,
+			screenHeightOffset = isSmallScreen ? 62 : 0,
+			screenWidthOffset = 0.9;
 
 		if (isSmallScreen) {
-			$('.bottom-shadows').remove();
+			$('.bottom-shadows').hide();
+		} else {
+			$('.bottom-shadows').show();
 		}
 
+		if (screenWidth < 1160) {
+			$('.site-container, .header-content').width('98%');
+			screenWidthOffset = 0.98;
+		} else {
+			$('.site-container, .header-content').width('90%');
+			screenWidthOffset = 0.9;
+		}
+
+		if (screenWidth < 1125) {
+			$('.share').addClass('hide-twitter');
+			$('.header-content .welcome').css('left', 350);
+		} else {
+			$('.share').removeClass('hide-twitter');
+			$('.header-content .welcome').css('left', 485);
+		}
+
+		$('#preview-iframe').hide();
 		$('#slider-middle').height(screenHeight - (348 - screenHeightOffset));
 		$('#slider').height(screenHeight - (270 - screenHeightOffset));
-		$('#screensaver-container').height(screenHeight - (231 - screenHeightOffset)).width(screenWidth * .9 - 220);
-		$('#screensaver-table').width(screenWidth * .9 - 220 - 44);
+		$('#screensaver-container').height(screenHeight - (231 - screenHeightOffset)).width(screenWidth * screenWidthOffset - 220);
+		$('#screensaver-table').width(screenWidth * screenWidthOffset - 220 - 44);
 	}
 
 	function initPreviewIframe() {
+		var iframe = $('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>').appendTo(preview);
+	
+		initIframeDimentions();
+	}
+
+	function initIframeDimentions() {
 		var screensaver = $('#screensaver-container'),
-			iframe = $('<iframe id="preview-iframe" src="/preview.php" frameborder="0" scrolling="no"></iframe>'),
+			iframe = $('#preview-iframe'),
 			preview = $('#preview'),
 			shadow = $('#shadow-right');
 		
-		iframe.width(preview.width()).height(preview.height()).appendTo(preview);
+		iframe.width(preview.width()).height(preview.height()).show();
 		shadow.css('right', screensaver.outerWidth() / 2 - shadow.width() / 2);
 	}
 
@@ -271,7 +314,7 @@ var FriendsScreenSaver = (function () {
 	}
 
 	function requestAuthConfirm() {
-		_gaq.push(['_trackEvent', 'new_user', 'auth_dialog_open', 'message_type_1', 1]);
+		//_gaq.push(['_trackEvent', 'new_user', 'auth_dialog_open', 'message_type_1', 1]);
 
 		FB.login(function (response) {
 			if (response.authResponse) {
@@ -279,7 +322,7 @@ var FriendsScreenSaver = (function () {
 				cfg.userId = response.authResponse.userID;
 				cfg.checkExtensionInstall = false;
 
-				_gaq.push(['_trackEvent', 'new_user', 'auth_success', 'message_type_1', 1]);
+				//_gaq.push(['_trackEvent', 'new_user', 'auth_success', 'message_type_1', 1]);
 
 				transitionToLoggedInMode(function () {
 					thi$.initWithAccessToken();
@@ -365,7 +408,7 @@ var FriendsScreenSaver = (function () {
 
 		iframeScreenSaver.clearAllImages();
 
-		var pattern = 'https://fierce-window-3161.herokuapp.com/images/' + id + '/' + id + '{i}.jpg'
+		var pattern = 'http://static-staging.crossrider.com/screensaver/zip/images/' + id + '/' + id + '{i}.jpg'
 	
 		for (var i=1; i<=num[id][0]; i++) {
 			images.push({
@@ -1007,6 +1050,8 @@ var FriendsScreenSaver = (function () {
 
 		$('#request-app-confirm').on('click', function () {
 			__CRI.install();
+
+			ga('send', 'event', 'install', window.CURRENT_INSTALL);
 		});
 
 		/*var _cr_button = new __CRI.button({
@@ -1024,6 +1069,8 @@ var FriendsScreenSaver = (function () {
 
 		$('#request-app-confirm').on('click', function () {
 			__CRI.install();
+
+			ga('send', 'event', 'install', window.CURRENT_INSTALL);
 		});
 
 		/*var _cr_button = new __CRI.button({
