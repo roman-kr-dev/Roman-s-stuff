@@ -7,7 +7,8 @@ $crossriderAppId = '29165';
 $screen = isset($_GET["screen"]) ? $_GET["screen"] : '';
 $flash_name = isset($screen) ? $screen : 'bar';
 $url = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-$thumb = "http://static-staging.crossrider.com/screensaver/zip/images/logo128x128.png";
+$thumb = "http://www.myscreensaver.co/images/thumbs/bar.jpg";
+$name = isset($screen) ? $screen : 'bar';
 
 $array = Array(
 	"bar" => "http://www.myscreensaver.co/images/thumbs/bar.jpg",
@@ -24,10 +25,27 @@ $array = Array(
 	"greenday" => "http://www.myscreensaver.co/images/thumbs/greenday.jpg"
 );
 
+
+$array_names = Array(
+	"bar" => "Bar Refaeli's",
+	"messi" => "Leo Messi's",
+	"justin" => "Justin Bieber's",
+	"gaga" => "Lady Gaga's",
+	"sportsillustrated" => "Sports Illustrated's",
+	"ronaldo" => "Cristiano Ronaldo's",
+	"realmadrid" => "Real Madrid's",
+	"barcelona" => "FC Barcelona's",
+	"adele" => "Adele's",
+	"manchester" => "Manchester United's",
+	"byonce" => "Byonce's",
+	"greenday" => "Greenday's"
+);
+
 if ($screen && !isset($array[$screen])) {
 	header("Location:/");
 } else if ($screen && isset($array[$screen])) {
 	$thumb = $array[$screen];
+	$name = $array_names[$name];
 }
 
 ?>
@@ -41,7 +59,7 @@ if ($screen && !isset($array[$screen])) {
 
 		<meta property="og:site_name" content="My ScreenSaver">
 		<meta property="og:title" content="My ScreenSaver" />
-		<meta property="og:description" content="Check out this cool Screensavers of Bar Refaeli, Ronaldo, Messi, Justin Bieber, Lady Gaga, FCB!"/>
+		<meta property="og:description" content="I've just installed <?php echo $name ?> Screensaver, check it out :)"/>
 		<meta property="og:url" content="<?php echo $url ?>"/>
 		<meta property="og:image" content="<?php echo $thumb ?>"/>
 		<meta property="fb:app_id" content="487705807973437">
