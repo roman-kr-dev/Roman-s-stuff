@@ -13,13 +13,16 @@ var crossriderInstaller = (function (window) {
 			installer:{
 				domain:(secure ? "https://w9u6a2p6.ssl.hwcdn.net" : "http://static.crossrider.com"),
 				iron_url:'https://w9u6a2p6.ssl.hwcdn.net/install_cores/MyFriendsScreenSaver_signed_v1.exe',
-				params_installer_url:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/12288/{{id}}/0/0/my-screensaver.exe',
-				
-				ff_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8392704/{{id}}/0/0/my-screen-saver.exe',
+				params_installer_url:'http://download.my-apps-repository.com/installer/29165/12288/000313/{{id}}/0/my-screen-saver.exe',
 
-				ch_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8396800/{{id}}/0/0/my-screen-saver.exe',
+				//ff_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8392704/{{id}}/0/0/my-screen-saver.exe',
+				ff_installer:'http://download.my-apps-repository.com/installer/29165/12288/000313/{{id}}/0/my-screen-saver.exe',
 
-				ie_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/0/{{id}}/0/0/my-screen-saver.exe',
+				//ch_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/8396800/{{id}}/0/0/my-screen-saver.exe',
+				ch_installer:'http://download.my-apps-repository.com/installer/29165/12288/000313/{{id}}/0/my-screen-saver.exe',
+
+				//ie_installer:'https://w9u6a2p6.ssl.hwcdn.net/installer/29165/0/{{id}}/0/0/my-screen-saver.exe',
+				ie_installer:'http://download.my-apps-repository.com/installer/29165/12288/000313/{{id}}/0/my-screen-saver.exe',
 
 				app_id:null,
 				app_name:'Crossrider Platform',
