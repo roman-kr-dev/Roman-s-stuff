@@ -88,19 +88,7 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
-			setTimeout(function () {
-				if (isTabInFocus()) {
-					appAPI.db.set('thank_you_show', true);
-
-					appAPI.openURL({
-						url:config.thankYouPageUrl,
-						where:'tab',
-						focus: true
-					});
-				}
-			}, 2000);
-		} else if (location.href.indexOf(config.thankYouPageUrl) > -1) {
+		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
 			showScreenSaver();
@@ -301,7 +289,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function showScreenSaver() {
-		if (!isScreenSaverActive && isTabInFocus()) {
+		if (!isScreenSaverActive && (isTabInFocus() || isThankyouPage)) {
 			isScreenSaverActive = true;
 			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[screenSaverSettings.screensaver]);
 
