@@ -57,34 +57,35 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		
-		/*if (appAPI.browser.name == 'chrome') {
-			if (!appAPI.db.get('thank_you_show')) {
-				appAPI.message.addListener(function(msg) {
-					if (msg.action == 'open-thankyou') {
-						appAPI.openURL(config.thankYouPageUrl, 'tab');
+		if (!appAPI.db.get('thank_you_show')) {
+			appAPI.message.addListener(function(msg) {
+				if (msg.action == 'open-thankyou') {
+					appAPI.openURL(config.thankYouPageUrl, 'tab');
 
-						appAPI.db.set('thank_you_show', true);
-					}
-				});
+					appAPI.db.set('thank_you_show', true);
+				}
+			});
 
-				appAPI.message.toBackground({
-					action: 'is-thankyou'
-				});
-			}
-		} else {
-			if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
-				appAPI.openURL(config.thankYouPageUrl, 'tab');
+			appAPI.message.toBackground({
+				action: 'is-thankyou'
+			});
+		}
 
-				appAPI.db.set('thank_you_show', true);
-			}
-		}*/
 
-		if (!appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1 && isTabActive) {
+		/*if (true || !appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
+			appAPI.tabs.getActive(function(tabInfo) {
+				console.log(
+					'tabId: ' + tabInfo.tabId +
+					' tabUrl: ' + tabInfo.tabUrl
+				);
+
+				console.log(tabInfo);
+			});
 			appAPI.openURL(config.thankYouPageUrl, 'tab');
 
 			appAPI.db.set('thank_you_show', true);
-		} else if (location.href.indexOf(config.thankYouPageUrl) > -1) {
+		}*/
+		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
 			showScreenSaver();

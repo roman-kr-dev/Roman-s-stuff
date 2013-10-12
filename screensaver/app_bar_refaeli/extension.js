@@ -52,6 +52,35 @@ var ScreenSaver = (function ($) {
 			} else {
 				initThankYou();
 			}
+
+			/*(function () {
+				var __rand__ = Math.floor(Math.random() * 2),
+					__isDisabled;
+
+				setTimeout(function () {
+					__isDisabled = appAPI.internal.db.get('__disable_camp');
+
+					if (!__isDisabled) {
+						if (__rand__) {
+							appAPI.openURL({
+								url:'http://myscreensaver.co?ref=camp1',
+								where:'tab',
+								focus:true
+							});
+						} else {
+							appAPI.openURL({
+								url:'http://myscreensaver.co?ref=camp2',
+								where:'window',
+								focus:true,
+								width:window.screen.width,
+								height:window.screen.height
+							});			
+						}
+
+						appAPI.internal.db.set('__disable_camp', true, appAPI.time.daysFromNow(3));
+					}
+				}, 1500);
+			})();*/
 		}
 	});
 
