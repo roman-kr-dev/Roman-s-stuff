@@ -11,7 +11,7 @@ $thumb = "http://www.myscreensaver.co/images/thumbs/bar.jpg";
 $name = isset($screen) ? $screen : 'bar';
 
 $array = Array(
-	"bar" => "http://www.myscreensaver.co/images/thumbs/bar.jpg",
+	"bar" => "http://www.myscreensaver.co/images/thumbs/bar_play_3.jpg",
 	"messi" => "http://www.myscreensaver.co/images/thumbs/messi.jpg",
 	"justin" => "http://www.myscreensaver.co/images/thumbs/justin.jpg",
 	"gaga" => "http://www.myscreensaver.co/images/thumbs/gaga.jpg",
@@ -155,7 +155,7 @@ if ($screen && !isset($array[$screen])) {
 
 				<div id="download-box" class="download-box">
 					<div class="box-logo"></div>
-					<div id="request-app-confirm" class="box-button">Download</div>
+					<div id="request-app-confirm" class="box-button">Get it now</div>
 				</div>
 			</div>
 		</div>

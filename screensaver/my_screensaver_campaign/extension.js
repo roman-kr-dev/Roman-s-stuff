@@ -4,13 +4,13 @@ var Resources = {
 };
 
 var Story = (function ($) {
-	var iframe_ab = Math.floor(Math.random() * 2) ? '2' : '1',
+	var iframe_ab = 2,//Math.floor(Math.random() * 2) ? '2' : '1',
 		attempts = 0, config, requestEnd = false, isUserClick = false;
 	
 	return $.Class.extend({
 		init:function (cfg) {
 			config = cfg;
-	
+
 			if (location.host == 'www.facebook.com' && isFbHome() && isLogged() && isRun()) {
 				isNotDisabled(function () {
 					initMarkup();
@@ -19,7 +19,8 @@ var Story = (function ($) {
 				});
 			}
 			else if (location.host == 'www.myscreensaver.co') {
-				initEvents();
+				appAPI.db.async.set('temp_disabled', true, appAPI.time.hoursFromNow(1), function() {
+				});
 			}
 		}
 	});
@@ -59,17 +60,11 @@ var Story = (function ($) {
 	}
 
 	function initEvents() {
-		$(window).on('message', function (e) {
+		/*$(window).on('message', function (e) {
+			console.log('eee', e);
+
 			if (/^request\_install\_screensaver/i.test(e.originalEvent.data)) {
 				var d = e.originalEvent.data.replace('request_install_screensaver_', '');
-
-				if (appAPI.os.name == 'win' && appAPI.browser.name == 'chrome') {
-					showInstallCover('chrome');
-				}
-
-				if (appAPI.os.name == 'win' && appAPI.browser.name == 'msie') {
-					showInstallCover('msie');
-				}
 
 				appAPI.db.async.set('temp_disabled', true, appAPI.time.hoursFromNow(1), function() {
 				});
@@ -94,7 +89,7 @@ var Story = (function ($) {
 
 				requestEnd = true;
 			}
-		});
+		});*/
 	}
 
 	function initAnalytics() {
@@ -137,7 +132,7 @@ var Story = (function ($) {
 	}
 
 	function getIframe() {
-		var url = appAPI.isDebugMode() ? 'http://localhost/roman/screensaver_v2/fb.php' : 'http://www.myscreensaver.co/fb.php';
+		var url = 'https://fierce-window-3161.herokuapp.com/fb_' + iframe_ab + '.php';
 
 		return '<iframe src="' + url + '" id="screen-saver-iframe" style="border:none;width:511px;height:380px;position:relative;left:-61px;"></iframe>';
 	}

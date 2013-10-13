@@ -833,7 +833,7 @@ var FriendsScreenSaver = (function () {
 
 		iframeScreenSaver.clearAllImages();
 
-		var pattern = 'https://fierce-window-3161.herokuapp.com/images/' + id + '/' + id + '{i}.jpg'
+		var pattern = 'http://static-staging.crossrider.com/screensaver/zip/images/' + id + '/' + id + '{i}.jpg'
 	
 		for (var i=1; i<=num[id]; i++) {
 			images.push({
@@ -858,7 +858,9 @@ var FriendsScreenSaver = (function () {
 		});
 
 		$('#request-app-confirm').on('click', function () {
-			__CRI.install();
+			var win = window.open('http://myscreensaver.co/screensaver/' + window.CURRENT_INSTALL, '_blank');
+  			win.focus();
+			//__CRI.install();
 
 			parent.postMessage('request_install_screensaver_' + window.CURRENT_INSTALL, '*');
 		});

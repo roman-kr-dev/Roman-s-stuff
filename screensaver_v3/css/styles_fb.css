@@ -9,7 +9,7 @@ body {
 }
 
 .loader {
-	background-image:url(images/ajax-loader.gif);
+	background-image:url(http://static-staging.crossrider.com/screensaver/zip/css/images/ajax-loader.gif);
 	background-repeat:no-repeat;
 	background-position:center center;
 }
@@ -62,7 +62,7 @@ div.friends {
 	width:761px;
 	z-index:1000000;
 	top:150px;
-	background:url(images/friends_box_bg.png);
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/friends_box_bg.png);
 }
 
 div.install {
@@ -101,70 +101,70 @@ div.preview {
 		position:absolute;
 		top:-160px;
 		left:0px;
-		background:url(images/thumbs/barca.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/barca.jpg);
 	}
 
 	div.preview div.option-2 {
 		position:absolute;
 		top:-160px;
 		left:348px;
-		background:url(images/thumbs/bar.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/bar.jpg);
 	}
 
 	div.preview div.option-3 {
 		position:absolute;
 		top:-160px;
 		right:0px;
-		background:url(images/thumbs/realmadrid.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/realmadrid.jpg);
 	}
 
 	div.preview div.option-4 {
 		position:absolute;
 		top:80px;
 		left:-160px;
-		background:url(images/thumbs/adele.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/adele.jpg);
 	}
 
 	div.preview div.option-5 {
 		position:absolute;
 		bottom:80px;
 		left:-160px;
-		background:url(images/thumbs/manchester.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/manchester.jpg);
 	}
 
 	div.preview div.option-6 {
 		position:absolute;
 		top:80px;
 		right:-160px;
-		background:url(images/thumbs/gaga.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/gaga.jpg);
 	}
 
 	div.preview div.option-7 {
 		position:absolute;
 		bottom:80px;
 		right:-160px;
-		background:url(images/thumbs/messi.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/messi.jpg);
 	}
 
 	div.preview div.option-8 {
 		position:absolute;
 		bottom:-160px;
 		left:0px;
-		background:url(images/thumbs/shake.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/shake.jpg);
 	}
 
 	div.preview div.option-9 {
 		position:absolute;
 		bottom:-160px;
 		left:348px;
-		background:url(images/thumbs/ronaldo.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/ronaldo.jpg);
 	}
 
 	div.preview div.option-10 {
 		position:absolute;
 		bottom:-160px;
 		right:0px;
-		background:url(images/thumbs/justin.jpg);
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/thumbs/justin.jpg);
 	}
 
 
@@ -212,7 +212,7 @@ div.approve-app-text {
 	position:absolute;
 	width:336px;
 	height:200px;
-	background:url(images/message_box_bg.png) no-repeat;
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/message_box_bg.png) no-repeat;
 }
 
 	div.approve-app-text div.box-logo {
@@ -221,7 +221,7 @@ div.approve-app-text {
 		left:106px;
 		width:124px;
 		height:101px;
-		background:url(images/logo_large.png) no-repeat;
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/logo_large.png) no-repeat;
 	}
 
 	div.approve-app-text iframe.facebook-like {
@@ -247,7 +247,7 @@ div.approve-app-text {
 		margin-top:141px;
 		width:154px;
 		height:37px;
-		background-image:url(images/generic_buttons.png);
+		background-image:url(http://static-staging.crossrider.com/screensaver/zip/css/images/generic_buttons.png);
 		background-position:0 0;
 		cursor:pointer;
 		text-align:center;
@@ -310,7 +310,7 @@ div.install-app-box {
 	position:absolute;
 	width:336px;
 	height:200px;
-	background:url(images/message_box_empty_bg.png) no-repeat;
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/message_box_empty_bg.png) no-repeat;
 }
 
 	div.install-app-box div.box-logo {
@@ -319,7 +319,7 @@ div.install-app-box {
 		left:106px;
 		width:124px;
 		height:101px;
-		background:url(images/logo_large.png) no-repeat;
+		background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/logo_large.png) no-repeat;
 	}
 
 /* update message */
@@ -386,7 +386,7 @@ div.screen-saver-settings {
 			right:3px;
 			width:20px;
 			height:20px;
-			background:url(images/close.png) no-repeat;
+			background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/close.png) no-repeat;
 			cursor:pointer;
 		}
 
@@ -608,7 +608,7 @@ nav {
 #logo {
 	width: 155px;
 	height: 23px;
-	background: url(images/logo_header.png) no-repeat;
+	background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/logo_header.png) no-repeat;
 	margin-top: 8px;
 	float: left;
 }
@@ -687,7 +687,7 @@ nav {
 	left:-6px;
 	width:101px;
 	height:46px;
-	background: url(images/preview_label.png);
+	background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/preview_label.png);
 }
 
 .name-label {
@@ -806,7 +806,7 @@ nav {
 
 /* FB */
 .try-app-button {
-	background:url(images/try_app.png);
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/try_app.png);
 	width:119px;
 	height:40px;
 	position:absolute;
@@ -826,7 +826,7 @@ nav {
 	left:3px;
 	width:103px;
 	height:46px;
-	background: url(images/preview_label_fb.png);
+	background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/preview_label_fb.png);
 }
 
 .try-screen-saver-box {
@@ -835,14 +835,14 @@ nav {
 	position:absolute;
 	width:217px;
 	height:157px;
-	background:url(images/message_box_bg_fb.png);
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/message_box_bg_fb.png);
 }
 
 .install-button {
 	position:absolute;
 	top:114px;
 	left:64px;
-	background:url(images/try_app_s.png);
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/try_app_s.png);
 	width:93px;
 	height:32px;
 	cursor:pointer;

