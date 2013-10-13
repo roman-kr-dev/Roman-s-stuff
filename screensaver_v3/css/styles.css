@@ -7,7 +7,7 @@ body {
 }
 
 .loader {
-	background-image:url(images/ajax-loader.gif);
+	background-image:url(http://static-staging.crossrider.com/screensaver/zip/css/images/ajax-loader.gif);
 	background-repeat:no-repeat;
 	background-position:center center;
 }
@@ -24,7 +24,7 @@ div.site-background {
 	width:100%;
 	height:100%;
 	z-index: -1;
-	background: #F5F5F5 url(images/bg_clouds.png) no-repeat center 62px;
+	background: #F5F5F5 url(http://static-staging.crossrider.com/screensaver/zip/css/images/bg_clouds.png) no-repeat center 62px;
 }
 /* site background - end */
 
@@ -35,7 +35,7 @@ div.header {
 	left:0px;
 	width:100%;
 	height:62px;
-	background: url(images/bg_header.png) repeat-x center;
+	background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/bg_header.png) repeat-x center;
 	z-index: 1000;
 }
 
@@ -58,7 +58,7 @@ div.header {
 			left: 485px;
 			width:622px;
 			height:34px;
-			background: url(images/screensaver_title.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/screensaver_title.png) no-repeat;
 		}
 /* site header - end */
 
@@ -84,6 +84,10 @@ div.share {
 		position:absolute;
 		top:0px;
 		left:150px;
+	}
+
+	div.share.hide-twitter .twitter-share-button {
+		display: none;
 	}
 
 	div.share div#___plusone_0 {
@@ -112,7 +116,7 @@ div.site-container {
 			top:-5px;
 			width:124px;
 			height:43px;
-			background: url(images/arrow.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/arrow.png) no-repeat;
 			margin-left: 164px;
 		}
 
@@ -140,18 +144,18 @@ div.site-container {
 		div.slider-box-header {
 			width:170px;
 			height:64px;
-			background: url(images/slider_top.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/slider_top.png) no-repeat;
 		}
 
 		div.slider-box-middle {
 			width:170px;
-			background: url(images/slider_bg.png) repeat-y;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/slider_bg.png) repeat-y;
 		}
 
 		div.slider-box-footer {
 			width:170px;
 			height:55px;
-			background: url(images/slider_bottom.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/slider_bottom.png) no-repeat;
 		}
 
 		div.slider-box-content {
@@ -228,7 +232,7 @@ div.site-container {
 			left:-7px;
 			width:144px;
 			height:145px;
-			background: url(images/preview_strip.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/preview_strip.png) no-repeat;
 		}
 
 		/* download box */
@@ -238,7 +242,7 @@ div.site-container {
 			height:200px;
 			top:0px;
 			left:0px;
-			background:url(images/message_box_bg.png) no-repeat;
+			background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/message_box_bg.png) no-repeat;
 		}
 
 			div.download-box div.box-logo {
@@ -247,7 +251,7 @@ div.site-container {
 				left:106px;
 				width:124px;
 				height:101px;
-				background:url(images/logo_large.png) no-repeat;
+				background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/logo_large.png) no-repeat;
 			}
 
 			div.download-box div.box-button {
@@ -256,7 +260,7 @@ div.site-container {
 				margin-top:141px;
 				width:154px;
 				height:37px;
-				background-image:url(images/generic_buttons.png);
+				background-image:url(http://static-staging.crossrider.com/screensaver/zip/css/images/generic_buttons.png);
 				background-position:0 0;
 				cursor:pointer;
 				text-align:center;
@@ -283,45 +287,45 @@ div.site-container {
 			div.right-box table td.corner-t-l {
 				width:22px;
 				height:24px;
-				background: url(images/corner_l_t.png) no-repeat;
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/corner_l_t.png) no-repeat;
 			}
 
 			div.right-box table td.bg-t {
 				height:24px;
-				background: url(images/bg_t.png) repeat-x;
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/bg_t.png) repeat-x;
 			}
 
 			div.right-box table td.corner-t-r {
 				width:22px;
 				height:24px;
-				background: url(images/corner_r_t.png) no-repeat;
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/corner_r_t.png) no-repeat;
 			}
 
 			div.right-box table td.bg-l {
 				width:px;
-				background: url(images/bg_l.png) repeat-y;
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/bg_l.png) repeat-y;
 			}
 
 			div.right-box table td.bg-r {
 				width:22px;
-				background: url(images/bg_r.png) repeat-y;
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/bg_r.png) repeat-y;
 			}
 
 			div.right-box table td.corner-b-l {
 				width:22px;
 				height:26px;
-				background: url(images/corner_l_b.png);
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/corner_l_b.png);
 			}
 
 			div.right-box table td.bg-b {
 				height:26px;
-				background: url(images/bg_b.png);
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/bg_b.png);
 			}
 
 			div.right-box table td.corner-b-r {
 				width:22px;
 				height:26px;
-				background: url(images/corenr_r_b.png);
+				background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/corenr_r_b.png);
 			}
 
 			div.right-box table td#preview iframe {
@@ -342,7 +346,7 @@ div.site-container {
 			left:-34px;
 			width:245px;
 			height:62px;
-			background: url(images/shadow_left.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/shadow_left.png) no-repeat;
 		}
 
 		div.bottom-shadows div.shadow-right {
@@ -351,7 +355,7 @@ div.site-container {
 			right:0px;
 			width:893px;
 			height:62px;
-			background: url(images/shadow_right.png) no-repeat;
+			background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/shadow_right.png) no-repeat;
 		}
 	/* shadows - end */
 
@@ -395,7 +399,7 @@ div.generic-dialog {
 		position: absolute;
 		top:-30px;
 		right:-30px;
-		background: url(images/x_button.png) no-repeat;
+		background: url(http://static-staging.crossrider.com/screensaver/zip/css/images/x_button.png) no-repeat;
 		cursor: pointer;
 	}
 

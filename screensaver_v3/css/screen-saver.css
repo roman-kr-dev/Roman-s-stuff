@@ -1,9 +1,9 @@
 body {
-	xbackground:url(images/background-pattern.jpg);
+	xbackground:url(http://static-staging.crossrider.com/screensaver/zip/css/images/background-pattern.jpg);
 }
 
 .screen-saver-loader {
-	background:url(images/ajax-loader.gif) no-repeat center center;
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/ajax-loader.gif) no-repeat center center;
 }
 
 .screen-saver-overlay {
@@ -44,6 +44,6 @@ body {
 	left:10px;
 	width:75px;
 	height:63px;
-	background:url(images/logo.png) no-repeat;
+	background:url(http://static-staging.crossrider.com/screensaver/zip/css/images/logo.png) no-repeat;
 	z-index:10000;
 }

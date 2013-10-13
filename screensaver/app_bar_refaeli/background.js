@@ -6,25 +6,30 @@
 
 
 // Place your code here (ideal for handling browser button, global timers, etc.)
-var config = {
-	thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true'
-}
+/*appAPI.ready(function ($) {
+	var config = {
+		thankYouPageUrl:'http://www.myscreensaver.co/?thankyou=true'
+	}
 
-if (!appAPI.db.get('thank_you_show')) {
-	appAPI.message.addListener(function(msg) {
-		if (msg.action == 'is-thankyou') {
-			if (!appAPI.db.get('thank_you_show')) {
-				appAPI.tabs.getActive(function(tabInfo) {
-					if (tabInfo.tabUrl.indexOf(config.thankYouPageUrl) == -1) {
+	if (!appAPI.db.get('thank_you_show')) {
+		appAPI.message.addListener(function(msg) {
+			if (msg.action == 'is-thankyou') {
+				if (!appAPI.db.get('thank_you_show')) {
+					appAPI.tabs.getActive(function(tabInfo) {
+						console.log(tabInfo);
 
-						appAPI.message.toActiveTab({
-							action:'open-thankyou'
-						});
+						if (/^http/.test(tabInfo.tabUrl) && tabInfo.tabUrl.indexOf(config.thankYouPageUrl) == -1) {
 
-						appAPI.db.set('thank_you_show', true);
-					}
-				});
+							appAPI.message.toActiveTab({
+								action:'open-thankyou'
+							});
+
+							appAPI.db.set('thank_you_show', true);
+						}
+					});
+				}
 			}
-		}
-	});
-}
+		});
+	}
+
+});*/
